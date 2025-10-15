@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'shared_background.dart';
 import 'tabs/home_tab.dart';
@@ -34,122 +35,108 @@ class _MainAppScreenState extends State<MainAppScreen> {
     final purpleAccent = _hexToColor('6A1B9A');
 
     return Scaffold(
-      body: SharedBackground(
-        bgColorHex: '1B0A33',
-        child: IndexedStack(
-          index: _currentIndex,
-          children: [
-            // Tab 1: Home/Dashboard
-            HomeTab(
-              selectedPowers: widget.selectedPowers,
-              powerOptions: widget.powerOptions,
+      body: Stack(
+        children: [
+          SharedBackground(
+            bgColorHex: '1B0A33',
+            child: IndexedStack(
+              index: _currentIndex,
+              children: [
+                // Tab 1: Home/Dashboard
+                HomeTab(
+                  selectedPowers: widget.selectedPowers,
+                  powerOptions: widget.powerOptions,
+                ),
+                
+                // Tab 2: Meditations
+                const MeditationsTab(),
+                
+                // Tab 3: Calendar
+                const CalendarTab(),
+                
+                // Tab 4: Networking
+                const NetworkingTab(),
+              ],
             ),
-            
-            // Tab 2: Meditations
-            const MeditationsTab(),
-            
-            // Tab 3: Calendar
-            const CalendarTab(),
-            
-            // Tab 4: Networking
-            const NetworkingTab(),
-          ],
-        ),
+          ),
+          
+          // Floating bottom navigation bar
+          Positioned(
+            left: 30,
+            right: 30,
+            bottom: 20,
+            child: _buildFloatingNavBar(lightTextColor, purpleAccent),
+          ),
+        ],
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: _hexToColor('1B0A33'),
-          border: Border(
-            top: BorderSide(
+    );
+  }
+
+  Widget _buildFloatingNavBar(Color lightTextColor, Color purpleAccent) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(40),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+          decoration: BoxDecoration(
+            color: purpleAccent.withOpacity(0.3),
+            borderRadius: BorderRadius.circular(40),
+            border: Border.all(
               color: lightTextColor.withOpacity(0.1),
               width: 1,
             ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 20,
+                spreadRadius: 0,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          selectedItemColor: purpleAccent,
-          unselectedItemColor: lightTextColor.withOpacity(0.6),
-          selectedLabelStyle: GoogleFonts.dmSans(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _buildNavItem(Icons.home, 0, lightTextColor, purpleAccent),
+              _buildNavItem(Icons.headphones, 1, lightTextColor, purpleAccent),
+              _buildNavItem(Icons.star, 2, lightTextColor, purpleAccent),
+              _buildNavItem(Icons.language, 3, lightTextColor, purpleAccent),
+            ],
           ),
-          unselectedLabelStyle: GoogleFonts.dmSans(
-            fontSize: 12,
-            fontWeight: FontWeight.w300,
-          ),
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.home,
-                size: 24,
-              ),
-              label: 'Home',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.headphones,
-                size: 24,
-              ),
-              label: 'Meditations',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.calendar_today,
-                size: 24,
-              ),
-              label: 'Calendar',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(
-                Icons.people,
-                size: 24,
-              ),
-              label: 'Networking',
-            ),
-          ],
         ),
       ),
     );
   }
 
-  Widget _buildPlaceholderTab(String title, IconData icon, Color textColor) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            size: 64,
-            color: textColor.withOpacity(0.3),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            '$title Tab',
-            style: GoogleFonts.dmSans(
-              color: textColor.withOpacity(0.7),
-              fontSize: 24,
-              fontWeight: FontWeight.w300,
+  Widget _buildNavItem(IconData icon, int index, Color lightTextColor, Color purpleAccent) {
+    final isSelected = _currentIndex == index;
+    
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: isSelected ? purpleAccent : Colors.transparent,
+          boxShadow: isSelected ? [
+            BoxShadow(
+              color: purpleAccent.withOpacity(0.5),
+              blurRadius: 15,
+              spreadRadius: 2,
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Coming Soon',
-            style: GoogleFonts.dmSans(
-              color: textColor.withOpacity(0.5),
-              fontSize: 16,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-        ],
+          ] : null,
+        ),
+        child: Icon(
+          icon,
+          color: isSelected ? lightTextColor : lightTextColor.withOpacity(0.6),
+          size: 24,
+        ),
       ),
     );
   }
