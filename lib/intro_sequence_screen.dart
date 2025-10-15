@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import 'shared_background.dart';
+import 'power_selection_screen.dart';
 
 // Enum has been expanded to manage the final screen
 enum IntroPhase {
@@ -173,7 +174,12 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
                   width: double.infinity, // MAKE THE BUTTON EXPAND
                   child: ElevatedButton(
                     onPressed: () {
-                      // TODO: Add navigation/logic for sign-up
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PowerSelectionScreen(),
+                        ),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _hexToColor('6A1B9A'),
