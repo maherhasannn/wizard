@@ -80,15 +80,15 @@ class _MainAppScreenState extends State<MainAppScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
           decoration: BoxDecoration(
-            color: purpleAccent.withOpacity(0.3),
+            color: Colors.white.withOpacity(0.25),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(
-              color: lightTextColor.withOpacity(0.1),
+              color: Colors.white.withOpacity(0.3),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withOpacity(0.1),
                 blurRadius: 20,
                 spreadRadius: 0,
                 offset: const Offset(0, 8),
@@ -134,7 +134,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
         ),
         child: Icon(
           icon,
-          color: isSelected ? lightTextColor : lightTextColor.withOpacity(0.6),
+          color: isSelected ? Colors.white : Colors.white.withOpacity(0.8),
           size: 24,
         ),
       ),
