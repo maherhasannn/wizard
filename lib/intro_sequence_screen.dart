@@ -3,8 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import 'shared_background.dart';
 
-// Enum to manage the current state of our animation sequence
-// Expanded to handle separate fade-in and fade-out steps for text.
+// Enum has been expanded to manage the final screen
 enum IntroPhase {
   showingImage1,
   phase2_TextFadeIn,
@@ -12,6 +11,8 @@ enum IntroPhase {
   phase3_TextFadeIn,
   phase3_TextFadeOut,
   phase4_TextFadeIn,
+  phase4_TextFadeOut, // Phase for final text to fade out
+  phase5_SignUp,     // Phase for the new sign-up screen
 }
 
 class IntroSequenceScreen extends StatefulWidget {
@@ -46,7 +47,7 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
     super.initState();
     _startAnimationSequence();
   }
-  
+
   void _startAnimationSequence() {
     const stepDuration = Duration(milliseconds: 2500);
 
@@ -56,6 +57,9 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
     Timer(stepDuration * 3, () => _setPhase(IntroPhase.phase3_TextFadeIn));
     Timer(stepDuration * 4, () => _setPhase(IntroPhase.phase3_TextFadeOut));
     Timer(stepDuration * 5, () => _setPhase(IntroPhase.phase4_TextFadeIn));
+    // Added timers for the new phases
+    Timer(stepDuration * 6, () => _setPhase(IntroPhase.phase4_TextFadeOut));
+    Timer(stepDuration * 7, () => _setPhase(IntroPhase.phase5_SignUp));
   }
 
   // Helper function to safely change state
@@ -105,8 +109,9 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
   }
 
   // A reusable widget for the animated text.
-  // It becomes visible only during its specified 'fadeInPhase'.
-  Widget _buildAnimatedText(IntroPhase fadeInPhase, Map<String, dynamic> textData) {
+  Widget _buildAnimatedText(
+      IntroPhase fadeInPhase, Map<String, dynamic> textData) {
+    // This widget implicitly handles fade-out when the phase changes.
     return AnimatedOpacity(
       opacity: _currentPhase == fadeInPhase ? 1.0 : 0.0,
       duration: const Duration(milliseconds: 2500),
@@ -128,6 +133,97 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
     );
   }
 
+  // New widget for the final sign-up screen content
+  Widget _buildSignUpContent() {
+    final lightTextColor = _hexToColor('F0E6D8');
+    final buttonTextStyle = GoogleFonts.dmSans(
+      color: lightTextColor,
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+    );
+    
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        // Main content (text and button)
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                child: Text(
+                  "Let's unleash the force you already are",
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.dmSans(
+                    color: lightTextColor,
+                    fontSize: 26,
+                    fontWeight: FontWeight.w300,
+                  ),
+                ),
+              ),
+
+
+              // ...
+              const SizedBox(height: 40),
+              // ADD PADDING TO MATCH THE TEXT'S HORIZONTAL SPACE
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                child: SizedBox(
+                  width: double.infinity, // MAKE THE BUTTON EXPAND
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // TODO: Add navigation/logic for sign-up
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _hexToColor('6A1B9A'),
+                      // Adjust vertical padding as needed, horizontal is now controlled by SizedBox
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
+                    child: Text(
+                      'Unleash My Power',
+                      style: buttonTextStyle,
+                    ),
+                  ),
+                ),
+              ),
+              //...
+
+
+
+            ],
+          ),
+        ),
+        
+        
+        // Bottom buttons
+        Positioned(
+          bottom: 30,
+          left: 20,
+          child: TextButton(
+            onPressed: () {
+              // TODO: Add navigation/logic for Login
+            },
+            child: Text('Login', style: buttonTextStyle.copyWith(fontSize: 14)),
+          ),
+        ),
+        Positioned(
+          bottom: 30,
+          right: 20,
+          child: TextButton(
+            onPressed: () {
+              // TODO: Add logic for Restore Purchase
+            },
+            child: Text('Restore Purchase', style: buttonTextStyle.copyWith(fontSize: 14)),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,7 +234,6 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
           alignment: Alignment.center,
           children: [
             // --- Image Layers ---
-            // Each image is now visible during both the text fade-in and fade-out phases.
             AnimatedOpacity(
               opacity: _currentPhase == IntroPhase.showingImage1 ? 0.5 : 0.0,
               duration: const Duration(milliseconds: 1500),
@@ -147,7 +242,7 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
             ),
             AnimatedOpacity(
               opacity: _currentPhase == IntroPhase.phase2_TextFadeIn ||
-                       _currentPhase == IntroPhase.phase2_TextFadeOut
+                      _currentPhase == IntroPhase.phase2_TextFadeOut
                   ? 0.7
                   : 0.0,
               duration: const Duration(milliseconds: 2000),
@@ -156,7 +251,7 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
             ),
             AnimatedOpacity(
               opacity: _currentPhase == IntroPhase.phase3_TextFadeIn ||
-                       _currentPhase == IntroPhase.phase3_TextFadeOut
+                      _currentPhase == IntroPhase.phase3_TextFadeOut
                   ? 0.7
                   : 0.0,
               duration: const Duration(milliseconds: 2000),
@@ -164,21 +259,37 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
               child: _buildFadedImage('assets/images/intro3.png'),
             ),
             AnimatedOpacity(
-              opacity: _currentPhase == IntroPhase.phase4_TextFadeIn ? 0.7 : 0.0,
+              opacity: _currentPhase == IntroPhase.phase4_TextFadeIn ||
+                      _currentPhase == IntroPhase.phase4_TextFadeOut
+                  ? 0.7
+                  : 0.0,
               duration: const Duration(milliseconds: 2000),
               curve: Curves.easeInOut,
               child: _buildFadedImage('assets/images/intro4.png'),
             ),
+            // Added final background image for the sign-up screen
+            AnimatedOpacity(
+              opacity: _currentPhase == IntroPhase.phase5_SignUp ? 0.8 : 0.0,
+              duration: const Duration(milliseconds: 2000),
+              curve: Curves.easeInOut,
+              child: _buildFadedImage('assets/images/intro5.png'),
+            ),
 
             // --- Text Layers ---
-            // The logic now ensures one text fades out before the next fades in.
             _buildAnimatedText(IntroPhase.phase2_TextFadeIn, _textPhases[0]),
             _buildAnimatedText(IntroPhase.phase3_TextFadeIn, _textPhases[1]),
             _buildAnimatedText(IntroPhase.phase4_TextFadeIn, _textPhases[2]),
+            
+            // --- Sign-Up Screen Layer ---
+            AnimatedOpacity(
+              opacity: _currentPhase == IntroPhase.phase5_SignUp ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 2000),
+              curve: Curves.easeIn,
+              child: _buildSignUpContent(),
+            ),
           ],
         ),
       ),
     );
   }
 }
-
