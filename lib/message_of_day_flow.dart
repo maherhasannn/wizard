@@ -13,9 +13,12 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
   bool _isUnlocked = false;
   bool _isLoading = false;
   int _loadingProgress = 0;
+  double _dragPosition = 0.0;
   
   late AnimationController _flipController;
   late Animation<double> _flipAnimation;
+  late AnimationController _resetController;
+  late Animation<double> _resetAnimation;
 
   @override
   void initState() {
@@ -31,11 +34,30 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
       parent: _flipController,
       curve: Curves.easeInOut,
     ));
+    
+    _resetController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _resetAnimation = Tween<double>(
+      begin: 0.0,
+      end: 0.0,
+    ).animate(CurvedAnimation(
+      parent: _resetController,
+      curve: Curves.easeOut,
+    ));
+    
+    _resetController.addListener(() {
+      setState(() {
+        _dragPosition = _resetAnimation.value;
+      });
+    });
   }
 
   @override
   void dispose() {
     _flipController.dispose();
+    _resetController.dispose();
     super.dispose();
   }
 
@@ -148,26 +170,31 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
                   transform: Matrix4.identity()
                     ..setEntry(3, 2, 0.001)
                     ..rotateY(_flipAnimation.value * 3.14159),
-                  child: Container(
-                    width: 120,
-                    height: 180,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Colors.amber,
-                        width: 2,
+                  child: Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.identity()
+                      ..rotateY(isShowingFront ? 3.14159 : 0),
+                    child: Container(
+                      width: 120,
+                      height: 180,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.amber,
+                          width: 2,
+                        ),
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: isShowingFront
+                              ? [Colors.amber.shade100, Colors.amber.shade300]
+                              : [Colors.amber.shade800, Colors.amber.shade900],
+                        ),
                       ),
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: isShowingFront
-                            ? [Colors.amber.shade100, Colors.amber.shade300]
-                            : [Colors.amber.shade800, Colors.amber.shade900],
-                      ),
+                      child: isShowingFront
+                          ? _buildTarotCardFront()
+                          : _buildTarotCardBack(),
                     ),
-                    child: isShowingFront
-                        ? _buildTarotCardFront()
-                        : _buildTarotCardBack(),
                   ),
                 );
               },
@@ -327,63 +354,128 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
         else if (_isUnlocked)
           _buildUnlockedMessage()
         else
-          // Unlock button
-          GestureDetector(
-            onTap: _unlockMessage,
-            child: Container(
-              width: double.infinity,
-              height: 200,
-              decoration: BoxDecoration(
-                color: _hexToColor('6A1B9A').withOpacity(0.2),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: lightTextColor.withOpacity(0.1),
-                  width: 1,
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _hexToColor('6A1B9A').withOpacity(0.3),
-                      border: Border.all(
-                        color: lightTextColor.withOpacity(0.3),
-                        width: 2,
-                      ),
-                    ),
-                    child: Icon(
-                      Icons.lock,
-                      color: lightTextColor.withOpacity(0.8),
-                      size: 32,
+          // Swipe to unlock slider
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final maxDrag = constraints.maxWidth - 60; // 60 is the button size
+              final dragPercentage = (_dragPosition / maxDrag).clamp(0.0, 1.0);
+              
+              return GestureDetector(
+                onHorizontalDragUpdate: (details) {
+                  setState(() {
+                    _dragPosition = (_dragPosition + details.delta.dx).clamp(0.0, maxDrag);
+                  });
+                },
+                onHorizontalDragEnd: (details) {
+                  if (dragPercentage >= 0.8) {
+                    // Unlock successful
+                    _unlockMessage();
+                  } else {
+                    // Reset to start
+                    _resetAnimation = Tween<double>(
+                      begin: _dragPosition,
+                      end: 0.0,
+                    ).animate(CurvedAnimation(
+                      parent: _resetController,
+                      curve: Curves.easeOut,
+                    ));
+                    _resetController.forward(from: 0.0);
+                  }
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: 60,
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: _hexToColor('6A1B9A').withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(
+                      color: lightTextColor.withOpacity(0.1),
+                      width: 1,
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Stack(
                     children: [
-                      Icon(
-                        Icons.double_arrow,
-                        color: lightTextColor,
-                        size: 20,
+                      // Progress background
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        width: _dragPosition + 52,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                _hexToColor('6A1B9A').withOpacity(0.4),
+                                _hexToColor('6A1B9A').withOpacity(0.2),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(26),
+                          ),
+                        ),
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Swipe to unlock',
-                        style: GoogleFonts.dmSans(
-                          color: lightTextColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
+                      
+                      // "Swipe to unlock" text
+                      Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.chevron_right,
+                              color: lightTextColor.withOpacity(0.6),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Swipe to unlock',
+                              style: GoogleFonts.dmSans(
+                                color: lightTextColor.withOpacity(0.8),
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Draggable button
+                      Positioned(
+                        left: _dragPosition,
+                        top: 0,
+                        bottom: 0,
+                        child: Container(
+                          width: 52,
+                          height: 52,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                _hexToColor('6A1B9A'),
+                                _hexToColor('8E24AA'),
+                              ],
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: _hexToColor('6A1B9A').withOpacity(0.5),
+                                blurRadius: 10,
+                                spreadRadius: 2,
+                              ),
+                            ],
+                          ),
+                          child: Icon(
+                            Icons.chevron_right,
+                            color: lightTextColor,
+                            size: 28,
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
       ],
     );

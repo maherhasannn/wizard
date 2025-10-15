@@ -170,83 +170,80 @@ class _NetworkingTabState extends State<NetworkingTab> {
               ] else ...[
                 // Main networking interface
                 Expanded(
-                  child: Column(
-                    children: [
-                      // Quick stats
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: purpleAccent.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: lightTextColor.withOpacity(0.1),
-                            width: 1,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        // Quick stats
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: purpleAccent.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: lightTextColor.withOpacity(0.1),
+                              width: 1,
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                children: [
+                                  _buildStatItem('24', 'Connections', lightTextColor),
+                                  _buildStatItem('156', 'Profile Views', lightTextColor),
+                                  _buildStatItem('8', 'New Matches', lightTextColor),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                _buildStatItem('24', 'Connections', lightTextColor),
-                                _buildStatItem('156', 'Profile Views', lightTextColor),
-                                _buildStatItem('8', 'New Matches', lightTextColor),
-                              ],
-                            ),
-                          ],
+
+                        const SizedBox(height: 30),
+
+                        // Discovery options
+                        Text(
+                          'How would you like to reach new friends?',
+                          style: GoogleFonts.dmSans(
+                            color: lightTextColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                      ),
 
-                      const SizedBox(height: 30),
+                        const SizedBox(height: 30),
 
-                      // Discovery options
-                      Text(
-                        'How would you like to reach new friends?',
-                        style: GoogleFonts.dmSans(
-                          color: lightTextColor,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w600,
+                        // Discovery method cards
+                        _buildDiscoveryCard(
+                          'Swipe Cards',
+                          'Discover people through an intuitive swipe interface',
+                          Icons.swipe,
+                          () => _goToDiscoveryMethods(),
+                          lightTextColor,
+                          purpleAccent,
                         ),
-                        textAlign: TextAlign.center,
-                      ),
-
-                      const SizedBox(height: 30),
-
-                      // Discovery method cards
-                      Expanded(
-                        child: Column(
-                          children: [
-                            _buildDiscoveryCard(
-                              'Swipe Cards',
-                              'Discover people through an intuitive swipe interface',
-                              Icons.swipe,
-                              () => _goToDiscoveryMethods(),
-                              lightTextColor,
-                              purpleAccent,
-                            ),
-                            const SizedBox(height: 16),
-                            _buildDiscoveryCard(
-                              'Show on a Map',
-                              'Find people near you on an interactive map',
-                              Icons.map,
-                              () => _goToDiscoveryMethods(),
-                              lightTextColor,
-                              purpleAccent,
-                            ),
-                            const SizedBox(height: 16),
-                            _buildDiscoveryCard(
-                              'By Filters',
-                              'Search with specific criteria and preferences',
-                              Icons.filter_list,
-                              () => _goToDiscoveryMethods(),
-                              lightTextColor,
-                              purpleAccent,
-                            ),
-                          ],
+                        const SizedBox(height: 16),
+                        _buildDiscoveryCard(
+                          'Show on a Map',
+                          'Find people near you on an interactive map',
+                          Icons.map,
+                          () => _goToDiscoveryMethods(),
+                          lightTextColor,
+                          purpleAccent,
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 16),
+                        _buildDiscoveryCard(
+                          'By Filters',
+                          'Search with specific criteria and preferences',
+                          Icons.filter_list,
+                          () => _goToDiscoveryMethods(),
+                          lightTextColor,
+                          purpleAccent,
+                        ),
+                        const SizedBox(height: 40), // Extra padding at bottom
+                      ],
+                    ),
                   ),
                 ),
               ],

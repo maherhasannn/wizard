@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'shared_background.dart';
 import 'tabs/home_tab.dart';
 import 'tabs/meditations_tab.dart';
+import 'tabs/calendar_tab.dart';
 import 'tabs/networking_tab.dart';
 
 class MainAppScreen extends StatefulWidget {
@@ -47,8 +48,8 @@ class _MainAppScreenState extends State<MainAppScreen> {
             // Tab 2: Meditations
             const MeditationsTab(),
             
-            // Tab 3: Calendar (Placeholder)
-            _buildPlaceholderTab('Calendar', Icons.calendar_today, lightTextColor),
+            // Tab 3: Calendar
+            const CalendarTab(),
             
             // Tab 4: Networking
             const NetworkingTab(),
