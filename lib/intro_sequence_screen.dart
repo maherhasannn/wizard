@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'dart:async';
 import 'shared_background.dart';
 
 // Enum to manage the current state of our animation sequence
+// Expanded to handle separate fade-in and fade-out steps for text.
 enum IntroPhase {
   showingImage1,
-  showingImage2,
+  phase2_TextFadeIn,
+  phase2_TextFadeOut,
+  phase3_TextFadeIn,
+  phase3_TextFadeOut,
+  phase4_TextFadeIn,
 }
 
 class IntroSequenceScreen extends StatefulWidget {
@@ -19,27 +25,48 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
   IntroPhase _currentPhase = IntroPhase.showingImage1;
   bool _isMounted = true;
 
-  final Map<String, dynamic> _textPhase = {
-    'text': 'Nobody is coming to save you.',
-    'textColor': 'F0E6D8',
-  };
+  // Store text for each phase in a list for easier management
+  final List<Map<String, dynamic>> _textPhases = [
+    {
+      'text': 'Nobody is coming to save you',
+      'textColor': 'F0E6D8',
+    },
+    {
+      'text': 'Good',
+      'textColor': 'F0E6D8',
+    },
+    {
+      'text': "You're all you need",
+      'textColor': 'F0E6D8',
+    },
+  ];
 
   @override
   void initState() {
     super.initState();
-
-    // This is the corrected timing logic.
-    // The screen takes 1500ms to fade in. We wait for that to finish,
-    // then wait an additional 1000ms (1 second) before changing the phase.
-    Future.delayed(const Duration(milliseconds: 2500), () {
-      if (_isMounted) {
-        setState(() {
-          _currentPhase = IntroPhase.showingImage2;
-        });
-      }
-    });
+    _startAnimationSequence();
   }
   
+  void _startAnimationSequence() {
+    const stepDuration = Duration(milliseconds: 2500);
+
+    // Sequence the phase changes with delays
+    Timer(stepDuration, () => _setPhase(IntroPhase.phase2_TextFadeIn));
+    Timer(stepDuration * 2, () => _setPhase(IntroPhase.phase2_TextFadeOut));
+    Timer(stepDuration * 3, () => _setPhase(IntroPhase.phase3_TextFadeIn));
+    Timer(stepDuration * 4, () => _setPhase(IntroPhase.phase3_TextFadeOut));
+    Timer(stepDuration * 5, () => _setPhase(IntroPhase.phase4_TextFadeIn));
+  }
+
+  // Helper function to safely change state
+  void _setPhase(IntroPhase newPhase) {
+    if (_isMounted) {
+      setState(() {
+        _currentPhase = newPhase;
+      });
+    }
+  }
+
   @override
   void dispose() {
     _isMounted = false;
@@ -77,6 +104,30 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
     );
   }
 
+  // A reusable widget for the animated text.
+  // It becomes visible only during its specified 'fadeInPhase'.
+  Widget _buildAnimatedText(IntroPhase fadeInPhase, Map<String, dynamic> textData) {
+    return AnimatedOpacity(
+      opacity: _currentPhase == fadeInPhase ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 2500),
+      curve: Curves.easeIn,
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40.0),
+          child: Text(
+            textData['text'],
+            textAlign: TextAlign.center,
+            style: GoogleFonts.dmSans(
+              color: _hexToColor(textData['textColor']),
+              fontSize: 32,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,45 +137,44 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
           fit: StackFit.expand,
           alignment: Alignment.center,
           children: [
-            // --- Image 1 Layer ---
-            // Fades in with the screen, then fades out when the phase changes.
+            // --- Image Layers ---
+            // Each image is now visible during both the text fade-in and fade-out phases.
             AnimatedOpacity(
               opacity: _currentPhase == IntroPhase.showingImage1 ? 0.5 : 0.0,
               duration: const Duration(milliseconds: 1500),
               curve: Curves.easeInOut,
               child: _buildFadedImage('assets/images/intro1.png'),
             ),
-
-            // --- Image 2 Layer ---
-            // Fades in when the phase changes.
             AnimatedOpacity(
-              // UPDATED: Changed opacity from 0.5 to 0.7 for 70% opacity
-              opacity: _currentPhase == IntroPhase.showingImage2 ? 0.7 : 0.0,
+              opacity: _currentPhase == IntroPhase.phase2_TextFadeIn ||
+                       _currentPhase == IntroPhase.phase2_TextFadeOut
+                  ? 0.7
+                  : 0.0,
               duration: const Duration(milliseconds: 2000),
               curve: Curves.easeInOut,
               child: _buildFadedImage('assets/images/intro2.png'),
             ),
-
-            // --- Text Layer ---
             AnimatedOpacity(
-              opacity: _currentPhase == IntroPhase.showingImage2 ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 2500),
-              curve: Curves.easeIn,
-              child: Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                  child: Text(
-                    _textPhase['text'],
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.dmSans(
-                      color: _hexToColor(_textPhase['textColor']),
-                      fontSize: 32,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                ),
-              ),
+              opacity: _currentPhase == IntroPhase.phase3_TextFadeIn ||
+                       _currentPhase == IntroPhase.phase3_TextFadeOut
+                  ? 0.7
+                  : 0.0,
+              duration: const Duration(milliseconds: 2000),
+              curve: Curves.easeInOut,
+              child: _buildFadedImage('assets/images/intro3.png'),
             ),
+            AnimatedOpacity(
+              opacity: _currentPhase == IntroPhase.phase4_TextFadeIn ? 0.7 : 0.0,
+              duration: const Duration(milliseconds: 2000),
+              curve: Curves.easeInOut,
+              child: _buildFadedImage('assets/images/intro4.png'),
+            ),
+
+            // --- Text Layers ---
+            // The logic now ensures one text fades out before the next fades in.
+            _buildAnimatedText(IntroPhase.phase2_TextFadeIn, _textPhases[0]),
+            _buildAnimatedText(IntroPhase.phase3_TextFadeIn, _textPhases[1]),
+            _buildAnimatedText(IntroPhase.phase4_TextFadeIn, _textPhases[2]),
           ],
         ),
       ),
