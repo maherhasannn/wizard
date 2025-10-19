@@ -1,0 +1,469 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// USER MANAGEMENT
+// ============================================================
+
+model User {
+  id             Int       @id @default(autoincrement())
+  email          String    @unique
+  password       String // Hashed with argon2
+  firstName      String?   @map("first_name")
+  lastName       String?   @map("last_name")
+  phone          String?
+  profilePhoto   String?   @map("profile_photo")
+  bio            String?
+  birthday       DateTime? @db.Date
+  gender         String? // MALE, FEMALE, OTHER, PREFER_NOT_TO_SAY
+  country        String?
+  city           String?
+  instagramHandle String?  @map("instagram_handle")
+  interests      String[]
+  isProfilePublic Boolean  @default(true) @map("is_profile_public")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  userAuth                    UserAuth?
+  userSettings                UserSettings?
+  networkProfile              NetworkProfile?
+  meditationFavorites         UserMeditationFavorite[]
+  meditationHistory           UserMeditationHistory[]
+  meditationStats             UserMeditationStats?
+  calendarEvents              CalendarEvent[]
+  connectionsRequested        Connection[]                  @relation("ConnectionRequester")
+  connectionsReceived         Connection[]                  @relation("ConnectionReceiver")
+  swipesMade                  UserSwipe[]                   @relation("Swiper")
+  swipesReceived              UserSwipe[]                   @relation("SwipedUser")
+  viewsMade                   UserView[]                    @relation("Viewer")
+  viewsReceived               UserView[]                    @relation("ViewedUser")
+  videoViews                  UserVideoView[]
+  affirmationInteractions     UserAffirmationInteraction[]
+  hostedStreams               LiveStream[]
+  streamParticipations        LiveStreamParticipant[]
+  streamChats                 LiveStreamChat[]
+  powerSelections             UserPowerSelection[]
+
+  @@index([email])
+  @@index([createdAt])
+  @@index([isProfilePublic])
+}
+
+model UserAuth {
+  id                     Int       @id @default(autoincrement())
+  userId                 Int       @unique @map("user_id")
+  authToken              String?   @map("auth_token")
+  tokenExpiry            DateTime? @map("token_expiry")
+  refreshToken           String?   @map("refresh_token")
+  refreshTokenExpiry     DateTime? @map("refresh_token_expiry")
+  resetToken             String?   @map("reset_token")
+  resetTokenExpiry       DateTime? @map("reset_token_expiry")
+  isEmailVerified        Boolean   @default(false) @map("is_email_verified")
+  emailVerificationToken String?   @map("email_verification_token")
+  verificationExpiry     DateTime? @map("verification_expiry")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([authToken])
+  @@index([refreshToken])
+  @@index([resetToken])
+  @@index([emailVerificationToken])
+}
+
+model UserSettings {
+  id                   Int      @id @default(autoincrement())
+  userId               Int      @unique @map("user_id")
+  pushNotifications    Boolean  @default(true) @map("push_notifications")
+  emailNotifications   Boolean  @default(true) @map("email_notifications")
+  darkMode             Boolean  @default(false) @map("dark_mode")
+  language             String   @default("en")
+  timezone             String   @default("UTC")
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================
+// MEDITATION FEATURES
+// ============================================================
+
+enum MeditationCategory {
+  AUDIO
+  MUSIC
+  SLEEP
+}
+
+model MeditationTrack {
+  id            Int                 @id @default(autoincrement())
+  title         String
+  artist        String
+  description   String?
+  category      MeditationCategory
+  duration      Int // Duration in seconds
+  audioUrl      String              @map("audio_url")
+  imageUrl      String?             @map("image_url")
+  isPremium     Boolean             @default(false) @map("is_premium")
+  playCount     Int                 @default(0) @map("play_count")
+  favoriteCount Int                 @default(0) @map("favorite_count")
+  sortOrder     Int                 @default(0) @map("sort_order")
+  isActive      Boolean             @default(true) @map("is_active")
+  createdAt     DateTime            @default(now()) @map("created_at")
+  updatedAt     DateTime            @updatedAt @map("updated_at")
+
+  favorites UserMeditationFavorite[]
+  history   UserMeditationHistory[]
+
+  @@index([category, isActive])
+  @@index([playCount])
+  @@index([favoriteCount])
+}
+
+model UserMeditationFavorite {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  trackId   Int      @map("track_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  track MeditationTrack @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, trackId])
+  @@index([userId])
+  @@index([trackId])
+}
+
+model UserMeditationHistory {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  trackId   Int      @map("track_id")
+  playedAt  DateTime @default(now()) @map("played_at")
+  duration  Int // How many seconds they listened
+  completed Boolean  @default(false) // Did they finish the track
+
+  user  User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  track MeditationTrack @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  @@index([userId, playedAt])
+  @@index([trackId])
+}
+
+model UserMeditationStats {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @unique @map("user_id")
+  totalMinutes    Int       @default(0) @map("total_minutes")
+  sessionsCount   Int       @default(0) @map("sessions_count")
+  streak          Int       @default(0) // Current streak in days
+  lastSessionDate DateTime? @map("last_session_date") @db.Date
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ============================================================
+// CALENDAR & EVENTS
+// ============================================================
+
+enum EventType {
+  MEDITATION
+  GOAL
+  REMINDER
+  CUSTOM
+}
+
+model CalendarEvent {
+  id               Int       @id @default(autoincrement())
+  userId           Int       @map("user_id")
+  title            String
+  description      String?
+  type             EventType
+  scheduledAt      DateTime  @map("scheduled_at")
+  duration         Int? // Duration in minutes
+  isCompleted      Boolean   @default(false) @map("is_completed")
+  completedAt      DateTime? @map("completed_at")
+  recurrence       Json? // JSON for recurrence rules
+  notificationTime Int? // Minutes before event to notify
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reminders EventReminder[]
+
+  @@index([userId, scheduledAt])
+  @@index([isCompleted])
+}
+
+model EventReminder {
+  id           Int       @id @default(autoincrement())
+  eventId      Int       @map("event_id")
+  reminderTime DateTime  @map("reminder_time")
+  sentAt       DateTime? @map("sent_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
+
+  event CalendarEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@index([reminderTime, sentAt])
+  @@index([eventId])
+}
+
+// ============================================================
+// NETWORKING FEATURES
+// ============================================================
+
+model NetworkProfile {
+  id                 Int       @id @default(autoincrement())
+  userId             Int       @unique @map("user_id")
+  visibility         String    @default("PUBLIC") // PUBLIC, FRIENDS_ONLY, PRIVATE
+  lookingFor         String? // What they're looking for in connections
+  bio                String?
+  interests          String[]
+  latitude           Float?
+  longitude          Float?
+  lastLocationUpdate DateTime? @map("last_location_update")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([visibility])
+  @@index([latitude, longitude])
+}
+
+enum ConnectionStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  BLOCKED
+}
+
+model Connection {
+  id          Int              @id @default(autoincrement())
+  requesterId Int              @map("requester_id")
+  receiverId  Int              @map("receiver_id")
+  status      ConnectionStatus @default(PENDING)
+  createdAt   DateTime         @default(now()) @map("created_at")
+  acceptedAt  DateTime?        @map("accepted_at")
+  updatedAt   DateTime         @updatedAt @map("updated_at")
+
+  requester User @relation("ConnectionRequester", fields: [requesterId], references: [id], onDelete: Cascade)
+  receiver  User @relation("ConnectionReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, receiverId])
+  @@index([requesterId, status])
+  @@index([receiverId, status])
+}
+
+enum SwipeDirection {
+  LEFT
+  RIGHT
+}
+
+model UserSwipe {
+  id           Int            @id @default(autoincrement())
+  swiperId     Int            @map("swiper_id")
+  swipedUserId Int            @map("swiped_user_id")
+  direction    SwipeDirection
+  createdAt    DateTime       @default(now()) @map("created_at")
+
+  swiper     User @relation("Swiper", fields: [swiperId], references: [id], onDelete: Cascade)
+  swipedUser User @relation("SwipedUser", fields: [swipedUserId], references: [id], onDelete: Cascade)
+
+  @@unique([swiperId, swipedUserId])
+  @@index([swiperId])
+  @@index([swipedUserId])
+}
+
+model UserView {
+  id           Int      @id @default(autoincrement())
+  viewerId     Int      @map("viewer_id")
+  viewedUserId Int      @map("viewed_user_id")
+  viewedAt     DateTime @default(now()) @map("viewed_at")
+
+  viewer     User @relation("Viewer", fields: [viewerId], references: [id], onDelete: Cascade)
+  viewedUser User @relation("ViewedUser", fields: [viewedUserId], references: [id], onDelete: Cascade)
+
+  @@index([viewerId, viewedAt])
+  @@index([viewedUserId])
+}
+
+// ============================================================
+// CONTENT FEATURES
+// ============================================================
+
+model MessageOfDay {
+  id           Int      @id @default(autoincrement())
+  date         DateTime @unique @db.Date
+  title        String
+  cardType     String   @map("card_type") // e.g., "The Sun", "The Moon"
+  shortMessage String   @map("short_message")
+  fullMessage  String   @map("full_message")
+  imageUrl     String?  @map("image_url")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([date])
+}
+
+model Video {
+  id           Int      @id @default(autoincrement())
+  title        String
+  description  String?
+  thumbnailUrl String   @map("thumbnail_url")
+  videoUrl     String   @map("video_url")
+  duration     Int // Duration in seconds
+  category     String?
+  viewCount    Int      @default(0) @map("view_count")
+  uploadedAt   DateTime @default(now()) @map("uploaded_at")
+  isActive     Boolean  @default(true) @map("is_active")
+
+  views UserVideoView[]
+
+  @@index([category, isActive])
+  @@index([uploadedAt])
+  @@index([viewCount])
+}
+
+model UserVideoView {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  videoId       Int      @map("video_id")
+  viewedAt      DateTime @default(now()) @map("viewed_at")
+  watchDuration Int      @default(0) @map("watch_duration") // Seconds watched
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  video Video @relation(fields: [videoId], references: [id], onDelete: Cascade)
+
+  @@index([userId, viewedAt])
+  @@index([videoId])
+}
+
+model Affirmation {
+  id          Int      @id @default(autoincrement())
+  title       String
+  content     String
+  category    String?
+  imageUrl    String?  @map("image_url")
+  videoUrl    String?  @map("video_url")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  interactions UserAffirmationInteraction[]
+
+  @@index([category, isActive])
+}
+
+model UserAffirmationInteraction {
+  id            Int      @id @default(autoincrement())
+  userId        Int      @map("user_id")
+  affirmationId Int      @map("affirmation_id")
+  feeling       Int? // Rating 1-5
+  viewedAt      DateTime @default(now()) @map("viewed_at")
+
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  affirmation Affirmation @relation(fields: [affirmationId], references: [id], onDelete: Cascade)
+
+  @@index([userId, viewedAt])
+  @@index([affirmationId])
+}
+
+// ============================================================
+// LIVE STREAM FEATURES
+// ============================================================
+
+enum StreamStatus {
+  SCHEDULED
+  LIVE
+  ENDED
+}
+
+model LiveStream {
+  id           Int          @id @default(autoincrement())
+  title        String
+  description  String?
+  hostId       Int          @map("host_id")
+  thumbnailUrl String?      @map("thumbnail_url")
+  streamUrl    String?      @map("stream_url")
+  status       StreamStatus @default(SCHEDULED)
+  viewerCount  Int          @default(0) @map("viewer_count")
+  startedAt    DateTime?    @map("started_at")
+  endedAt      DateTime?    @map("ended_at")
+  scheduledAt  DateTime     @map("scheduled_at")
+  createdAt    DateTime     @default(now()) @map("created_at")
+
+  host         User                    @relation(fields: [hostId], references: [id])
+  participants LiveStreamParticipant[]
+  chats        LiveStreamChat[]
+
+  @@index([status, scheduledAt])
+  @@index([hostId])
+}
+
+model LiveStreamParticipant {
+  id        Int       @id @default(autoincrement())
+  streamId  Int       @map("stream_id")
+  userId    Int       @map("user_id")
+  joinedAt  DateTime  @default(now()) @map("joined_at")
+  leftAt    DateTime? @map("left_at")
+
+  stream LiveStream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([streamId, userId])
+  @@index([userId])
+}
+
+model LiveStreamChat {
+  id       Int      @id @default(autoincrement())
+  streamId Int      @map("stream_id")
+  userId   Int      @map("user_id")
+  message  String
+  sentAt   DateTime @default(now()) @map("sent_at")
+
+  stream LiveStream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([streamId, sentAt])
+  @@index([userId])
+}
+
+// ============================================================
+// POWER/GOALS SYSTEM
+// ============================================================
+
+model PowerCategory {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  description String?
+  icon        String? // Icon name or URL
+  sortOrder   Int      @default(0) @map("sort_order")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  selections UserPowerSelection[]
+
+  @@index([sortOrder, isActive])
+}
+
+model UserPowerSelection {
+  id              Int      @id @default(autoincrement())
+  userId          Int      @map("user_id")
+  powerCategoryId Int      @map("power_category_id")
+  selectedAt      DateTime @default(now()) @map("selected_at")
+  priority        Int      @default(0) // Order of importance
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  powerCategory PowerCategory @relation(fields: [powerCategoryId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, powerCategoryId])
+  @@index([userId, priority])
+  @@index([powerCategoryId])
+}
+

@@ -1,16 +1,39 @@
-# wizard
+# Wizard
 
-A new Flutter project.
+A comprehensive meditation and wellness platform with mobile app, backend API, and web interface.
+
+## Project Structure
+
+```
+wizard/
+├── mobile/          # Flutter mobile application
+├── api/             # Node.js/Express/TypeScript backend API
+└── web/             # Web application (coming soon)
+```
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Mobile App
+See [mobile/README.md](mobile/README.md) for Flutter app setup and development.
 
-A few resources to get you started if this is your first Flutter project:
+### Backend API
+See [api/README.md](api/README.md) for API setup and development.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Web App
+Coming soon.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tech Stack
+
+- **Mobile**: Flutter/Dart
+- **Backend**: Node.js, Express, TypeScript, Prisma, PostgreSQL
+- **Cloud**: Google Cloud Platform (Cloud SQL, Cloud Storage, Cloud Run)
+
+## Features
+
+- 🧘 Meditation tracks and guided sessions
+- 📅 Personal calendar and goal tracking
+- 🌐 Social networking and connections
+- 📺 Video content and live streams
+- 💫 Daily affirmations and messages
+- ⚡ Power goals and personal development
+
