@@ -39,15 +39,20 @@ JWT_REFRESH_SECRET=your-refresh-secret-here
 # Generate Prisma client
 npm run prisma:generate
 
-# Push schema to database (for development)
-npm run db:push
-
-# Or run migrations (for production-like setup)
+# Run migrations (recommended - creates migration history)
 npm run migrate:dev
+
+# This will:
+# - Create a migrations directory if it doesn't exist
+# - Generate an initial migration from your schema
+# - Apply the migration to your database
+# - Automatically run prisma:generate
 
 # Seed database with sample data
 npm run db:seed
 ```
+
+**Note**: We use migrations instead of `db:push` to maintain a proper migration history, which is essential for production deployments and team collaboration.
 
 ### 4. Run Development Server
 
@@ -106,16 +111,29 @@ npm run prisma:studio
 
 This opens a web interface at `http://localhost:5555` to view and edit your database.
 
-### Reset Database
+### Migration Commands
 
 ```bash
+# Create and apply a new migration after schema changes
+npm run migrate:dev
+
+# Apply pending migrations in production
+npm run migrate:deploy
+
+# Reset database (drops all data, re-runs all migrations, and seeds)
 npm run migrate:reset
+
+# Create a migration without applying it
+npx prisma migrate dev --create-only
+
+# View migration status
+npx prisma migrate status
 ```
 
-This will:
-1. Drop all tables
-2. Re-run migrations
-3. Automatically seed the database
+**When to use each command:**
+- `migrate:dev` - Use during development when you change the schema
+- `migrate:deploy` - Use in production to apply migrations
+- `migrate:reset` - Use to completely reset your local database
 
 ## Available Endpoints
 
@@ -123,7 +141,6 @@ This will:
 - `POST /register` - Register new user
 - `POST /login` - Login user
 - `POST /refresh` - Refresh access token
-- `POST /verify-email` - Verify email
 - `POST /forgot-password` - Request password reset
 - `POST /reset-password` - Reset password
 - `GET /me` - Get current user (authenticated)
@@ -193,6 +210,8 @@ This will:
 
 The database is seeded with:
 - **30 users**: Including test user `gabriella@wizard.app` (password: `password123`)
+  - All users have pre-configured settings
+  - Ready to login and test immediately
 - **50 meditation tracks**: Various categories (Audio, Music, Sleep)
 - **10 power categories**: Different focus areas for personal development
 - **20 videos**: Tutorial and practice videos
@@ -260,4 +279,5 @@ npm run prisma:generate
 ## Support
 
 For issues or questions, refer to the main README or contact the development team.
+
 

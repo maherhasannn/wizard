@@ -21,10 +21,6 @@ const refreshTokenSchema = z.object({
   refreshToken: z.string().min(1, 'Refresh token is required'),
 });
 
-const verifyEmailSchema = z.object({
-  token: z.string().min(1, 'Verification token is required'),
-});
-
 const requestPasswordResetSchema = z.object({
   email: emailSchema,
 });
@@ -90,23 +86,6 @@ class AuthController {
   }
 
   /**
-   * POST /api/auth/verify-email
-   */
-  async verifyEmail(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { token } = verifyEmailSchema.parse(req.body);
-      const result = await authService.verifyEmail(token);
-
-      res.json({
-        success: true,
-        data: result,
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  /**
    * POST /api/auth/forgot-password
    */
   async requestPasswordReset(req: Request, res: Response, next: NextFunction) {
@@ -162,4 +141,5 @@ class AuthController {
 }
 
 export default new AuthController();
+
 

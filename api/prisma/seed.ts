@@ -28,7 +28,6 @@ async function main() {
   await prisma.userMeditationFavorite.deleteMany();
   await prisma.meditationTrack.deleteMany();
   await prisma.userSettings.deleteMany();
-  await prisma.userAuth.deleteMany();
   await prisma.user.deleteMany();
 
   console.log('✅ Cleaned existing data');
@@ -48,7 +47,6 @@ async function main() {
         country: 'Spain',
         interests: ['meditation', 'yoga', 'mindfulness', 'wellness'],
         isProfilePublic: true,
-        userAuth: { create: { isEmailVerified: true } },
         userSettings: { create: {} },
       },
     }),
@@ -68,7 +66,6 @@ async function main() {
           country: 'Europe',
           interests: ['meditation', 'wellness', 'mindfulness'].slice(0, Math.floor(Math.random() * 3) + 1),
           isProfilePublic: true,
-          userAuth: { create: { isEmailVerified: true } },
           userSettings: { create: {} },
         },
       });
@@ -313,4 +310,5 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
 

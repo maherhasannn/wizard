@@ -36,10 +36,10 @@ cp .env.example .env
 ### Database Setup
 
 ```bash
-# Push schema to database (development)
-npm run db:push
+# Generate Prisma client
+npm run prisma:generate
 
-# Or run migrations (production)
+# Run migrations (creates and applies migrations)
 npm run migrate:dev
 
 # Seed database with sample data
@@ -48,6 +48,8 @@ npm run db:seed
 # Open Prisma Studio to view data
 npm run prisma:studio
 ```
+
+**Migration vs DB Push**: We use `migrate:dev` instead of `db:push` to maintain proper migration history. This is essential for production deployments and tracking schema changes over time.
 
 ### Running the Server
 
@@ -68,7 +70,6 @@ npm start
 - `POST /api/auth/refresh` - Refresh access token
 - `POST /api/auth/forgot-password` - Request password reset
 - `POST /api/auth/reset-password` - Reset password
-- `POST /api/auth/verify-email` - Verify email
 - `GET /api/auth/me` - Get current user
 
 ### User
@@ -177,4 +178,5 @@ gcloud run deploy wizard-api \
 ## License
 
 ISC
+
 

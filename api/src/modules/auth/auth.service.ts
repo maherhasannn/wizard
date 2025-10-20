@@ -38,23 +38,19 @@ class AuthService {
     // Hash password
     const hashedPassword = await hashPassword(data.password);
 
-    // Generate email verification token
-    const verificationToken = generateRandomToken();
-    const verificationExpiry = getTokenExpiry(24); // 24 hours
+    // Generate tokens
+    const tempUserId = 0; // Temporary, will be replaced after user creation
+    const refreshToken = generateRefreshToken({ userId: tempUserId, email: data.email.toLowerCase() });
 
-    // Create user and auth record in a transaction
+    // Create user with refresh token
     const user = await prisma.user.create({
       data: {
         email: data.email.toLowerCase(),
         password: hashedPassword,
         firstName: data.firstName,
         lastName: data.lastName,
-        userAuth: {
-          create: {
-            emailVerificationToken: verificationToken,
-            verificationExpiry,
-          },
-        },
+        refreshToken,
+        refreshTokenExpiry: getTokenExpiry(30 * 24), // 30 days
         userSettings: {
           create: {},
         },
@@ -68,26 +64,13 @@ class AuthService {
       },
     });
 
-    // Generate tokens
+    // Generate access token with actual user ID
     const accessToken = generateAccessToken({ userId: user.id, email: user.email });
-    const refreshToken = generateRefreshToken({ userId: user.id, email: user.email });
-
-    // Store refresh token
-    await prisma.userAuth.update({
-      where: { userId: user.id },
-      data: {
-        refreshToken,
-        refreshTokenExpiry: getTokenExpiry(30 * 24), // 30 days
-      },
-    });
-
-    // TODO: Send verification email
 
     return {
       user,
-      accessToken,
+      token: accessToken,
       refreshToken,
-      verificationToken, // For development/testing
     };
   }
 
@@ -104,7 +87,6 @@ class AuthService {
         password: true,
         firstName: true,
         lastName: true,
-        userAuth: true,
       },
     });
 
@@ -124,13 +106,11 @@ class AuthService {
     const refreshToken = generateRefreshToken({ userId: user.id, email: user.email });
 
     // Update refresh token
-    await prisma.userAuth.update({
-      where: { userId: user.id },
+    await prisma.user.update({
+      where: { id: user.id },
       data: {
         refreshToken,
         refreshTokenExpiry: getTokenExpiry(30 * 24), // 30 days
-        authToken: accessToken,
-        tokenExpiry: getTokenExpiry(1), // 1 hour (longer than JWT for leeway)
       },
     });
 
@@ -141,7 +121,7 @@ class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
       },
-      accessToken,
+      token: accessToken,
       refreshToken,
     };
   }
@@ -155,89 +135,53 @@ class AuthService {
       const decoded = verifyRefreshToken(refreshTokenString);
 
       // Check if refresh token exists in database
-      const userAuth = await prisma.userAuth.findFirst({
+      const user = await prisma.user.findFirst({
         where: {
-          userId: decoded.userId,
+          id: decoded.userId,
           refreshToken: refreshTokenString,
         },
-        include: {
-          user: {
-            select: {
-              id: true,
-              email: true,
-            },
-          },
+        select: {
+          id: true,
+          email: true,
+          refreshTokenExpiry: true,
         },
       });
 
-      if (!userAuth || !userAuth.user) {
+      if (!user) {
         throw new AppError('Invalid refresh token', 401);
       }
 
       // Check if refresh token is expired
-      if (userAuth.refreshTokenExpiry && new Date() > userAuth.refreshTokenExpiry) {
+      if (user.refreshTokenExpiry && new Date() > user.refreshTokenExpiry) {
         throw new AppError('Refresh token expired', 401);
       }
 
       // Generate new tokens
       const accessToken = generateAccessToken({
-        userId: userAuth.user.id,
-        email: userAuth.user.email,
+        userId: user.id,
+        email: user.email,
       });
       const newRefreshToken = generateRefreshToken({
-        userId: userAuth.user.id,
-        email: userAuth.user.email,
+        userId: user.id,
+        email: user.email,
       });
 
       // Update tokens in database
-      await prisma.userAuth.update({
-        where: { userId: userAuth.userId },
+      await prisma.user.update({
+        where: { id: user.id },
         data: {
           refreshToken: newRefreshToken,
           refreshTokenExpiry: getTokenExpiry(30 * 24),
-          authToken: accessToken,
-          tokenExpiry: getTokenExpiry(1),
         },
       });
 
       return {
-        accessToken,
+        token: accessToken,
         refreshToken: newRefreshToken,
       };
     } catch (error) {
       throw new AppError('Invalid refresh token', 401);
     }
-  }
-
-  /**
-   * Verify email
-   */
-  async verifyEmail(token: string) {
-    const userAuth = await prisma.userAuth.findFirst({
-      where: {
-        emailVerificationToken: token,
-      },
-    });
-
-    if (!userAuth) {
-      throw new AppError('Invalid verification token', 400);
-    }
-
-    if (userAuth.verificationExpiry && new Date() > userAuth.verificationExpiry) {
-      throw new AppError('Verification token expired', 400);
-    }
-
-    // Mark email as verified
-    await prisma.userAuth.update({
-      where: { userId: userAuth.userId },
-      data: {
-        isEmailVerified: true,
-        emailVerificationToken: null,
-        verificationExpiry: null,
-      },
-    });
-
-    return { message: 'Email verified successfully' };
   }
 
   /**
@@ -258,8 +202,8 @@ class AuthService {
     const resetTokenExpiry = getTokenExpiry(1); // 1 hour
 
     // Store reset token
-    await prisma.userAuth.update({
-      where: { userId: user.id },
+    await prisma.user.update({
+      where: { id: user.id },
       data: {
         resetToken,
         resetTokenExpiry,
@@ -278,17 +222,17 @@ class AuthService {
    * Reset password
    */
   async resetPassword(token: string, newPassword: string) {
-    const userAuth = await prisma.userAuth.findFirst({
+    const user = await prisma.user.findFirst({
       where: {
         resetToken: token,
       },
     });
 
-    if (!userAuth) {
+    if (!user) {
       throw new AppError('Invalid reset token', 400);
     }
 
-    if (userAuth.resetTokenExpiry && new Date() > userAuth.resetTokenExpiry) {
+    if (user.resetTokenExpiry && new Date() > user.resetTokenExpiry) {
       throw new AppError('Reset token expired', 400);
     }
 
@@ -296,19 +240,14 @@ class AuthService {
     const hashedPassword = await hashPassword(newPassword);
 
     // Update password and clear reset token
-    await prisma.$transaction([
-      prisma.user.update({
-        where: { id: userAuth.userId },
-        data: { password: hashedPassword },
-      }),
-      prisma.userAuth.update({
-        where: { userId: userAuth.userId },
-        data: {
-          resetToken: null,
-          resetTokenExpiry: null,
-        },
-      }),
-    ]);
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        resetToken: null,
+        resetTokenExpiry: null,
+      },
+    });
 
     return { message: 'Password reset successfully' };
   }
@@ -327,11 +266,6 @@ class AuthService {
         profilePhoto: true,
         bio: true,
         createdAt: true,
-        userAuth: {
-          select: {
-            isEmailVerified: true,
-          },
-        },
       },
     });
 
@@ -344,4 +278,5 @@ class AuthService {
 }
 
 export default new AuthService();
+
 

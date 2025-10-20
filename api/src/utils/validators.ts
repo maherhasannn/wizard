@@ -39,3 +39,4 @@ export function validateQuery<T>(schema: z.ZodSchema<T>, data: unknown): T {
   return schema.parse(data);
 }
 
+

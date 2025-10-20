@@ -10,3 +10,4 @@ router.get('/selected', authenticate, powerController.getSelections.bind(powerCo
 
 export default router;
 
+

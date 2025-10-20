@@ -253,3 +253,4 @@ If you encounter issues:
 3. Check backend logs in terminal
 4. Check mobile app logs in flutter console
 
+

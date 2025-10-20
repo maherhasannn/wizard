@@ -18,3 +18,4 @@ router.get('/stats', authenticate, meditationController.getStats.bind(meditation
 
 export default router;
 
+

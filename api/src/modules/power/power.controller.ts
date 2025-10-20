@@ -41,3 +41,4 @@ class PowerController {
 
 export default new PowerController();
 
+

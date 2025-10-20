@@ -27,11 +27,14 @@ model User {
   instagramHandle String?  @map("instagram_handle")
   interests      String[]
   isProfilePublic Boolean  @default(true) @map("is_profile_public")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
+  refreshToken       String?   @map("refresh_token")
+  refreshTokenExpiry DateTime? @map("refresh_token_expiry")
+  resetToken         String?   @map("reset_token")
+  resetTokenExpiry   DateTime? @map("reset_token_expiry")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
 
   // Relations
-  userAuth                    UserAuth?
   userSettings                UserSettings?
   networkProfile              NetworkProfile?
   meditationFavorites         UserMeditationFavorite[]
@@ -54,29 +57,8 @@ model User {
   @@index([email])
   @@index([createdAt])
   @@index([isProfilePublic])
-}
-
-model UserAuth {
-  id                     Int       @id @default(autoincrement())
-  userId                 Int       @unique @map("user_id")
-  authToken              String?   @map("auth_token")
-  tokenExpiry            DateTime? @map("token_expiry")
-  refreshToken           String?   @map("refresh_token")
-  refreshTokenExpiry     DateTime? @map("refresh_token_expiry")
-  resetToken             String?   @map("reset_token")
-  resetTokenExpiry       DateTime? @map("reset_token_expiry")
-  isEmailVerified        Boolean   @default(false) @map("is_email_verified")
-  emailVerificationToken String?   @map("email_verification_token")
-  verificationExpiry     DateTime? @map("verification_expiry")
-  createdAt              DateTime  @default(now()) @map("created_at")
-  updatedAt              DateTime  @updatedAt @map("updated_at")
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([authToken])
   @@index([refreshToken])
   @@index([resetToken])
-  @@index([emailVerificationToken])
 }
 
 model UserSettings {
@@ -466,4 +448,5 @@ model UserPowerSelection {
   @@index([userId, priority])
   @@index([powerCategoryId])
 }
+
 

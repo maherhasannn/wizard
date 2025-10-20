@@ -19,3 +19,4 @@ router.post('/location', networkingController.updateLocation.bind(networkingCont
 
 export default router;
 
+

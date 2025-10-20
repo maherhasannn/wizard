@@ -79,3 +79,4 @@ class ContentController {
 
 export default new ContentController();
 
+

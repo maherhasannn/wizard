@@ -6,3 +6,4 @@ Web application for the Wizard meditation and wellness platform.
 
 🚧 Coming soon
 
+

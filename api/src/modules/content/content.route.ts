@@ -14,3 +14,4 @@ router.post('/affirmations/:id/interact', authenticate, contentController.record
 
 export default router;
 
+
