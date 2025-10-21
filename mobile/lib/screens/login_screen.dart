@@ -3,7 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'register_screen.dart';
-import '../main_app_screen.dart';
+import 'forgot_password_screen.dart';
+import '../power_selection_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -34,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (success && mounted) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (_) => const MainAppScreen()),
+          MaterialPageRoute(builder: (_) => const PowerSelectionScreen()),
         );
       }
     }
@@ -66,8 +67,34 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // Forgot password link at top right
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const ForgotPasswordScreen(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Forgot password?',
+                            style: GoogleFonts.dmSans(
+                              color: purpleAccent,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    
                     Text(
-                      'Welcome Back',
+                      'Log in',
                       style: GoogleFonts.dmSans(
                         color: lightTextColor,
                         fontSize: 32,
@@ -77,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Sign in to continue',
+                      'If the account already exists',
                       style: GoogleFonts.dmSans(
                         color: lightTextColor.withOpacity(0.7),
                         fontSize: 16,
@@ -213,7 +240,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             )
                           : Text(
-                              'Sign In',
+                              'Log in',
                               style: GoogleFonts.dmSans(
                                 color: lightTextColor,
                                 fontSize: 16,
@@ -231,7 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       },
                       child: Text(
-                        'Don\'t have an account? Sign Up',
+                        'Sign up',
                         style: GoogleFonts.dmSans(
                           color: purpleAccent,
                           fontSize: 14,

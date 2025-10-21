@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import 'shared_background.dart';
 import 'power_selection_screen.dart';
+import 'screens/why_you_came_screen.dart';
+import 'screens/login_screen.dart';
 
 // Enum has been expanded to manage the final screen
 enum IntroPhase {
@@ -177,7 +179,7 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => PowerSelectionScreen(),
+                          builder: (context) => const WhyYouCameScreen(),
                         ),
                       );
                     },
@@ -211,7 +213,12 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
           left: 20,
           child: TextButton(
             onPressed: () {
-              // TODO: Add navigation/logic for Login
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginScreen(),
+                ),
+              );
             },
             child: Text('Login', style: buttonTextStyle.copyWith(fontSize: 14)),
           ),

@@ -145,7 +145,7 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
                           // TODO: Implement favorite toggle
                         },
                         icon: Icon(
-                          widget.track.isFavorited
+                              widget.track.isFavorited
                               ? Icons.favorite
                               : Icons.favorite_border,
                           color: lightTextColor,

@@ -36,14 +36,18 @@ export async function authenticate(
     // Verify token
     const decoded = verifyAccessToken(token);
 
-    // Check if user exists
+    // Check if user exists and is verified
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: { id: true, email: true },
+      select: { id: true, email: true, isEmailVerified: true },
     });
 
     if (!user) {
       throw new AppError('User not found', 401);
+    }
+
+    if (!user.isEmailVerified) {
+      throw new AppError('Please verify your email before accessing the app', 401);
     }
 
     // Attach user to request

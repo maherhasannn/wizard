@@ -30,6 +30,35 @@ const resetPasswordSchema = z.object({
   password: passwordSchema,
 });
 
+const verifyEmailSchema = z.object({
+  email: emailSchema,
+  code: z.string().length(6, 'Verification code must be 6 digits'),
+});
+
+const resendCodeSchema = z.object({
+  email: emailSchema,
+});
+
+const forgotPasswordSchema = z.object({
+  email: emailSchema,
+});
+
+const verifyResetCodeSchema = z.object({
+  email: emailSchema,
+  code: z.string().length(6, 'Verification code must be 6 digits'),
+});
+
+const resetPasswordWithCodeSchema = z.object({
+  email: emailSchema,
+  code: z.string().length(6, 'Verification code must be 6 digits'),
+  password: passwordSchema,
+});
+
+const setPasswordSchema = z.object({
+  email: emailSchema,
+  password: passwordSchema,
+});
+
 class AuthController {
   /**
    * POST /api/auth/register
@@ -133,6 +162,111 @@ class AuthController {
       res.json({
         success: true,
         data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/auth/verify-email
+   */
+  async verifyEmail(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = verifyEmailSchema.parse(req.body);
+      const result = await authService.verifyEmail(data.email, data.code);
+
+      res.json({
+        success: true,
+        data: result,
+        message: 'Email verified successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/auth/resend-code
+   */
+  async resendCode(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = resendCodeSchema.parse(req.body);
+      await authService.resendVerificationCode(data.email);
+
+      res.json({
+        success: true,
+        message: 'Verification code sent successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/auth/forgot-password
+   */
+  async forgotPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = forgotPasswordSchema.parse(req.body);
+      await authService.forgotPassword(data.email);
+
+      res.json({
+        success: true,
+        message: 'Password reset code sent successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/auth/verify-reset-code
+   */
+  async verifyResetCode(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = verifyResetCodeSchema.parse(req.body);
+      await authService.verifyResetCode(data.email, data.code);
+
+      res.json({
+        success: true,
+        message: 'Reset code verified successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/auth/reset-password-with-code
+   */
+  async resetPasswordWithCode(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = resetPasswordWithCodeSchema.parse(req.body);
+      const result = await authService.resetPasswordWithCode(data.email, data.code, data.password);
+
+      res.json({
+        success: true,
+        data: result,
+        message: 'Password reset successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/auth/set-password
+   */
+  async setPassword(req: Request, res: Response, next: NextFunction) {
+    try {
+      const data = setPasswordSchema.parse(req.body);
+      const result = await authService.setPassword(data.email, data.password);
+
+      res.json({
+        success: true,
+        data: result,
+        message: 'Password set successfully',
       });
     } catch (error) {
       next(error);

@@ -57,7 +57,16 @@ class UserController {
       }
 
       const data = updateProfileSchema.parse(req.body);
-      const profile = await userService.updateProfile(req.user.userId, data);
+      
+      // Convert birthday string to Date if provided
+      const profileData = {
+        ...data,
+        birthday: data.birthday 
+          ? (typeof data.birthday === 'string' ? new Date(data.birthday) : data.birthday)
+          : undefined,
+      };
+      
+      const profile = await userService.updateProfile(req.user.userId, profileData);
 
       res.json({
         success: true,

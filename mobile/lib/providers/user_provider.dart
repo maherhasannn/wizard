@@ -9,12 +9,14 @@ class UserProvider extends ChangeNotifier {
   User? _profile;
   bool _isLoading = false;
   String? _error;
+  List<String> _onboardingReasons = [];
 
   UserProvider(this._service);
 
   User? get profile => _profile;
   bool get isLoading => _isLoading;
   String? get error => _error;
+  List<String> get onboardingReasons => _onboardingReasons;
 
   Future<void> loadProfile() async {
     _isLoading = true;
@@ -86,6 +88,11 @@ class UserProvider extends ChangeNotifier {
 
   void clearError() {
     _error = null;
+    notifyListeners();
+  }
+
+  void updateOnboardingReasons(List<String> reasons) {
+    _onboardingReasons = reasons;
     notifyListeners();
   }
 }

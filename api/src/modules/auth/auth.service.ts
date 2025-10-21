@@ -8,6 +8,7 @@ import {
   getTokenExpiry,
 } from '../../lib/jwt';
 import { AppError } from '../../middleware/errorHandler';
+import { sendEmail, createVerificationEmail, createPasswordResetEmail, generateVerificationCode } from '../../lib/emailService';
 
 interface RegisterData {
   email: string;
@@ -32,25 +33,23 @@ class AuthService {
     });
 
     if (existingUser) {
-      throw new AppError('User with this email already exists', 409);
+      throw new AppError('Email already exists', 409);
     }
 
-    // Hash password
-    const hashedPassword = await hashPassword(data.password);
+    // Generate verification code
+    const verificationCode = generateVerificationCode();
+    const verificationCodeExpiry = getTokenExpiry(10); // 10 minutes
 
-    // Generate tokens
-    const tempUserId = 0; // Temporary, will be replaced after user creation
-    const refreshToken = generateRefreshToken({ userId: tempUserId, email: data.email.toLowerCase() });
-
-    // Create user with refresh token
+    // Create user account immediately with email verification required
     const user = await prisma.user.create({
       data: {
         email: data.email.toLowerCase(),
-        password: hashedPassword,
+        password: data.password, // Will be set after verification
         firstName: data.firstName,
         lastName: data.lastName,
-        refreshToken,
-        refreshTokenExpiry: getTokenExpiry(30 * 24), // 30 days
+        isEmailVerified: false,
+        verificationCode,
+        verificationCodeExpiry,
         userSettings: {
           create: {},
         },
@@ -64,13 +63,13 @@ class AuthService {
       },
     });
 
-    // Generate access token with actual user ID
-    const accessToken = generateAccessToken({ userId: user.id, email: user.email });
+    // Send verification email
+    const emailTemplate = createVerificationEmail(verificationCode);
+    await sendEmail(user.email, emailTemplate);
 
     return {
       user,
-      token: accessToken,
-      refreshToken,
+      message: 'Registration successful. Please check your email for verification code.',
     };
   }
 
@@ -87,18 +86,24 @@ class AuthService {
         password: true,
         firstName: true,
         lastName: true,
+        isEmailVerified: true,
       },
     });
 
     if (!user) {
-      throw new AppError('Invalid email or password', 401);
+      throw new AppError('Incorrect password', 401);
+    }
+
+    // Check if email is verified
+    if (!user.isEmailVerified) {
+      throw new AppError('Please verify your email before logging in', 401);
     }
 
     // Verify password
     const isValidPassword = await verifyPassword(user.password, data.password);
 
     if (!isValidPassword) {
-      throw new AppError('Invalid email or password', 401);
+      throw new AppError('Incorrect password', 401);
     }
 
     // Generate new tokens
@@ -274,6 +279,300 @@ class AuthService {
     }
 
     return user;
+  }
+
+  /**
+   * Verify email with 6-digit code
+   */
+  async verifyEmail(email: string, code: string) {
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      select: {
+        id: true,
+        email: true,
+        verificationCode: true,
+        verificationCodeExpiry: true,
+        isEmailVerified: true,
+      },
+    });
+
+    if (!user) {
+      throw new AppError('Incorrect code', 400);
+    }
+
+    if (user.isEmailVerified) {
+      throw new AppError('Email already verified', 400);
+    }
+
+    if (!user.verificationCode || !user.verificationCodeExpiry) {
+      throw new AppError('No verification code found', 400);
+    }
+
+    if (user.verificationCode !== code) {
+      throw new AppError('Incorrect code', 400);
+    }
+
+    if (new Date() > user.verificationCodeExpiry) {
+      throw new AppError('Code expired - please request a new one', 400);
+    }
+
+    // Mark email as verified and clear verification code
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        isEmailVerified: true,
+        verificationCode: null,
+        verificationCodeExpiry: null,
+      },
+    });
+
+    // Generate tokens for immediate login
+    const accessToken = generateAccessToken({ userId: user.id, email: user.email });
+    const refreshToken = generateRefreshToken({ userId: user.id, email: user.email });
+
+    // Update refresh token
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        refreshToken,
+        refreshTokenExpiry: getTokenExpiry(30 * 24), // 30 days
+      },
+    });
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+      token: accessToken,
+      refreshToken,
+    };
+  }
+
+  /**
+   * Resend verification code
+   */
+  async resendVerificationCode(email: string) {
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      select: {
+        id: true,
+        email: true,
+        isEmailVerified: true,
+      },
+    });
+
+    if (!user) {
+      throw new AppError('Email address is not valid', 400);
+    }
+
+    if (user.isEmailVerified) {
+      throw new AppError('Email already verified', 400);
+    }
+
+    // Generate new verification code
+    const verificationCode = generateVerificationCode();
+    const verificationCodeExpiry = getTokenExpiry(10); // 10 minutes
+
+    // Update verification code
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        verificationCode,
+        verificationCodeExpiry,
+      },
+    });
+
+    // Send verification email
+    const emailTemplate = createVerificationEmail(verificationCode);
+    await sendEmail(user.email, emailTemplate);
+
+    return { message: 'Verification code sent successfully' };
+  }
+
+  /**
+   * Forgot password - send reset code
+   */
+  async forgotPassword(email: string) {
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      select: {
+        id: true,
+        email: true,
+        isEmailVerified: true,
+      },
+    });
+
+    if (!user) {
+      throw new AppError('Email address is not valid', 400);
+    }
+
+    if (!user.isEmailVerified) {
+      throw new AppError('Please verify your email first', 400);
+    }
+
+    // Generate reset code
+    const resetCode = generateVerificationCode();
+    const resetCodeExpiry = getTokenExpiry(10); // 10 minutes
+
+    // Store reset code (using verification code fields for password reset)
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        verificationCode: resetCode,
+        verificationCodeExpiry: resetCodeExpiry,
+      },
+    });
+
+    // Send reset email
+    const emailTemplate = createPasswordResetEmail(resetCode);
+    await sendEmail(user.email, emailTemplate);
+
+    return { message: 'Password reset code sent successfully' };
+  }
+
+  /**
+   * Verify reset code
+   */
+  async verifyResetCode(email: string, code: string) {
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      select: {
+        id: true,
+        email: true,
+        verificationCode: true,
+        verificationCodeExpiry: true,
+        isEmailVerified: true,
+      },
+    });
+
+    if (!user) {
+      throw new AppError('Incorrect code', 400);
+    }
+
+    if (!user.isEmailVerified) {
+      throw new AppError('Please verify your email first', 400);
+    }
+
+    if (!user.verificationCode || !user.verificationCodeExpiry) {
+      throw new AppError('No reset code found', 400);
+    }
+
+    if (user.verificationCode !== code) {
+      throw new AppError('Incorrect code', 400);
+    }
+
+    if (new Date() > user.verificationCodeExpiry) {
+      throw new AppError('Code expired - please request a new one', 400);
+    }
+
+    return { message: 'Reset code verified successfully' };
+  }
+
+  /**
+   * Reset password with code
+   */
+  async resetPasswordWithCode(email: string, code: string, newPassword: string) {
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      select: {
+        id: true,
+        email: true,
+        verificationCode: true,
+        verificationCodeExpiry: true,
+        isEmailVerified: true,
+      },
+    });
+
+    if (!user) {
+      throw new AppError('Incorrect code', 400);
+    }
+
+    if (!user.isEmailVerified) {
+      throw new AppError('Please verify your email first', 400);
+    }
+
+    if (!user.verificationCode || !user.verificationCodeExpiry) {
+      throw new AppError('No reset code found', 400);
+    }
+
+    if (user.verificationCode !== code) {
+      throw new AppError('Incorrect code', 400);
+    }
+
+    if (new Date() > user.verificationCodeExpiry) {
+      throw new AppError('Code expired - please request a new one', 400);
+    }
+
+    // Hash new password
+    const hashedPassword = await hashPassword(newPassword);
+
+    // Update password and clear reset code
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+        verificationCode: null,
+        verificationCodeExpiry: null,
+      },
+    });
+
+    return { message: 'Password reset successfully' };
+  }
+
+  /**
+   * Set password after email verification
+   */
+  async setPassword(email: string, password: string) {
+    const user = await prisma.user.findUnique({
+      where: { email: email.toLowerCase() },
+      select: {
+        id: true,
+        email: true,
+        isEmailVerified: true,
+      },
+    });
+
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+
+    if (!user.isEmailVerified) {
+      throw new AppError('Email not verified', 400);
+    }
+
+    // Hash password
+    const hashedPassword = await hashPassword(password);
+
+    // Update password
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    // Generate tokens for immediate login
+    const accessToken = generateAccessToken({ userId: user.id, email: user.email });
+    const refreshToken = generateRefreshToken({ userId: user.id, email: user.email });
+
+    // Update refresh token
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        refreshToken,
+        refreshTokenExpiry: getTokenExpiry(30 * 24), // 30 days
+      },
+    });
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+      },
+      token: accessToken,
+      refreshToken,
+    };
   }
 }
 

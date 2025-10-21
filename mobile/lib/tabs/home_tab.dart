@@ -4,6 +4,8 @@ import '../message_of_day_flow.dart';
 import '../widgets/video_section.dart';
 import '../widgets/live_stream_widget.dart';
 import '../widgets/affirmation_card.dart';
+import '../widgets/ai_liz_widget.dart';
+import '../widgets/challenge_card.dart';
 
 class HomeTab extends StatelessWidget {
   final List<String> selectedPowers;
@@ -91,66 +93,18 @@ class HomeTab extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              // Video Section
-              VideoSection(),
+              // AI Liz Section
+              const AiLizWidget(),
 
               const SizedBox(height: 30),
 
-              // Opportunities Section
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: purpleAccent.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: lightTextColor.withOpacity(0.1),
-                    width: 1,
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Get a new opportunities',
-                            style: GoogleFonts.dmSans(
-                              color: lightTextColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'With the subscription from \$9.99 per month',
-                            style: GoogleFonts.dmSans(
-                              color: lightTextColor.withOpacity(0.8),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: lightTextColor.withOpacity(0.1),
-                      ),
-                      child: Icon(
-                        Icons.person,
-                        color: lightTextColor.withOpacity(0.6),
-                        size: 30,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Challenges Section
+              const ChallengeCard(),
+
+              const SizedBox(height: 30),
+
+              // Video Section
+              VideoSection(),
 
               const SizedBox(height: 30),
 

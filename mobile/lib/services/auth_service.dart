@@ -80,6 +80,78 @@ class AuthService {
       'password': password,
     });
   }
+
+  Future<AuthResponse> verifyEmail(String email, String code) async {
+    final json = await _client.post('/auth/verify-email', body: {
+      'email': email,
+      'code': code,
+    });
+
+    final data = json['data'] as Map<String, dynamic>;
+    final response = AuthResponse.fromJson(data);
+    
+    // Store token in client
+    _client.setToken(response.token);
+    
+    return response;
+  }
+
+  Future<void> resendVerificationCode(String email) async {
+    await _client.post('/auth/resend-code', body: {
+      'email': email,
+    });
+  }
+
+  Future<void> forgotPassword(String email) async {
+    await _client.post('/auth/forgot-password-new', body: {
+      'email': email,
+    });
+  }
+
+  Future<void> verifyResetCode(String email, String code) async {
+    await _client.post('/auth/verify-reset-code', body: {
+      'email': email,
+      'code': code,
+    });
+  }
+
+  Future<AuthResponse> resetPasswordWithCode({
+    required String email,
+    required String code,
+    required String password,
+  }) async {
+    final json = await _client.post('/auth/reset-password-with-code', body: {
+      'email': email,
+      'code': code,
+      'password': password,
+    });
+
+    final data = json['data'] as Map<String, dynamic>;
+    final response = AuthResponse.fromJson(data);
+    
+    // Store token in client
+    _client.setToken(response.token);
+    
+    return response;
+  }
+
+  Future<AuthResponse> setPassword(String email, String password) async {
+    // This method will be called after email verification to set the password
+    // For now, we'll use the reset password with code flow
+    // In a real implementation, this might be a separate endpoint
+    final json = await _client.post('/auth/set-password', body: {
+      'email': email,
+      'password': password,
+    });
+
+    final data = json['data'] as Map<String, dynamic>;
+    final response = AuthResponse.fromJson(data);
+    
+    // Store token in client
+    _client.setToken(response.token);
+    
+    return response;
+  }
 }
 
 class AuthResponse {

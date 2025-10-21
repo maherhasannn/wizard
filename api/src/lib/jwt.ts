@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import config from '../config';
 import crypto from 'crypto';
 
@@ -18,7 +18,7 @@ export interface DecodedToken extends TokenPayload {
 export function generateAccessToken(payload: TokenPayload): string {
   return jwt.sign(payload, config.jwt.secret, {
     expiresIn: config.jwt.expiresIn,
-  });
+  } as SignOptions);
 }
 
 /**
@@ -27,7 +27,7 @@ export function generateAccessToken(payload: TokenPayload): string {
 export function generateRefreshToken(payload: TokenPayload): string {
   return jwt.sign(payload, config.jwt.refreshSecret, {
     expiresIn: config.jwt.refreshExpiresIn,
-  });
+  } as SignOptions);
 }
 
 /**

@@ -13,12 +13,9 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
   bool _isUnlocked = false;
   bool _isLoading = false;
   int _loadingProgress = 0;
-  double _dragPosition = 0.0;
   
   late AnimationController _flipController;
   late Animation<double> _flipAnimation;
-  late AnimationController _resetController;
-  late Animation<double> _resetAnimation;
 
   @override
   void initState() {
@@ -34,30 +31,11 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
       parent: _flipController,
       curve: Curves.easeInOut,
     ));
-    
-    _resetController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-    _resetAnimation = Tween<double>(
-      begin: 0.0,
-      end: 0.0,
-    ).animate(CurvedAnimation(
-      parent: _resetController,
-      curve: Curves.easeOut,
-    ));
-    
-    _resetController.addListener(() {
-      setState(() {
-        _dragPosition = _resetAnimation.value;
-      });
-    });
   }
 
   @override
   void dispose() {
     _flipController.dispose();
-    _resetController.dispose();
     super.dispose();
   }
 
@@ -354,128 +332,27 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
         else if (_isUnlocked)
           _buildUnlockedMessage()
         else
-          // Swipe to unlock slider
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final maxDrag = constraints.maxWidth - 60; // 60 is the button size
-              final dragPercentage = (_dragPosition / maxDrag).clamp(0.0, 1.0);
-              
-              return GestureDetector(
-                onHorizontalDragUpdate: (details) {
-                  setState(() {
-                    _dragPosition = (_dragPosition + details.delta.dx).clamp(0.0, maxDrag);
-                  });
-                },
-                onHorizontalDragEnd: (details) {
-                  if (dragPercentage >= 0.8) {
-                    // Unlock successful
-                    _unlockMessage();
-                  } else {
-                    // Reset to start
-                    _resetAnimation = Tween<double>(
-                      begin: _dragPosition,
-                      end: 0.0,
-                    ).animate(CurvedAnimation(
-                      parent: _resetController,
-                      curve: Curves.easeOut,
-                    ));
-                    _resetController.forward(from: 0.0);
-                  }
-                },
-                child: Container(
-                  width: double.infinity,
-                  height: 60,
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    color: _hexToColor('6A1B9A').withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(
-                      color: lightTextColor.withOpacity(0.1),
-                      width: 1,
-                    ),
-                  ),
-                  child: Stack(
-                    children: [
-                      // Progress background
-                      Positioned(
-                        left: 0,
-                        top: 0,
-                        bottom: 0,
-                        width: _dragPosition + 52,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                _hexToColor('6A1B9A').withOpacity(0.4),
-                                _hexToColor('6A1B9A').withOpacity(0.2),
-                              ],
-                            ),
-                            borderRadius: BorderRadius.circular(26),
-                          ),
-                        ),
-                      ),
-                      
-                      // "Swipe to unlock" text
-                      Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.chevron_right,
-                              color: lightTextColor.withOpacity(0.6),
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Swipe to unlock',
-                              style: GoogleFonts.dmSans(
-                                color: lightTextColor.withOpacity(0.8),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      
-                      // Draggable button
-                      Positioned(
-                        left: _dragPosition,
-                        top: 0,
-                        bottom: 0,
-                        child: Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                              colors: [
-                                _hexToColor('6A1B9A'),
-                                _hexToColor('8E24AA'),
-                              ],
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: _hexToColor('6A1B9A').withOpacity(0.5),
-                                blurRadius: 10,
-                                spreadRadius: 2,
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.chevron_right,
-                            color: lightTextColor,
-                            size: 28,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+          // Unlock button
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: _unlockMessage,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _hexToColor('6A1B9A'),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
                 ),
-              );
-            },
+              ),
+              child: Text(
+                'Unlock Message',
+                style: GoogleFonts.dmSans(
+                  color: lightTextColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ),
       ],
     );

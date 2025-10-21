@@ -56,13 +56,23 @@ class LiveStreamService {
   async joinStream(userId: number, streamId: number) {
     await this.getStream(streamId);
 
-    await prisma.liveStreamParticipant.upsert({
-      where: {
-        streamId_userId: { streamId, userId },
-      },
-      create: { streamId, userId },
-      update: { leftAt: null },
+    // Check if participant already exists
+    const existingParticipant = await prisma.liveStreamParticipant.findFirst({
+      where: { streamId, userId },
     });
+
+    if (existingParticipant) {
+      // Update existing participant
+      await prisma.liveStreamParticipant.update({
+        where: { id: existingParticipant.id },
+        data: { leftAt: null },
+      });
+    } else {
+      // Create new participant
+      await prisma.liveStreamParticipant.create({
+        data: { streamId, userId },
+      });
+    }
 
     await prisma.liveStream.update({
       where: { id: streamId },

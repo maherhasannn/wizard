@@ -36,62 +36,106 @@ class ApiClient {
       url += '?' + params.entries.map((e) => '${e.key}=${Uri.encodeComponent(e.value)}').join('&');
     }
     
+    print('🌐 [API] GET $url');
+    print('📋 [API] Headers: ${_headers()}');
+    
     final response = await _client
         .get(Uri.parse(url), headers: _headers())
         .timeout(ApiConfig.timeout);
 
+    print('✅ [API] Response: ${response.statusCode}');
+    print('📦 [API] Body: ${response.body}');
+    
     return _handleResponse(response);
   }
 
   // POST request
   Future<Map<String, dynamic>> post(String endpoint, {dynamic body}) async {
-    final response = await _client
-        .post(
-          Uri.parse('${ApiConfig.baseUrl}$endpoint'),
-          headers: _headers(),
-          body: body != null ? jsonEncode(body) : null,
-        )
-        .timeout(ApiConfig.timeout);
+    final url = '${ApiConfig.baseUrl}$endpoint';
+    print('🌐 [API] POST $url');
+    print('📋 [API] Headers: ${_headers()}');
+    print('📤 [API] Body: ${body != null ? jsonEncode(body) : "null"}');
+    
+    try {
+      final response = await _client
+          .post(
+            Uri.parse(url),
+            headers: _headers(),
+            body: body != null ? jsonEncode(body) : null,
+          )
+          .timeout(ApiConfig.timeout);
 
-    return _handleResponse(response);
+      print('✅ [API] Response: ${response.statusCode}');
+      print('📦 [API] Body: ${response.body}');
+      
+      return _handleResponse(response);
+    } catch (e) {
+      print('❌ [API] Error: $e');
+      rethrow;
+    }
   }
 
   // DELETE request
   Future<Map<String, dynamic>> delete(String endpoint) async {
+    final url = '${ApiConfig.baseUrl}$endpoint';
+    print('🌐 [API] DELETE $url');
+    print('📋 [API] Headers: ${_headers()}');
+    
     final response = await _client
         .delete(
-          Uri.parse('${ApiConfig.baseUrl}$endpoint'),
+          Uri.parse(url),
           headers: _headers(),
         )
         .timeout(ApiConfig.timeout);
 
+    print('✅ [API] Response: ${response.statusCode}');
+    print('📦 [API] Body: ${response.body}');
+    
     return _handleResponse(response);
   }
 
   // PUT request
   Future<Map<String, dynamic>> put(String endpoint, {dynamic body}) async {
+    final url = '${ApiConfig.baseUrl}$endpoint';
+    print('🌐 [API] PUT $url');
+    print('📋 [API] Headers: ${_headers()}');
+    print('📤 [API] Body: ${body != null ? jsonEncode(body) : "null"}');
+    
     final response = await _client
         .put(
-          Uri.parse('${ApiConfig.baseUrl}$endpoint'),
+          Uri.parse(url),
           headers: _headers(),
           body: body != null ? jsonEncode(body) : null,
         )
         .timeout(ApiConfig.timeout);
 
+    print('✅ [API] Response: ${response.statusCode}');
+    print('📦 [API] Body: ${response.body}');
+    
     return _handleResponse(response);
   }
 
   // Handle API response
   Map<String, dynamic> _handleResponse(http.Response response) {
-    final json = jsonDecode(response.body) as Map<String, dynamic>;
+    print('🔍 [API] Parsing response...');
     
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return json;
+    try {
+      final json = jsonDecode(response.body) as Map<String, dynamic>;
+      
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        print('✨ [API] Success!');
+        return json;
+      }
+      
+      // Extract error message from API response
+      final errorMessage = json['error']?['message'] ?? json['message'] ?? 'Request failed';
+      print('⚠️ [API] Error: $errorMessage (Status: ${response.statusCode})');
+      throw ApiException(errorMessage, response.statusCode);
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      print('💥 [API] Failed to parse response: $e');
+      throw ApiException('Invalid response from server', response.statusCode);
     }
-    
-    // Extract error message from API response
-    final errorMessage = json['error']?['message'] ?? 'Request failed';
-    throw ApiException(errorMessage, response.statusCode);
   }
 }
 

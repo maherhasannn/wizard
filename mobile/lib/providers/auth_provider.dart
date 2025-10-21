@@ -24,6 +24,7 @@ class AuthProvider extends ChangeNotifier {
     String? firstName,
     String? lastName,
   }) async {
+    print('👤 [Auth] Starting registration for: $email');
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -36,13 +37,18 @@ class AuthProvider extends ChangeNotifier {
         lastName: lastName,
       );
       
+      print('✅ [Auth] Registration successful!');
+      print('👤 [Auth] User: ${response.user.email}');
+      
       _user = response.user;
       _isAuthenticated = true;
       return true;
     } on ApiException catch (e) {
+      print('❌ [Auth] API Exception: ${e.message} (${e.statusCode})');
       _error = e.message;
       return false;
     } catch (e) {
+      print('💥 [Auth] Unexpected error: $e');
       _error = 'Registration failed';
       return false;
     } finally {
@@ -101,6 +107,164 @@ class AuthProvider extends ChangeNotifier {
   void clearError() {
     _error = null;
     notifyListeners();
+  }
+
+  Future<bool> verifyEmail(String email, String code) async {
+    print('👤 [Auth] Verifying email for: $email');
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final response = await _service.verifyEmail(email, code);
+      
+      print('✅ [Auth] Email verification successful!');
+      print('👤 [Auth] User: ${response.user.email}');
+      
+      _user = response.user;
+      _isAuthenticated = true;
+      return true;
+    } on ApiException catch (e) {
+      print('❌ [Auth] API Exception: ${e.message} (${e.statusCode})');
+      _error = e.message;
+      return false;
+    } catch (e) {
+      print('💥 [Auth] Unexpected error: $e');
+      _error = 'Email verification failed';
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> resendVerificationCode(String email) async {
+    print('👤 [Auth] Resending verification code for: $email');
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _service.resendVerificationCode(email);
+      print('✅ [Auth] Verification code sent successfully!');
+    } on ApiException catch (e) {
+      print('❌ [Auth] API Exception: ${e.message} (${e.statusCode})');
+      _error = e.message;
+    } catch (e) {
+      print('💥 [Auth] Unexpected error: $e');
+      _error = 'Failed to resend verification code';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> setPassword(String email, String password) async {
+    print('👤 [Auth] Setting password for: $email');
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final response = await _service.setPassword(email, password);
+      
+      print('✅ [Auth] Password set successfully!');
+      print('👤 [Auth] User: ${response.user.email}');
+      
+      _user = response.user;
+      _isAuthenticated = true;
+      return true;
+    } on ApiException catch (e) {
+      print('❌ [Auth] API Exception: ${e.message} (${e.statusCode})');
+      _error = e.message;
+      return false;
+    } catch (e) {
+      print('💥 [Auth] Unexpected error: $e');
+      _error = 'Failed to set password';
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> forgotPassword(String email) async {
+    print('👤 [Auth] Requesting password reset for: $email');
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _service.forgotPassword(email);
+      print('✅ [Auth] Password reset code sent successfully!');
+    } on ApiException catch (e) {
+      print('❌ [Auth] API Exception: ${e.message} (${e.statusCode})');
+      _error = e.message;
+    } catch (e) {
+      print('💥 [Auth] Unexpected error: $e');
+      _error = 'Failed to send password reset code';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> verifyResetCode(String email, String code) async {
+    print('👤 [Auth] Verifying reset code for: $email');
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      await _service.verifyResetCode(email, code);
+      print('✅ [Auth] Reset code verified successfully!');
+    } on ApiException catch (e) {
+      print('❌ [Auth] API Exception: ${e.message} (${e.statusCode})');
+      _error = e.message;
+    } catch (e) {
+      print('💥 [Auth] Unexpected error: $e');
+      _error = 'Failed to verify reset code';
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> resetPasswordWithCode({
+    required String email,
+    required String code,
+    required String password,
+  }) async {
+    print('👤 [Auth] Resetting password for: $email');
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final response = await _service.resetPasswordWithCode(
+        email: email,
+        code: code,
+        password: password,
+      );
+      
+      print('✅ [Auth] Password reset successfully!');
+      print('👤 [Auth] User: ${response.user.email}');
+      
+      _user = response.user;
+      _isAuthenticated = true;
+      return true;
+    } on ApiException catch (e) {
+      print('❌ [Auth] API Exception: ${e.message} (${e.statusCode})');
+      _error = e.message;
+      return false;
+    } catch (e) {
+      print('💥 [Auth] Unexpected error: $e');
+      _error = 'Failed to reset password';
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
   }
 }
 

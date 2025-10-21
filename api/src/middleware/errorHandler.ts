@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { ZodError } from 'zod';
 
 export class AppError extends Error {
   statusCode: number;
@@ -28,6 +29,25 @@ export default function errorHandler(
     statusCode = err.statusCode;
     message = err.message;
     isOperational = err.isOperational;
+  }
+
+  // Handle Zod validation errors
+  if (err instanceof ZodError) {
+    statusCode = 400;
+    const firstError = err.errors[0];
+    message = firstError.message || 'Validation error';
+    
+    // Return detailed validation errors
+    return res.status(statusCode).json({
+      success: false,
+      error: {
+        message,
+        validation: err.errors.map(e => ({
+          field: e.path.join('.'),
+          message: e.message,
+        })),
+      },
+    });
   }
 
   // Handle Prisma errors

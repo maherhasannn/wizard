@@ -8,8 +8,8 @@
     "npm": ">=10.0.0"
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon -r tsconfig-paths/register src/app.ts",
-    "start": "cross-env NODE_ENV=production node -r tsconfig-paths/register dist/app.js",
+    "dev": "cross-env NODE_ENV=development nodemon -r tsconfig-paths/register src/index.ts",
+    "start": "cross-env NODE_ENV=production node -r tsconfig-paths/register dist/index.js",
     "build": "tsc",
     "migrate:dev": "prisma migrate dev",
     "migrate:deploy": "prisma migrate deploy",
@@ -48,6 +48,7 @@
   "dependencies": {
     "@google-cloud/storage": "^7.15.0",
     "@prisma/client": "^6.11.1",
+    "@types/nodemailer": "^7.0.2",
     "argon2": "^0.43.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
@@ -55,7 +56,7 @@
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "multer": "^2.0.1",
+    "nodemailer": "^7.0.9",
     "zod": "^3.24.3"
   }
 }
-

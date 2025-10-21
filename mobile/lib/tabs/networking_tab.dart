@@ -216,15 +216,6 @@ class _NetworkingTabState extends State<NetworkingTab> {
 
                         // Discovery method cards
                         _buildDiscoveryCard(
-                          'Swipe Cards',
-                          'Discover people through an intuitive swipe interface',
-                          Icons.swipe,
-                          () => _goToDiscoveryMethods(),
-                          lightTextColor,
-                          purpleAccent,
-                        ),
-                        const SizedBox(height: 16),
-                        _buildDiscoveryCard(
                           'Show on a Map',
                           'Find people near you on an interactive map',
                           Icons.map,

@@ -173,7 +173,7 @@ class _MeditationsTabState extends State<MeditationsTab>
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Row(
-                children: ['audio', 'music', 'sleep'].map((category) {
+                children: ['audio', 'sleep'].map((category) {
                   final isSelected = _selectedCategory == category;
                   return Expanded(
                     child: GestureDetector(

@@ -14,7 +14,7 @@ class User {
   final List<String> interests;
   final bool isProfilePublic;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
 
   const User({
     required this.id,
@@ -32,7 +32,7 @@ class User {
     this.interests = const [],
     this.isProfilePublic = true,
     required this.createdAt,
-    required this.updatedAt,
+    this.updatedAt,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -56,7 +56,9 @@ class User {
           : [],
       isProfilePublic: json['isProfilePublic'] as bool? ?? true,
       createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+      updatedAt: json['updatedAt'] != null 
+          ? DateTime.parse(json['updatedAt'] as String)
+          : null,
     );
   }
 
