@@ -19,6 +19,38 @@ class _CalendarTabState extends State<CalendarTab> {
     return Color(int.parse('FF$hexString', radix: 16));
   }
 
+  // Get color based on event type
+  Color _getEventColor(String type) {
+    switch (type) {
+      case 'MEDITATION':
+        return const Color(0xFF6A1B9A);
+      case 'GOAL':
+        return const Color(0xFFEC407A);
+      case 'REMINDER':
+        return const Color(0xFFE91E63);
+      case 'CUSTOM':
+        return const Color(0xFF4CAF50);
+      default:
+        return const Color(0xFF9C27B0);
+    }
+  }
+
+  // Get icon based on event type
+  IconData _getEventIcon(String type) {
+    switch (type) {
+      case 'MEDITATION':
+        return Icons.self_improvement;
+      case 'GOAL':
+        return Icons.bolt;
+      case 'REMINDER':
+        return Icons.favorite;
+      case 'CUSTOM':
+        return Icons.event;
+      default:
+        return Icons.circle;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -39,9 +71,9 @@ class _CalendarTabState extends State<CalendarTab> {
 
   List<CalendarEvent> _getEventsForDate(DateTime date) {
     return _events.where((event) {
-      return event.dateTime.year == date.year &&
-          event.dateTime.month == date.month &&
-          event.dateTime.day == date.day;
+      return event.scheduledAt.year == date.year &&
+          event.scheduledAt.month == date.month &&
+          event.scheduledAt.day == date.day;
     }).toList();
   }
 
@@ -50,9 +82,9 @@ class _CalendarTabState extends State<CalendarTab> {
     final nextWeek = now.add(const Duration(days: 7));
     
     return _events.where((event) {
-      return event.dateTime.isAfter(now) && event.dateTime.isBefore(nextWeek);
+      return event.scheduledAt.isAfter(now) && event.scheduledAt.isBefore(nextWeek);
     }).toList()
-      ..sort((a, b) => a.dateTime.compareTo(b.dateTime));
+      ..sort((a, b) => a.scheduledAt.compareTo(b.scheduledAt));
   }
 
   int _getCurrentStreak() {
@@ -63,9 +95,9 @@ class _CalendarTabState extends State<CalendarTab> {
     for (int i = 0; i < 30; i++) {
       final checkDate = now.subtract(Duration(days: i));
       final hasActivity = _events.any((event) =>
-          event.dateTime.year == checkDate.year &&
-          event.dateTime.month == checkDate.month &&
-          event.dateTime.day == checkDate.day);
+          event.scheduledAt.year == checkDate.year &&
+          event.scheduledAt.month == checkDate.month &&
+          event.scheduledAt.day == checkDate.day);
       
       if (hasActivity) {
         streak++;
@@ -323,6 +355,9 @@ class _CalendarTabState extends State<CalendarTab> {
   }
 
   Widget _buildEventCard(CalendarEvent event, Color textColor, Color accentColor) {
+    final eventColor = _getEventColor(event.type);
+    final eventIcon = _getEventIcon(event.type);
+    
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -340,12 +375,12 @@ class _CalendarTabState extends State<CalendarTab> {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: event.color.withOpacity(0.2),
+              color: eventColor.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
-              event.icon,
-              color: event.color,
+              eventIcon,
+              color: eventColor,
               size: 24,
             ),
           ),
@@ -364,7 +399,7 @@ class _CalendarTabState extends State<CalendarTab> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${_getMonthName(event.dateTime.month)} ${event.dateTime.day} at ${_formatTime(event.dateTime)}',
+                  '${_getMonthName(event.scheduledAt.month)} ${event.scheduledAt.day} at ${_formatTime(event.scheduledAt)}',
                   style: GoogleFonts.dmSans(
                     color: textColor.withOpacity(0.7),
                     fontSize: 14,

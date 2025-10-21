@@ -29,7 +29,7 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
   @override
   void initState() {
     super.initState();
-    _totalDuration = _parseDuration(widget.track.duration);
+    _totalDuration = Duration(seconds: widget.track.duration);
     _currentPosition = Duration.zero;
     
     _rotationController = AnimationController(
@@ -145,7 +145,7 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
                           // TODO: Implement favorite toggle
                         },
                         icon: Icon(
-                          widget.track.isFavorite
+                          widget.track.isFavorited
                               ? Icons.favorite
                               : Icons.favorite_border,
                           color: lightTextColor,
