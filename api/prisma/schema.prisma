@@ -56,6 +56,8 @@ model User {
   streamParticipations        LiveStreamParticipant[]
   streamChats                 LiveStreamChat[]
   powerSelections             UserPowerSelection[]
+  userChallenges              UserChallenge[]
+  moods                       UserMood[]
 
   @@index([email])
   @@index([createdAt])
@@ -450,6 +452,80 @@ model UserPowerSelection {
   @@unique([userId, powerCategoryId])
   @@index([userId, priority])
   @@index([powerCategoryId])
+}
+
+// ============================================================
+// CHALLENGES SYSTEM
+// ============================================================
+
+model Challenge {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  duration    Int      // Duration in days
+  goals       String[] // Array of achievement goals
+  icon        String?  // Icon or image URL
+  isActive    Boolean  @default(true) @map("is_active")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  userChallenges UserChallenge[]
+  rituals        Ritual[]
+
+  @@index([isActive, sortOrder])
+}
+
+model UserChallenge {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @map("user_id")
+  challengeId Int       @map("challenge_id")
+  status      String    @default("NOT_STARTED") // NOT_STARTED, ACTIVE, PAUSED, COMPLETED
+  currentDay  Int       @default(0) @map("current_day")
+  startedAt   DateTime? @map("started_at")
+  completedAt DateTime? @map("completed_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challenge Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, challengeId])
+  @@index([userId, status])
+  @@index([challengeId])
+}
+
+model Ritual {
+  id          Int      @id @default(autoincrement())
+  challengeId Int?     @map("challenge_id") // Optional - can be standalone
+  title       String
+  description String?
+  duration    Int      // Duration in minutes
+  type        String   // TEXT, AUDIO, VIDEO, etc.
+  content     String?  // Text content or instructions
+  day         Int?     // Day in challenge (if part of challenge)
+  sortOrder   Int      @default(0) @map("sort_order")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  challenge Challenge? @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+
+  @@index([challengeId, day])
+  @@index([isActive, sortOrder])
+}
+
+model UserMood {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  mood      String   // GREAT, GOOD, OKAY, NOT_GOOD
+  date      DateTime @db.Date
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([userId, date])
 }
 
 

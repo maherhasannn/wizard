@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'shared_background.dart';
-import 'tabs/home_tab.dart';
-import 'tabs/meditations_tab.dart';
-import 'tabs/calendar_tab.dart';
-import 'tabs/networking_tab.dart';
+import 'tabs/main_tab.dart';
+import 'tabs/rituals_tab.dart';
+import 'tabs/challenge_tab.dart';
+import 'tabs/circe_tab.dart';
 
 class MainAppScreen extends StatefulWidget {
   final List<String> selectedPowers;
@@ -42,20 +42,20 @@ class _MainAppScreenState extends State<MainAppScreen> {
             child: IndexedStack(
               index: _currentIndex,
               children: [
-                // Tab 1: Home/Dashboard
-                HomeTab(
+                // Tab 1: Main (formerly Home)
+                MainTab(
                   selectedPowers: widget.selectedPowers,
                   powerOptions: widget.powerOptions,
                 ),
                 
-                // Tab 2: Meditations
-                const MeditationsTab(),
+                // Tab 2: Rituals (formerly Meditations)
+                const RitualsTab(),
                 
-                // Tab 3: Calendar
-                const CalendarTab(),
+                // Tab 3: Challenge (formerly Calendar)
+                const ChallengeTab(),
                 
-                // Tab 4: Networking
-                const NetworkingTab(),
+                // Tab 4: Circe (formerly Networking/Community)
+                const CirceTab(),
               ],
             ),
           ),
@@ -98,10 +98,10 @@ class _MainAppScreenState extends State<MainAppScreen> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _buildNavItem(Icons.home, 0, lightTextColor, purpleAccent),
-              _buildNavItem(Icons.headphones, 1, lightTextColor, purpleAccent),
-              _buildNavItem(Icons.star, 2, lightTextColor, purpleAccent),
-              _buildNavItem(Icons.language, 3, lightTextColor, purpleAccent),
+              _buildNavItem(Icons.home, 0, lightTextColor, purpleAccent, 'Main'),
+              _buildNavItem(Icons.music_note, 1, lightTextColor, purpleAccent, 'Rituals'),
+              _buildNavItem(Icons.emoji_events, 2, lightTextColor, purpleAccent, 'Challenge'),
+              _buildNavItem(Icons.people, 3, lightTextColor, purpleAccent, 'Circe'),
             ],
           ),
         ),
@@ -109,7 +109,7 @@ class _MainAppScreenState extends State<MainAppScreen> {
     );
   }
 
-  Widget _buildNavItem(IconData icon, int index, Color lightTextColor, Color purpleAccent) {
+  Widget _buildNavItem(IconData icon, int index, Color lightTextColor, Color purpleAccent, String label) {
     final isSelected = _currentIndex == index;
     
     return GestureDetector(
@@ -118,25 +118,39 @@ class _MainAppScreenState extends State<MainAppScreen> {
           _currentIndex = index;
         });
       },
-      child: Container(
-        width: 50,
-        height: 50,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: isSelected ? purpleAccent : Colors.transparent,
-          boxShadow: isSelected ? [
-            BoxShadow(
-              color: purpleAccent.withOpacity(0.5),
-              blurRadius: 15,
-              spreadRadius: 2,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected ? purpleAccent : Colors.transparent,
+              boxShadow: isSelected ? [
+                BoxShadow(
+                  color: purpleAccent.withOpacity(0.5),
+                  blurRadius: 15,
+                  spreadRadius: 2,
+                ),
+              ] : null,
             ),
-          ] : null,
-        ),
-        child: Icon(
-          icon,
-          color: isSelected ? Colors.white : Colors.white.withOpacity(0.8),
-          size: 24,
-        ),
+            child: Icon(
+              icon,
+              color: isSelected ? Colors.white : Colors.white.withOpacity(0.8),
+              size: 24,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: GoogleFonts.dmSans(
+              color: isSelected ? lightTextColor : lightTextColor.withOpacity(0.6),
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }
