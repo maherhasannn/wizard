@@ -9,10 +9,11 @@ import {
 } from '../../lib/jwt';
 import { AppError } from '../../middleware/errorHandler';
 import { sendEmail, createVerificationEmail, createPasswordResetEmail, generateVerificationCode } from '../../lib/emailService';
+import { verifyGoogleToken, verifyAppleToken, verifyFacebookToken } from '../../lib/socialAuth';
 
 interface RegisterData {
   email: string;
-  password: string;
+  password?: string; // Optional - will be set after email verification
   firstName?: string;
   lastName?: string;
 }
@@ -30,13 +31,56 @@ class AuthService {
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({
       where: { email: data.email.toLowerCase() },
+      select: {
+        id: true,
+        email: true,
+        isEmailVerified: true,
+        firstName: true,
+        lastName: true,
+        createdAt: true,
+      },
     });
 
-    if (existingUser) {
+    // If user exists and is verified, reject registration
+    if (existingUser && existingUser.isEmailVerified) {
       throw new AppError('Email already exists', 409);
     }
 
-    // Generate verification code
+    // If user exists but is NOT verified, resend verification code
+    if (existingUser && !existingUser.isEmailVerified) {
+      // Generate new verification code
+      const verificationCode = generateVerificationCode();
+      const verificationCodeExpiry = getTokenExpiry(10); // 10 minutes
+
+      // Update the existing user with new code
+      await prisma.user.update({
+        where: { id: existingUser.id },
+        data: {
+          verificationCode,
+          verificationCodeExpiry,
+          // Optionally update firstName/lastName if provided
+          ...(data.firstName && { firstName: data.firstName }),
+          ...(data.lastName && { lastName: data.lastName }),
+        },
+      });
+
+      // Send verification email
+      const emailTemplate = createVerificationEmail(verificationCode);
+      await sendEmail(existingUser.email, emailTemplate);
+
+      return {
+        user: {
+          id: existingUser.id,
+          email: existingUser.email,
+          firstName: data.firstName || existingUser.firstName,
+          lastName: data.lastName || existingUser.lastName,
+          createdAt: existingUser.createdAt,
+        },
+        message: 'Registration successful. Please check your email for verification code.',
+      };
+    }
+
+    // If user doesn't exist, create new user
     const verificationCode = generateVerificationCode();
     const verificationCodeExpiry = getTokenExpiry(10); // 10 minutes
 
@@ -44,7 +88,7 @@ class AuthService {
     const user = await prisma.user.create({
       data: {
         email: data.email.toLowerCase(),
-        password: data.password, // Will be set after verification
+        password: null, // Will be set after verification via set-password endpoint
         firstName: data.firstName,
         lastName: data.lastName,
         isEmailVerified: false,
@@ -97,6 +141,11 @@ class AuthService {
     // Check if email is verified
     if (!user.isEmailVerified) {
       throw new AppError('Please verify your email before logging in', 401);
+    }
+
+    // Check if password is set (not null for incomplete registrations)
+    if (!user.password) {
+      throw new AppError('Please complete registration by setting a password', 401);
     }
 
     // Verify password
@@ -326,26 +375,9 @@ class AuthService {
       },
     });
 
-    // Generate tokens for immediate login
-    const accessToken = generateAccessToken({ userId: user.id, email: user.email });
-    const refreshToken = generateRefreshToken({ userId: user.id, email: user.email });
-
-    // Update refresh token
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        refreshToken,
-        refreshTokenExpiry: getTokenExpiry(30 * 24), // 30 days
-      },
-    });
-
+    // Return success - user will set password next, no auto-login yet
     return {
-      user: {
-        id: user.id,
-        email: user.email,
-      },
-      token: accessToken,
-      refreshToken,
+      message: 'Email verified successfully',
     };
   }
 
@@ -507,17 +539,31 @@ class AuthService {
     // Hash new password
     const hashedPassword = await hashPassword(newPassword);
 
-    // Update password and clear reset code
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        password: hashedPassword,
-        verificationCode: null,
-        verificationCodeExpiry: null,
-      },
-    });
+      // Generate tokens for auto-login
+      const newAccessToken = generateAccessToken({ userId: user.id, email: user.email });
+      const newRefreshToken = generateRefreshToken({ userId: user.id, email: user.email });
 
-    return { message: 'Password reset successfully' };
+      // Update password, clear reset code, and store refresh token
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          password: hashedPassword,
+          verificationCode: null,
+          verificationCodeExpiry: null,
+          refreshToken: newRefreshToken,
+          refreshTokenExpiry: getTokenExpiry(30 * 24), // 30 days
+        },
+      });
+
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+        },
+        token: newAccessToken,
+        refreshToken: newRefreshToken,
+        message: 'Password reset successfully',
+      };
   }
 
   /**
@@ -530,6 +576,9 @@ class AuthService {
         id: true,
         email: true,
         isEmailVerified: true,
+        firstName: true,
+        lastName: true,
+        createdAt: true,
       },
     });
 
@@ -569,10 +618,223 @@ class AuthService {
       user: {
         id: user.id,
         email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        createdAt: user.createdAt,
       },
       token: accessToken,
       refreshToken,
     };
+  }
+
+  /**
+   * Google OAuth authentication
+   */
+  async signInWithGoogle(idToken: string) {
+    try {
+      const userInfo = await verifyGoogleToken(idToken);
+      
+      // Check if user exists
+      let user = await prisma.user.findUnique({
+        where: { email: userInfo.email.toLowerCase() },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          isEmailVerified: true,
+        },
+      });
+
+      if (!user) {
+        // Create new user for social auth
+        user = await prisma.user.create({
+          data: {
+            email: userInfo.email.toLowerCase(),
+            password: null, // No password for social auth
+            firstName: userInfo.firstName,
+            lastName: userInfo.lastName,
+            isEmailVerified: true, // Social auth emails are pre-verified
+            userSettings: {
+              create: {},
+            },
+          },
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            isEmailVerified: true,
+          },
+        });
+      }
+
+      // Generate tokens
+      const newAccessToken = generateAccessToken({ userId: user.id, email: user.email });
+      const newRefreshToken = generateRefreshToken({ userId: user.id, email: user.email });
+
+      // Update refresh token
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          refreshToken: newRefreshToken,
+          refreshTokenExpiry: getTokenExpiry(30 * 24), // 30 days
+        },
+      });
+
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+        token: newAccessToken,
+        refreshToken: newRefreshToken,
+      };
+    } catch (error) {
+      throw new AppError('Google authentication failed', 401);
+    }
+  }
+
+  /**
+   * Apple Sign-In authentication
+   */
+  async signInWithApple(idToken: string) {
+    try {
+      const userInfo = await verifyAppleToken(idToken);
+      
+      // Check if user exists
+      let user = await prisma.user.findUnique({
+        where: { email: userInfo.email.toLowerCase() },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          isEmailVerified: true,
+        },
+      });
+
+      if (!user) {
+        // Create new user for social auth
+        user = await prisma.user.create({
+          data: {
+            email: userInfo.email.toLowerCase(),
+            password: null, // No password for social auth
+            firstName: userInfo.firstName,
+            lastName: userInfo.lastName,
+            isEmailVerified: true, // Social auth emails are pre-verified
+            userSettings: {
+              create: {},
+            },
+          },
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            isEmailVerified: true,
+          },
+        });
+      }
+
+      // Generate tokens
+      const newAccessToken = generateAccessToken({ userId: user.id, email: user.email });
+      const newRefreshToken = generateRefreshToken({ userId: user.id, email: user.email });
+
+      // Update refresh token
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          refreshToken: newRefreshToken,
+          refreshTokenExpiry: getTokenExpiry(30 * 24), // 30 days
+        },
+      });
+
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+        token: newAccessToken,
+        refreshToken: newRefreshToken,
+      };
+    } catch (error) {
+      throw new AppError('Apple authentication failed', 401);
+    }
+  }
+
+  /**
+   * Facebook OAuth authentication
+   */
+  async signInWithFacebook(facebookAccessToken: string) {
+    try {
+      const userInfo = await verifyFacebookToken(facebookAccessToken);
+      
+      // Check if user exists
+      let user = await prisma.user.findUnique({
+        where: { email: userInfo.email.toLowerCase() },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          isEmailVerified: true,
+        },
+      });
+
+      if (!user) {
+        // Create new user for social auth
+        user = await prisma.user.create({
+          data: {
+            email: userInfo.email.toLowerCase(),
+            password: null, // No password for social auth
+            firstName: userInfo.firstName,
+            lastName: userInfo.lastName,
+            isEmailVerified: true, // Social auth emails are pre-verified
+            userSettings: {
+              create: {},
+            },
+          },
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            isEmailVerified: true,
+          },
+        });
+      }
+
+      // Generate tokens
+      const newAccessToken = generateAccessToken({ userId: user.id, email: user.email });
+      const newRefreshToken = generateRefreshToken({ userId: user.id, email: user.email });
+
+      // Update refresh token
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          refreshToken: newRefreshToken,
+          refreshTokenExpiry: getTokenExpiry(30 * 24), // 30 days
+        },
+      });
+
+      return {
+        user: {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
+        token: newAccessToken,
+        refreshToken: newRefreshToken,
+      };
+    } catch (error) {
+      throw new AppError('Facebook authentication failed', 401);
+    }
   }
 }
 

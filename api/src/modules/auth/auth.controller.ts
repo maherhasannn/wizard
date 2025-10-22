@@ -7,7 +7,7 @@ import { AppError } from '../../middleware/errorHandler';
 // Validation schemas
 const registerSchema = z.object({
   email: emailSchema,
-  password: passwordSchema,
+  password: passwordSchema.optional(), // Optional - set after email verification
   firstName: z.string().min(1).max(100).optional(),
   lastName: z.string().min(1).max(100).optional(),
 });
@@ -57,6 +57,18 @@ const resetPasswordWithCodeSchema = z.object({
 const setPasswordSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
+});
+
+const googleAuthSchema = z.object({
+  idToken: z.string().min(1, 'Google ID token is required'),
+});
+
+const appleAuthSchema = z.object({
+  idToken: z.string().min(1, 'Apple ID token is required'),
+});
+
+const facebookAuthSchema = z.object({
+  accessToken: z.string().min(1, 'Facebook access token is required'),
 });
 
 class AuthController {
@@ -267,6 +279,60 @@ class AuthController {
         success: true,
         data: result,
         message: 'Password set successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/auth/google
+   */
+  async signInWithGoogle(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { idToken } = googleAuthSchema.parse(req.body);
+      const result = await authService.signInWithGoogle(idToken);
+
+      res.json({
+        success: true,
+        data: result,
+        message: 'Google authentication successful',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/auth/apple
+   */
+  async signInWithApple(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { idToken } = appleAuthSchema.parse(req.body);
+      const result = await authService.signInWithApple(idToken);
+
+      res.json({
+        success: true,
+        data: result,
+        message: 'Apple authentication successful',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * POST /api/auth/facebook
+   */
+  async signInWithFacebook(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { accessToken } = facebookAuthSchema.parse(req.body);
+      const result = await authService.signInWithFacebook(accessToken);
+
+      res.json({
+        success: true,
+        data: result,
+        message: 'Facebook authentication successful',
       });
     } catch (error) {
       next(error);

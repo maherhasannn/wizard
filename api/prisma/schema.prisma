@@ -14,7 +14,7 @@ datasource db {
 model User {
   id             Int       @id @default(autoincrement())
   email          String    @unique
-  password       String // Hashed with argon2
+  password       String? // Hashed with argon2, nullable for social auth or incomplete registration
   firstName      String?   @map("first_name")
   lastName       String?   @map("last_name")
   phone          String?

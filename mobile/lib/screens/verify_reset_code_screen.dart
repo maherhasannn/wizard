@@ -3,21 +3,21 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../shared_background.dart';
-import 'set_password_screen.dart';
+import 'reset_password_screen.dart';
 
-class VerifyEmailScreen extends StatefulWidget {
+class VerifyResetCodeScreen extends StatefulWidget {
   final String email;
 
-  const VerifyEmailScreen({
+  const VerifyResetCodeScreen({
     Key? key,
     required this.email,
   }) : super(key: key);
 
   @override
-  State<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
+  State<VerifyResetCodeScreen> createState() => _VerifyResetCodeScreenState();
 }
 
-class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
+class _VerifyResetCodeScreenState extends State<VerifyResetCodeScreen> {
   final List<TextEditingController> _controllers = List.generate(6, (index) => TextEditingController());
   final List<FocusNode> _focusNodes = List.generate(6, (index) => FocusNode());
   bool _isLoading = false;
@@ -81,7 +81,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
     return _controllers.map((controller) => controller.text).join();
   }
 
-  Future<void> _verifyEmail() async {
+  Future<void> _verifyResetCode() async {
     final code = _getVerificationCode();
     if (code.length != 6) {
       _showError('Please enter the complete verification code');
@@ -94,13 +94,13 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final success = await authProvider.verifyEmail(widget.email, code);
+      await authProvider.verifyResetCode(widget.email, code);
 
-      if (success && mounted) {
+      if (mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => SetPasswordScreen(email: widget.email),
+            builder: (context) => ResetPasswordScreen(email: widget.email, code: code),
           ),
         );
       }
@@ -126,10 +126,10 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      await authProvider.resendVerificationCode(widget.email);
+      await authProvider.forgotPassword(widget.email);
 
       if (mounted) {
-        _showSuccess('Verification code sent successfully');
+        _showSuccess('Reset code sent successfully');
         _startResendCountdown();
         // Clear current code
         for (var controller in _controllers) {
@@ -180,7 +180,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
               children: [
                 const SizedBox(height: 40),
                 Text(
-                  'Verify your email',
+                  'Verify email',
                   style: GoogleFonts.dmSans(
                     color: const Color(0xFFF5F5F5),
                     fontSize: 32,
@@ -190,7 +190,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'We sent a 6-digit code to\n${widget.email}',
+                  'We have sent an email with the code to ${widget.email}. Please check the Spam folder.',
                   style: GoogleFonts.dmSans(
                     color: const Color(0xFFF5F5F5).withOpacity(0.7),
                     fontSize: 16,
@@ -255,7 +255,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _verifyEmail,
+                    onPressed: _isLoading ? null : _verifyResetCode,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF6A1B9A),
                       padding: const EdgeInsets.symmetric(vertical: 16),
@@ -308,7 +308,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: Text(
-                    'Back to registration',
+                    'Back to forgot password',
                     style: GoogleFonts.dmSans(
                       color: const Color(0xFFF5F5F5).withOpacity(0.7),
                       fontSize: 14,

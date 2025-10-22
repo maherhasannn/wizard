@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import '../providers/auth_provider.dart';
 import '../shared_background.dart';
 import 'login_screen.dart';
 import 'verify_email_screen.dart';
+import '../power_selection_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -28,7 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       
       final success = await authProvider.register(
         email: _emailController.text.trim(),
-        password: '', // Password will be set after verification
+        // No password sent - will be set after verification
       );
 
       if (success && mounted) {
@@ -43,29 +47,105 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   Future<void> _handleGoogleSignIn() async {
-    // TODO: Implement Google Sign-In
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Google Sign-In coming soon',
-          style: GoogleFonts.dmSans(color: Colors.white),
-        ),
-        backgroundColor: _hexToColor('6A1B9A'),
-      ),
-    );
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn();
+      final GoogleSignInAccount? account = await googleSignIn.signIn();
+      
+      if (account != null) {
+        final GoogleSignInAuthentication auth = await account.authentication;
+        final String? idToken = auth.idToken;
+        
+        if (idToken != null) {
+          final authProvider = context.read<AuthProvider>();
+          final success = await authProvider.signInWithGoogle(idToken);
+          
+          if (success && mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const PowerSelectionScreen()),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Google Sign-In failed: $e',
+              style: GoogleFonts.dmSans(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Future<void> _handleAppleSignIn() async {
-    // TODO: Implement Apple Sign-In
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Apple Sign-In coming soon',
-          style: GoogleFonts.dmSans(color: Colors.white),
-        ),
-        backgroundColor: _hexToColor('6A1B9A'),
-      ),
-    );
+    try {
+      final credential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+      
+      if (credential.identityToken != null) {
+        final authProvider = context.read<AuthProvider>();
+        final success = await authProvider.signInWithApple(credential.identityToken!);
+        
+        if (success && mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const PowerSelectionScreen()),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Apple Sign-In failed: $e',
+              style: GoogleFonts.dmSans(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _handleFacebookSignIn() async {
+    try {
+      final LoginResult result = await FacebookAuth.instance.login();
+      
+      if (result.status == LoginStatus.success) {
+        final AccessToken? accessToken = result.accessToken;
+        
+        if (accessToken != null) {
+          final authProvider = context.read<AuthProvider>();
+          final success = await authProvider.signInWithFacebook(accessToken.token);
+          
+          if (success && mounted) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const PowerSelectionScreen()),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Facebook Sign-In failed: $e',
+              style: GoogleFonts.dmSans(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -270,6 +350,47 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             const SizedBox(width: 12),
                             Text(
                               'Continue with Apple',
+                              style: GoogleFonts.dmSans(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Continue with Facebook button
+                      ElevatedButton(
+                        onPressed: _handleFacebookSignIn,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1877F2), // Facebook blue
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // Facebook logo placeholder
+                            Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: const Icon(
+                                Icons.facebook,
+                                color: Color(0xFF1877F2),
+                                size: 16,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              'Continue with Facebook',
                               style: GoogleFonts.dmSans(
                                 color: Colors.white,
                                 fontSize: 16,

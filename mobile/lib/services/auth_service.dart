@@ -6,21 +6,27 @@ class AuthService {
 
   AuthService(this._client);
 
-  Future<AuthResponse> register({
+  Future<RegistrationResponse> register({
     required String email,
-    required String password,
+    String? password,
     String? firstName,
     String? lastName,
   }) async {
-    final json = await _client.post('/auth/register', body: {
+    final body = <String, dynamic>{
       'email': email,
-      'password': password,
       if (firstName != null) 'firstName': firstName,
       if (lastName != null) 'lastName': lastName,
-    });
+    };
+    
+    // Only include password if provided
+    if (password != null && password.isNotEmpty) {
+      body['password'] = password;
+    }
+    
+    final json = await _client.post('/auth/register', body: body);
 
     final data = json['data'] as Map<String, dynamic>;
-    return AuthResponse.fromJson(data);
+    return RegistrationResponse.fromJson(data);
   }
 
   Future<AuthResponse> login({
@@ -81,19 +87,14 @@ class AuthService {
     });
   }
 
-  Future<AuthResponse> verifyEmail(String email, String code) async {
+  Future<void> verifyEmail(String email, String code) async {
     final json = await _client.post('/auth/verify-email', body: {
       'email': email,
       'code': code,
     });
 
-    final data = json['data'] as Map<String, dynamic>;
-    final response = AuthResponse.fromJson(data);
-    
-    // Store token in client
-    _client.setToken(response.token);
-    
-    return response;
+    // No tokens returned - just success message
+    // User will set password next
   }
 
   Future<void> resendVerificationCode(String email) async {
@@ -151,6 +152,65 @@ class AuthService {
     _client.setToken(response.token);
     
     return response;
+  }
+
+  Future<AuthResponse> signInWithGoogle(String idToken) async {
+    final json = await _client.post('/auth/google', body: {
+      'idToken': idToken,
+    });
+
+    final data = json['data'] as Map<String, dynamic>;
+    final response = AuthResponse.fromJson(data);
+    
+    // Store token in client
+    _client.setToken(response.token);
+    
+    return response;
+  }
+
+  Future<AuthResponse> signInWithApple(String idToken) async {
+    final json = await _client.post('/auth/apple', body: {
+      'idToken': idToken,
+    });
+
+    final data = json['data'] as Map<String, dynamic>;
+    final response = AuthResponse.fromJson(data);
+    
+    // Store token in client
+    _client.setToken(response.token);
+    
+    return response;
+  }
+
+  Future<AuthResponse> signInWithFacebook(String accessToken) async {
+    final json = await _client.post('/auth/facebook', body: {
+      'accessToken': accessToken,
+    });
+
+    final data = json['data'] as Map<String, dynamic>;
+    final response = AuthResponse.fromJson(data);
+    
+    // Store token in client
+    _client.setToken(response.token);
+    
+    return response;
+  }
+}
+
+class RegistrationResponse {
+  final User user;
+  final String message;
+
+  const RegistrationResponse({
+    required this.user,
+    required this.message,
+  });
+
+  factory RegistrationResponse.fromJson(Map<String, dynamic> json) {
+    return RegistrationResponse(
+      user: User.fromJson(json['user'] as Map<String, dynamic>),
+      message: json['message'] as String,
+    );
   }
 }
 

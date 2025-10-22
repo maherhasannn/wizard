@@ -48,6 +48,7 @@ dependencies:
   # Authentication
   sign_in_with_apple: ^6.1.1
   google_sign_in: ^6.2.1
+  flutter_facebook_auth: ^6.0.3
   
   # In-app purchases and reviews
   in_app_purchase: ^3.1.13

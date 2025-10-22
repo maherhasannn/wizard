@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../shared_background.dart';
+import 'verify_reset_code_screen.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -14,7 +15,6 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  bool _emailSent = false;
 
   Color _hexToColor(String hexCode) {
     final hexString = hexCode.replaceAll('#', '');
@@ -25,13 +25,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (_formKey.currentState!.validate()) {
       final authProvider = context.read<AuthProvider>();
       
-      // TODO: Implement forgot password API call
-      // For now, just simulate success
-      await Future.delayed(const Duration(seconds: 1));
-      
-      setState(() {
-        _emailSent = true;
-      });
+      try {
+        await authProvider.forgotPassword(_emailController.text.trim());
+        
+        if (mounted) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VerifyResetCodeScreen(email: _emailController.text.trim()),
+            ),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to send reset code: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
   }
 
@@ -53,7 +67,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(24.0),
-            child: _emailSent ? _buildSuccessScreen(lightTextColor, purpleAccent) : _buildFormScreen(lightTextColor, purpleAccent),
+            child: _buildFormScreen(lightTextColor, purpleAccent),
           ),
         ),
       ),
@@ -142,85 +156,4 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-  Widget _buildSuccessScreen(Color lightTextColor, Color purpleAccent) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Green checkmark
-        Center(
-          child: Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.green,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.green.withOpacity(0.3),
-                  blurRadius: 20,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.check,
-              color: Colors.white,
-              size: 40,
-            ),
-          ),
-        ),
-        const SizedBox(height: 32),
-
-        Text(
-          'An email has been sent to ${_emailController.text}. Please follow the link in the email and renew your new password.',
-          style: GoogleFonts.dmSans(
-            color: lightTextColor,
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-          ),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(height: 48),
-
-        // That's done button
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: purpleAccent,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          child: Text(
-            'That\'s done!',
-            style: GoogleFonts.dmSans(
-              color: lightTextColor,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        // Still have a problem link
-        TextButton(
-          onPressed: () {
-            // TODO: Add support contact or help
-          },
-          child: Text(
-            'Still have a problem?',
-            style: GoogleFonts.dmSans(
-              color: purpleAccent,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
 }

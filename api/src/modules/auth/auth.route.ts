@@ -23,6 +23,11 @@ router.post('/reset-password-with-code', authController.resetPasswordWithCode.bi
 // Set password after verification
 router.post('/set-password', authController.setPassword.bind(authController));
 
+// Social authentication routes
+router.post('/google', authController.signInWithGoogle.bind(authController));
+router.post('/apple', authController.signInWithApple.bind(authController));
+router.post('/facebook', authController.signInWithFacebook.bind(authController));
+
 // Protected routes
 router.get('/me', authenticate, authController.getCurrentUser.bind(authController));
 

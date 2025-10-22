@@ -20,7 +20,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<bool> register({
     required String email,
-    required String password,
+    String? password,
     String? firstName,
     String? lastName,
   }) async {
@@ -39,9 +39,9 @@ class AuthProvider extends ChangeNotifier {
       
       print('✅ [Auth] Registration successful!');
       print('👤 [Auth] User: ${response.user.email}');
+      print('📧 [Auth] ${response.message}');
       
-      _user = response.user;
-      _isAuthenticated = true;
+      // Don't set authentication state - user needs to verify email first
       return true;
     } on ApiException catch (e) {
       print('❌ [Auth] API Exception: ${e.message} (${e.statusCode})');
@@ -116,13 +116,10 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await _service.verifyEmail(email, code);
+      await _service.verifyEmail(email, code);
       
       print('✅ [Auth] Email verification successful!');
-      print('👤 [Auth] User: ${response.user.email}');
-      
-      _user = response.user;
-      _isAuthenticated = true;
+      // No auto-login - user will set password next
       return true;
     } on ApiException catch (e) {
       print('❌ [Auth] API Exception: ${e.message} (${e.statusCode})');
@@ -260,6 +257,93 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       print('💥 [Auth] Unexpected error: $e');
       _error = 'Failed to reset password';
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> signInWithGoogle(String idToken) async {
+    print('👤 [Auth] Google Sign-In for token: ${idToken.substring(0, 20)}...');
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final response = await _service.signInWithGoogle(idToken);
+      
+      print('✅ [Auth] Google Sign-In successful!');
+      print('👤 [Auth] User: ${response.user.email}');
+      
+      _user = response.user;
+      _isAuthenticated = true;
+      return true;
+    } on ApiException catch (e) {
+      print('❌ [Auth] API Exception: ${e.message} (${e.statusCode})');
+      _error = e.message;
+      return false;
+    } catch (e) {
+      print('💥 [Auth] Unexpected error: $e');
+      _error = 'Google Sign-In failed';
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> signInWithApple(String idToken) async {
+    print('👤 [Auth] Apple Sign-In for token: ${idToken.substring(0, 20)}...');
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final response = await _service.signInWithApple(idToken);
+      
+      print('✅ [Auth] Apple Sign-In successful!');
+      print('👤 [Auth] User: ${response.user.email}');
+      
+      _user = response.user;
+      _isAuthenticated = true;
+      return true;
+    } on ApiException catch (e) {
+      print('❌ [Auth] API Exception: ${e.message} (${e.statusCode})');
+      _error = e.message;
+      return false;
+    } catch (e) {
+      print('💥 [Auth] Unexpected error: $e');
+      _error = 'Apple Sign-In failed';
+      return false;
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<bool> signInWithFacebook(String accessToken) async {
+    print('👤 [Auth] Facebook Sign-In for token: ${accessToken.substring(0, 20)}...');
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final response = await _service.signInWithFacebook(accessToken);
+      
+      print('✅ [Auth] Facebook Sign-In successful!');
+      print('👤 [Auth] User: ${response.user.email}');
+      
+      _user = response.user;
+      _isAuthenticated = true;
+      return true;
+    } on ApiException catch (e) {
+      print('❌ [Auth] API Exception: ${e.message} (${e.statusCode})');
+      _error = e.message;
+      return false;
+    } catch (e) {
+      print('💥 [Auth] Unexpected error: $e');
+      _error = 'Facebook Sign-In failed';
       return false;
     } finally {
       _isLoading = false;
