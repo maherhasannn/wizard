@@ -1,15 +1,29 @@
-# Root gitignore
+# Root gitignore for monorepo
+# Note: Subdirectories (api/, mobile/) have their own .gitignore files
+
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE - Global settings
+.vscode/
+.idea/
+
+# Logs at root level
 *.log
+
+# Environment files at root level
 .env
 .env.local
 .env.*.local
 
-# IDE
-.vscode/
-.idea/
+# Build artifacts at root level (from Flutter/Xcode/etc)
+build/
+
+# Temporary files
+*~
 *.swp
 *.swo
-*~
 
 
