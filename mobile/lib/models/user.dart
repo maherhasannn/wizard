@@ -79,7 +79,7 @@ class User {
       'interests': interests,
       'isProfilePublic': isProfilePublic,
       'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
     };
   }
 

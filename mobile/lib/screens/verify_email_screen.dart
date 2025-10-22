@@ -172,6 +172,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SharedBackground(
+        bgColorHex: '1A0A2E',
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
