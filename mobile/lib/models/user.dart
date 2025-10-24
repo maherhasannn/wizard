@@ -55,7 +55,9 @@ class User {
           ? List<String>.from(json['interests'] as List)
           : [],
       isProfilePublic: json['isProfilePublic'] as bool? ?? true,
-      createdAt: DateTime.parse(json['createdAt'] as String),
+      createdAt: json['createdAt'] != null 
+          ? DateTime.parse(json['createdAt'] as String)
+          : DateTime.now(), // Default to current time if not provided
       updatedAt: json['updatedAt'] != null 
           ? DateTime.parse(json['updatedAt'] as String)
           : null,

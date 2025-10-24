@@ -28,15 +28,22 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_formKey.currentState!.validate()) {
       final authProvider = context.read<AuthProvider>();
       
+      print('🔐 [LoginScreen] Starting login process...');
       final success = await authProvider.login(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
 
+      print('🔐 [LoginScreen] Login result: $success');
+      print('🔐 [LoginScreen] AuthProvider state - isLoading: ${authProvider.isLoading}, isAuthenticated: ${authProvider.isAuthenticated}, error: ${authProvider.error}');
+
       if (success && mounted) {
+        print('🔐 [LoginScreen] Navigating to PowerSelectionScreen...');
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (_) => const PowerSelectionScreen()),
         );
+      } else {
+        print('🔐 [LoginScreen] Login failed or widget not mounted');
       }
     }
   }

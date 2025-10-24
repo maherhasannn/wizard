@@ -61,6 +61,7 @@ class AuthProvider extends ChangeNotifier {
     required String email,
     required String password,
   }) async {
+    print('🔐 [Auth] Starting login for: $email');
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -71,18 +72,26 @@ class AuthProvider extends ChangeNotifier {
         password: password,
       );
       
+      print('✅ [Auth] Login successful!');
+      print('👤 [Auth] User: ${response.user.email}');
+      print('🎫 [Auth] Token received: ${response.token.substring(0, 20)}...');
+      
       _user = response.user;
       _isAuthenticated = true;
+      print('🔐 [Auth] Authentication state updated: $_isAuthenticated');
       return true;
     } on ApiException catch (e) {
+      print('❌ [Auth] API Exception: ${e.message} (${e.statusCode})');
       _error = e.message;
       return false;
     } catch (e) {
+      print('💥 [Auth] Unexpected error: $e');
       _error = 'Login failed';
       return false;
     } finally {
       _isLoading = false;
       notifyListeners();
+      print('🔐 [Auth] Login process completed. Loading: $_isLoading, Authenticated: $_isAuthenticated');
     }
   }
 

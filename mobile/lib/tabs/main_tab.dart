@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../shared_background.dart';
+import 'package:provider/provider.dart';
+import '../services/tarot_service.dart';
+import '../widgets/tarot_card_widget.dart';
+import '../providers/auth_provider.dart';
 
-class MainTab extends StatelessWidget {
+class MainTab extends StatefulWidget {
   final List<String> selectedPowers;
   final List<Map<String, dynamic>> powerOptions;
 
@@ -11,6 +14,31 @@ class MainTab extends StatelessWidget {
     required this.selectedPowers,
     required this.powerOptions,
   });
+
+  @override
+  State<MainTab> createState() => _MainTabState();
+}
+
+class _MainTabState extends State<MainTab> {
+  final TarotService _tarotService = TarotService();
+
+  @override
+  void initState() {
+    super.initState();
+    _tarotService.addListener(_onTarotServiceChanged);
+  }
+
+  @override
+  void dispose() {
+    _tarotService.removeListener(_onTarotServiceChanged);
+    super.dispose();
+  }
+
+  void _onTarotServiceChanged() {
+    setState(() {
+      // Rebuild when tarot service state changes
+    });
+  }
 
   Color _hexToColor(String hexCode) {
     final hexString = hexCode.replaceAll('#', '');
@@ -21,61 +49,78 @@ class MainTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final lightTextColor = _hexToColor('F0E6D8');
     final purpleAccent = _hexToColor('6A1B9A');
+    final authProvider = Provider.of<AuthProvider>(context);
+    final userFirstName = authProvider.user?.firstName ?? 'User';
 
     return SafeArea(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with profile and settings
-              _buildHeader(lightTextColor, purpleAccent),
-              
-              const SizedBox(height: 30),
-              
-              // Affirmation Card
-              _buildAffirmationCard(lightTextColor, purpleAccent),
-              
-              const SizedBox(height: 30),
-              
-              // Challenge Section
-              _buildChallengeSection(lightTextColor, purpleAccent),
-              
-              const SizedBox(height: 30),
-              
-              // Ritual Section
-              _buildRitualSection(lightTextColor, purpleAccent),
-              
-              const SizedBox(height: 30),
-              
-              // Action Step
-              _buildActionStep(lightTextColor, purpleAccent),
-              
-              const SizedBox(height: 30),
-              
-              // Mood Tracking
-              _buildMoodTracking(lightTextColor, purpleAccent),
-              
-              const SizedBox(height: 30),
-              
-              // Exclusive Videos
-              _buildExclusiveVideos(lightTextColor, purpleAccent),
-              
-              const SizedBox(height: 30),
-              
-              // Featured Ritual
-              _buildFeaturedRitual(lightTextColor, purpleAccent),
-              
-              const SizedBox(height: 100), // Space for bottom navigation
-            ],
+      child: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Header with profile and settings
+                  _buildHeader(lightTextColor, purpleAccent, userFirstName),
+                  
+                  const SizedBox(height: 30),
+                  
+                  // Affirmation Card
+                  _buildAffirmationCard(lightTextColor, purpleAccent),
+            
+                  const SizedBox(height: 30),
+                  
+                  // Challenge Section
+                  _buildChallengeSection(lightTextColor, purpleAccent),
+                  
+                  const SizedBox(height: 30),
+                  
+                  // Ritual Section
+                  _buildRitualSection(lightTextColor, purpleAccent),
+                  
+                  const SizedBox(height: 30),
+                  
+                  // Action Step
+                  _buildActionStep(lightTextColor, purpleAccent),
+                  
+                  const SizedBox(height: 30),
+                  
+                  // Mood Tracking
+                  _buildMoodTracking(lightTextColor, purpleAccent),
+                  
+                  const SizedBox(height: 30),
+                  
+                  // Exclusive Videos
+                  _buildExclusiveVideos(lightTextColor, purpleAccent),
+                  
+                  const SizedBox(height: 30),
+                  
+                  // Featured Ritual
+                  _buildFeaturedRitual(lightTextColor, purpleAccent),
+                  
+                  const SizedBox(height: 100), // Space for bottom navigation
+                ],
+              ),
+            ),
           ),
-        ),
+          // Tarot card overlay
+          if (_tarotService.isRevealed && _tarotService.currentCard != null)
+            TarotCardWidget(
+              tarotCard: _tarotService.currentCard!,
+              onClose: () {
+                _tarotService.reset();
+              },
+              onGrabNewMessage: () {
+                _tarotService.grabNewMessage();
+              },
+            ),
+        ],
       ),
     );
   }
 
-  Widget _buildHeader(Color lightTextColor, Color purpleAccent) {
+  Widget _buildHeader(Color lightTextColor, Color purpleAccent, String userFirstName) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -91,12 +136,24 @@ class MainTab extends StatelessWidget {
                 ),
               ),
               Text(
-                'Liz!',
+                'Gabriella!',
                 style: GoogleFonts.dmSans(
                   color: lightTextColor,
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
                 ),
+              ),
+              const SizedBox(width: 8),
+              Icon(
+                Icons.auto_awesome,
+                color: lightTextColor,
+                size: 16,
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                Icons.auto_awesome,
+                color: lightTextColor,
+                size: 16,
               ),
             ],
           ),
@@ -106,16 +163,29 @@ class MainTab extends StatelessWidget {
           height: 40,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: purpleAccent.withOpacity(0.3),
+            color: Colors.white,
             border: Border.all(
               color: lightTextColor.withOpacity(0.3),
               width: 1,
             ),
           ),
-          child: Icon(
-            Icons.settings,
-            color: lightTextColor,
-            size: 20,
+          child: ClipOval(
+            child: Image.asset(
+              'assets/images/profile_placeholder.png',
+              width: 40,
+              height: 40,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: Colors.grey[300],
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.grey[600],
+                    size: 24,
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ],
@@ -123,6 +193,9 @@ class MainTab extends StatelessWidget {
   }
 
   Widget _buildAffirmationCard(Color lightTextColor, Color purpleAccent) {
+    final now = DateTime.now();
+    final dateStr = '${now.day} ${_getMonthName(now.month)} ${now.year}';
+    
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -154,41 +227,61 @@ class MainTab extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Reveal Today\'s Secret',
+            'Unlock your message of the day',
             style: GoogleFonts.dmSans(
               color: lightTextColor,
               fontSize: 24,
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 16),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            decoration: BoxDecoration(
-              color: lightTextColor.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(25),
-            ),
-            child: Text(
-              'Open',
-              style: GoogleFonts.dmSans(
-                color: lightTextColor,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
           const SizedBox(height: 8),
           Text(
-            'There may be several lines of text here.',
+            'Unique for $dateStr',
             style: GoogleFonts.dmSans(
               color: lightTextColor.withOpacity(0.7),
               fontSize: 12,
               fontWeight: FontWeight.w400,
             ),
           ),
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () {
+              _tarotService.revealAdvice();
+              setState(() {
+                // Trigger rebuild to show tarot card
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
+                  color: lightTextColor,
+                  width: 1.5,
+                ),
+              ),
+              child: Text(
+                'Open',
+                style: GoogleFonts.dmSans(
+                  color: lightTextColor,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  String _getMonthName(int month) {
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    return months[month - 1];
   }
 
   Widget _buildChallengeSection(Color lightTextColor, Color purpleAccent) {
