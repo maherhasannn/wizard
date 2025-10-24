@@ -13,6 +13,7 @@ import 'services/content_service.dart';
 import 'services/calendar_service.dart';
 import 'services/power_service.dart';
 import 'services/user_service.dart';
+import 'services/subscription_service.dart';
 
 // Providers
 import 'providers/auth_provider.dart';
@@ -21,6 +22,7 @@ import 'providers/content_provider.dart';
 import 'providers/calendar_provider.dart';
 import 'providers/power_provider.dart';
 import 'providers/user_provider.dart';
+import 'providers/subscription_provider.dart';
 
 import 'shared_background.dart';
 import 'intro_sequence_screen.dart';
@@ -41,6 +43,7 @@ void main() async {
   final calendarService = CalendarService(apiClient);
   final powerService = PowerService(apiClient);
   final userService = UserService(apiClient);
+  final subscriptionService = SubscriptionService(apiClient);
   
   runApp(
     MultiProvider(
@@ -51,6 +54,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => CalendarProvider(calendarService)),
         ChangeNotifierProvider(create: (_) => PowerProvider(powerService)),
         ChangeNotifierProvider(create: (_) => UserProvider(userService)),
+        ChangeNotifierProvider(create: (_) => SubscriptionProvider(subscriptionService)),
       ],
       child: const MyApp(),
     ),

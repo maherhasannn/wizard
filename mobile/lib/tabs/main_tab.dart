@@ -9,6 +9,7 @@ import '../screens/self_love_journey_onboarding_screen.dart';
 import '../screens/self_love_journey_screen.dart';
 import '../screens/meditation_player_screen.dart';
 import '../screens/videos_screen.dart';
+import '../screens/profile_menu_screen.dart';
 import '../models/meditation_track.dart';
 
 class MainTab extends StatefulWidget {
@@ -100,6 +101,26 @@ class _MainTabState extends State<MainTab> {
       // Here you could save the completion status to local storage
       print('Action step completed!');
     }
+  }
+
+  void _openProfileMenu() {
+    // SECURITY: Verify user is authenticated before opening profile menu
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (!authProvider.isAuthenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please log in to access your profile'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ProfileMenuScreen(),
+      ),
+    );
   }
 
   void _navigateToMeditationPlayer(Map<String, dynamic> videoData) {
@@ -265,33 +286,36 @@ class _MainTabState extends State<MainTab> {
             ],
           ),
         ),
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white,
-            border: Border.all(
-              color: lightTextColor.withOpacity(0.3),
-              width: 1,
+        GestureDetector(
+          onTap: () => _openProfileMenu(),
+          child: Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              border: Border.all(
+                color: lightTextColor.withOpacity(0.3),
+                width: 1,
+              ),
             ),
-          ),
-          child: ClipOval(
-            child: Image.asset(
-              'assets/images/profile_placeholder.png',
-              width: 40,
-              height: 40,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.grey[300],
-                  child: Icon(
-                    Icons.person,
-                    color: Colors.grey[600],
-                    size: 24,
-                  ),
-                );
-              },
+            child: ClipOval(
+              child: Image.asset(
+                'assets/images/profile_placeholder.png',
+                width: 40,
+                height: 40,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey[300],
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.grey[600],
+                      size: 24,
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ),
