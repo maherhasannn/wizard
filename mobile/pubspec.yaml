@@ -53,6 +53,10 @@ dependencies:
   # In-app purchases and reviews
   in_app_purchase: ^3.1.13
   in_app_review: ^2.0.9
+  
+  # Vibrations and animations
+  vibration: ^2.0.0
+  confetti: ^0.7.0
 
 dev_dependencies:
   flutter_test:
