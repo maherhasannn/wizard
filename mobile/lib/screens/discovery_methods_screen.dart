@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'swipe_cards_screen.dart';
 import 'map_view_screen.dart';
 import 'filter_search_screen.dart';
@@ -38,7 +37,8 @@ class DiscoveryMethodsScreen extends StatelessWidget {
                   const SizedBox(width: 16),
                   Text(
                     'How would you like to reach new friends?',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
@@ -182,7 +182,8 @@ class DiscoveryMethodsScreen extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: textColor,
                             fontSize: 20,
                             fontWeight: FontWeight.w600,
@@ -191,7 +192,8 @@ class DiscoveryMethodsScreen extends StatelessWidget {
                         const SizedBox(height: 8),
                         Text(
                           description,
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: textColor.withOpacity(0.8),
                             fontSize: 14,
                             fontWeight: FontWeight.w400,

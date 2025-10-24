@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/network_user.dart';
 import '../data/network_users_data.dart';
 import '../widgets/profile_card.dart';
@@ -90,7 +89,8 @@ class _SwipeCardsScreenState extends State<SwipeCardsScreen>
                 const SizedBox(height: 20),
                 Text(
                   'No more profiles!',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
@@ -99,7 +99,8 @@ class _SwipeCardsScreenState extends State<SwipeCardsScreen>
                 const SizedBox(height: 8),
                 Text(
                   'Check back later for new people to meet',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor.withOpacity(0.7),
                     fontSize: 16,
                   ),
@@ -117,7 +118,8 @@ class _SwipeCardsScreenState extends State<SwipeCardsScreen>
                   ),
                   child: Text(
                     'Go Back',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -152,7 +154,8 @@ class _SwipeCardsScreenState extends State<SwipeCardsScreen>
                   const SizedBox(width: 16),
                   Text(
                     'Swipe Cards',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
@@ -161,7 +164,8 @@ class _SwipeCardsScreenState extends State<SwipeCardsScreen>
                   const Spacer(),
                   Text(
                     '${_currentIndex + 1}/${_users.length}',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor.withOpacity(0.7),
                       fontSize: 14,
                       fontWeight: FontWeight.w400,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/network_user.dart';
 
 class ProfileCard extends StatefulWidget {
@@ -175,7 +174,8 @@ class _ProfileCardState extends State<ProfileCard>
                                   children: [
                                     Text(
                                       widget.user.name,
-                                      style: GoogleFonts.dmSans(
+                                      style: TextStyle(
+          fontFamily: 'DMSans',
                                         color: lightTextColor,
                                         fontSize: 28,
                                         fontWeight: FontWeight.w600,
@@ -184,7 +184,8 @@ class _ProfileCardState extends State<ProfileCard>
                                     const SizedBox(width: 8),
                                     Text(
                                       '${widget.user.age}',
-                                      style: GoogleFonts.dmSans(
+                                      style: TextStyle(
+          fontFamily: 'DMSans',
                                         color: lightTextColor.withOpacity(0.8),
                                         fontSize: 24,
                                         fontWeight: FontWeight.w400,
@@ -198,7 +199,8 @@ class _ProfileCardState extends State<ProfileCard>
                                 // Location
                                 Text(
                                   widget.user.locationString,
-                                  style: GoogleFonts.dmSans(
+                                  style: TextStyle(
+          fontFamily: 'DMSans',
                                     color: lightTextColor.withOpacity(0.9),
                                     fontSize: 16,
                                     fontWeight: FontWeight.w400,
@@ -210,7 +212,8 @@ class _ProfileCardState extends State<ProfileCard>
                                 // Bio
                                 Text(
                                   widget.user.bio,
-                                  style: GoogleFonts.dmSans(
+                                  style: TextStyle(
+          fontFamily: 'DMSans',
                                     color: lightTextColor.withOpacity(0.9),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
@@ -241,7 +244,8 @@ class _ProfileCardState extends State<ProfileCard>
                                       ),
                                       child: Text(
                                         interest,
-                                        style: GoogleFonts.dmSans(
+                                        style: TextStyle(
+          fontFamily: 'DMSans',
                                           color: lightTextColor,
                                           fontSize: 12,
                                           fontWeight: FontWeight.w500,
@@ -265,7 +269,8 @@ class _ProfileCardState extends State<ProfileCard>
                                       const SizedBox(width: 4),
                                       Text(
                                         widget.user.instagram,
-                                        style: GoogleFonts.dmSans(
+                                        style: TextStyle(
+          fontFamily: 'DMSans',
                                           color: lightTextColor.withOpacity(0.7),
                                           fontSize: 14,
                                           fontWeight: FontWeight.w400,
@@ -328,7 +333,8 @@ class _ProfileCardState extends State<ProfileCard>
       child: Center(
         child: Text(
           widget.user.initials,
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 48,
             fontWeight: FontWeight.w600,

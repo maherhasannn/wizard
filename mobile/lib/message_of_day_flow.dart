@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class MessageOfDayFlow extends StatefulWidget {
   const MessageOfDayFlow({super.key});
@@ -90,7 +89,8 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
           children: [
             Text(
               '$_loadingProgress%',
-              style: GoogleFonts.dmSans(
+              style: TextStyle(
+          fontFamily: 'DMSans',
                 color: lightTextColor,
                 fontSize: 48,
                 fontWeight: FontWeight.w300,
@@ -184,7 +184,8 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
             Text(
               'You will meet your destiny very soon and unexpectedly.',
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSans(
+              style: TextStyle(
+          fontFamily: 'DMSans',
                 color: lightTextColor,
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
@@ -199,7 +200,8 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
               children: [
                 Text(
                   'Tap for full message',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor.withOpacity(0.7),
                     fontSize: 12,
                     fontWeight: FontWeight.w300,
@@ -248,7 +250,8 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
           const SizedBox(height: 8),
           Text(
             'THE SUN',
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: Colors.amber.shade900,
               fontSize: 12,
               fontWeight: FontWeight.bold,
@@ -291,6 +294,7 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
             child: Text(
               '★',
               style: TextStyle(
+          fontFamily: 'DMSans',
                 color: Colors.amber.shade100,
                 fontSize: 32,
               ),
@@ -310,7 +314,8 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
       children: [
         Text(
           'Unlock your message of the day',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -319,7 +324,8 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
         const SizedBox(height: 8),
         Text(
           'Unique for ${DateTime.now().day} ${_getMonthName(DateTime.now().month)} ${DateTime.now().year}',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor.withOpacity(0.7),
             fontSize: 14,
             fontWeight: FontWeight.w300,
@@ -346,7 +352,8 @@ class _MessageOfDayFlowState extends State<MessageOfDayFlow>
               ),
               child: Text(
                 'Unlock Message',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,

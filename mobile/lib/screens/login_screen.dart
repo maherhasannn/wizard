@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'register_screen.dart';
@@ -89,7 +88,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           },
                           child: Text(
                             'Forgot password?',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: purpleAccent,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -102,7 +102,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     
                     Text(
                       'Log in',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor,
                         fontSize: 32,
                         fontWeight: FontWeight.w600,
@@ -112,7 +113,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 8),
                     Text(
                       'If the account already exists',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor.withOpacity(0.7),
                         fontSize: 16,
                         fontWeight: FontWeight.w300,
@@ -125,10 +127,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
-                      style: GoogleFonts.dmSans(color: lightTextColor),
+                      style: TextStyle(
+          fontFamily: 'DMSans',color: lightTextColor),
                       decoration: InputDecoration(
                         labelText: 'Email',
-                        labelStyle: GoogleFonts.dmSans(
+                        labelStyle: TextStyle(
                           color: lightTextColor.withOpacity(0.7),
                         ),
                         enabledBorder: OutlineInputBorder(
@@ -166,10 +169,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextFormField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
-                      style: GoogleFonts.dmSans(color: lightTextColor),
+                      style: TextStyle(
+          fontFamily: 'DMSans',color: lightTextColor),
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        labelStyle: GoogleFonts.dmSans(
+                        labelStyle: TextStyle(
                           color: lightTextColor.withOpacity(0.7),
                         ),
                         enabledBorder: OutlineInputBorder(
@@ -219,7 +223,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.only(bottom: 16),
                         child: Text(
                           authProvider.error!,
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: Colors.red,
                             fontSize: 14,
                           ),
@@ -248,7 +253,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             )
                           : Text(
                               'Log in',
-                              style: GoogleFonts.dmSans(
+                              style: TextStyle(
+          fontFamily: 'DMSans',
                                 color: lightTextColor,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -266,7 +272,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: Text(
                         'Sign up',
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: purpleAccent,
                           fontSize: 14,
                           fontWeight: FontWeight.w500,

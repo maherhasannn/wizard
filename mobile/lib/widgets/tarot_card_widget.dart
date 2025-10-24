@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:vibration/vibration.dart';
-import 'package:confetti/confetti.dart';
 import '../models/tarot_card.dart';
 import '../shared_background.dart';
 
@@ -9,12 +7,14 @@ class TarotCardWidget extends StatefulWidget {
   final TarotCard tarotCard;
   final VoidCallback onClose;
   final VoidCallback onGrabNewMessage;
+  final bool isFirstLoadOfDay;
 
   const TarotCardWidget({
     super.key,
     required this.tarotCard,
     required this.onClose,
     required this.onGrabNewMessage,
+    this.isFirstLoadOfDay = true,
   });
 
   @override
@@ -26,7 +26,6 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
   late AnimationController _cardController;
   late AnimationController _progressController;
   late AnimationController _textController;
-  late ConfettiController _confettiController;
   
   late Animation<double> _cardAnimation;
   late Animation<double> _progressAnimation;
@@ -56,7 +55,6 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
       vsync: this,
     );
 
-    _confettiController = ConfettiController(duration: const Duration(seconds: 2));
 
     _cardAnimation = CurvedAnimation(
       parent: _cardController,
@@ -73,7 +71,24 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
       curve: Curves.easeIn,
     );
 
-    _startLoadingSequence();
+    // TEMPORARILY DISABLED FOR TESTING - Skip loading animation
+    _isLoading = false;
+    _showCard = true;
+    _showText = true;
+    _cardController.forward();
+    _textController.forward();
+    
+    // Original loading logic (commented out for testing):
+    // if (widget.isFirstLoadOfDay) {
+    //   _startLoadingSequence();
+    // } else {
+    //   // Skip loading animation, show card immediately
+    //   _isLoading = false;
+    //   _showCard = true;
+    //   _showText = true;
+    //   _cardController.forward();
+    //   _textController.forward();
+    // }
   }
 
   void _startLoadingSequence() async {
@@ -109,9 +124,6 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
         _showCard = true;
       });
       
-      // Start confetti
-      _confettiController.play();
-      
       // Start card animation
       _cardController.forward();
       
@@ -132,7 +144,6 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
     _cardController.dispose();
     _progressController.dispose();
     _textController.dispose();
-    _confettiController.dispose();
     super.dispose();
   }
 
@@ -152,25 +163,6 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
         backgroundColor: Colors.transparent,
         body: Stack(
           children: [
-            // Confetti
-            Align(
-              alignment: Alignment.topCenter,
-              child: ConfettiWidget(
-                confettiController: _confettiController,
-                blastDirection: 1.57, // Downward
-                emissionFrequency: 0.05,
-                numberOfParticles: 50,
-                gravity: 0.3,
-                shouldLoop: false,
-                colors: const [
-                  Colors.purple,
-                  Colors.pink,
-                  Colors.amber,
-                  Colors.cyan,
-                  Colors.green,
-                ],
-              ),
-            ),
             
             SafeArea(
               child: Column(
@@ -204,10 +196,11 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                                     // Main Advice
                                     Text(
                                       widget.tarotCard.mainAdvice,
-                                      style: GoogleFonts.dmSans(
+                                      style: TextStyle(
+          fontFamily: 'DMSans',
+                                        fontWeight: FontWeight.w600,
                                         color: lightTextColor,
                                         fontSize: 24,
-                                        fontWeight: FontWeight.w600,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
@@ -216,7 +209,9 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                                     // Description
                                     Text(
                                       widget.tarotCard.description,
-                                      style: GoogleFonts.dmSans(
+                                      style: TextStyle(
+          fontFamily: 'DMSans',
+                                        fontWeight: FontWeight.w400,
                                         color: lightTextColor.withOpacity(0.8),
                                         fontSize: 16,
                                         height: 1.5,
@@ -230,10 +225,11 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
                                       onTap: widget.onGrabNewMessage,
                                       child: Text(
                                         widget.tarotCard.actionText,
-                                        style: GoogleFonts.dmSans(
+                                        style: TextStyle(
+          fontFamily: 'DMSans',
+                                          fontWeight: FontWeight.w600,
                                           color: purpleAccent,
                                           fontSize: 18,
-                                          fontWeight: FontWeight.w600,
                                           decoration: TextDecoration.underline,
                                           decorationColor: purpleAccent,
                                         ),
@@ -310,10 +306,11 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
               Center(
                 child: Text(
                   '$_progressPercentage%',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
+                    fontWeight: FontWeight.w600,
                     color: lightTextColor,
                     fontSize: 32,
-                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
@@ -326,10 +323,11 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
         // Loading text
         Text(
           'Channeling your destiny...',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
+            fontWeight: FontWeight.w400,
             color: lightTextColor.withOpacity(0.8),
             fontSize: 18,
-            fontWeight: FontWeight.w400,
           ),
           textAlign: TextAlign.center,
         ),
@@ -367,10 +365,11 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
           ),
           Text(
             'Message of the day',
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
+              fontWeight: FontWeight.w600,
               color: lightTextColor,
               fontSize: 18,
-              fontWeight: FontWeight.w600,
             ),
           ),
           IconButton(
@@ -401,15 +400,18 @@ class _TarotCardWidgetState extends State<TarotCardWidget>
             children: [
               Text(
                 widget.tarotCard.mediaTitle,
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
+                  fontWeight: FontWeight.w600,
                   color: lightTextColor,
                   fontSize: 16,
-                  fontWeight: FontWeight.w600,
                 ),
               ),
               Text(
                 widget.tarotCard.mediaDuration,
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
+                  fontWeight: FontWeight.w400,
                   color: lightTextColor.withOpacity(0.7),
                   fontSize: 14,
                 ),

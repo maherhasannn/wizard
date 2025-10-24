@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../shared_background.dart';
@@ -81,7 +80,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       children: [
         Text(
           'Forgot password',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 32,
             fontWeight: FontWeight.w600,
@@ -95,10 +95,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           child: TextFormField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
-            style: GoogleFonts.dmSans(color: lightTextColor),
+            style: TextStyle(
+          fontFamily: 'DMSans',color: lightTextColor),
             decoration: InputDecoration(
               labelText: 'Email',
-              labelStyle: GoogleFonts.dmSans(
+              labelStyle: TextStyle(
                 color: lightTextColor.withOpacity(0.7),
               ),
               enabledBorder: OutlineInputBorder(
@@ -145,7 +146,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
           child: Text(
             'Restore password',
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor,
               fontSize: 16,
               fontWeight: FontWeight.w600,

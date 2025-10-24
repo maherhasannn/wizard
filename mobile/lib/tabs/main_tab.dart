@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../services/tarot_service.dart';
 import '../widgets/tarot_card_widget.dart';
@@ -108,6 +107,7 @@ class _MainTabState extends State<MainTab> {
           if (_tarotService.isRevealed && _tarotService.currentCard != null)
             TarotCardWidget(
               tarotCard: _tarotService.currentCard!,
+              isFirstLoadOfDay: _tarotService.isFirstLoadOfDay,
               onClose: () {
                 _tarotService.reset();
               },
@@ -129,18 +129,20 @@ class _MainTabState extends State<MainTab> {
             children: [
               Text(
                 'Welcome back ',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
+                  fontWeight: FontWeight.w400,
                   color: lightTextColor,
                   fontSize: 20,
-                  fontWeight: FontWeight.w400,
                 ),
               ),
               Text(
-                'Gabriella!',
-                style: GoogleFonts.dmSans(
+                '$userFirstName!',
+                style: TextStyle(
+          fontFamily: 'DMSans',
+                  fontWeight: FontWeight.w600,
                   color: lightTextColor,
                   fontSize: 20,
-                  fontWeight: FontWeight.w600,
                 ),
               ),
               const SizedBox(width: 8),
@@ -218,7 +220,8 @@ class _MainTabState extends State<MainTab> {
         children: [
           Text(
             "LIZ'S AFFIRMATION",
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor.withOpacity(0.8),
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -228,7 +231,8 @@ class _MainTabState extends State<MainTab> {
           const SizedBox(height: 8),
           Text(
             'Unlock your message of the day',
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor,
               fontSize: 24,
               fontWeight: FontWeight.w600,
@@ -237,7 +241,8 @@ class _MainTabState extends State<MainTab> {
           const SizedBox(height: 8),
           Text(
             'Unique for $dateStr',
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor.withOpacity(0.7),
               fontSize: 12,
               fontWeight: FontWeight.w400,
@@ -263,7 +268,8 @@ class _MainTabState extends State<MainTab> {
               ),
               child: Text(
                 'Open',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -290,7 +296,8 @@ class _MainTabState extends State<MainTab> {
       children: [
         Text(
           'CHALLENGE',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor.withOpacity(0.8),
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -316,7 +323,8 @@ class _MainTabState extends State<MainTab> {
                   children: [
                     Text(
                       '14-Day Self-Love Journey',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -325,7 +333,8 @@ class _MainTabState extends State<MainTab> {
                     const SizedBox(height: 4),
                     Text(
                       'A daily journey to rebuild your confidence step by step.',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor.withOpacity(0.7),
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
@@ -338,7 +347,8 @@ class _MainTabState extends State<MainTab> {
                 children: [
                   Text(
                     '4/21',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor.withOpacity(0.7),
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
@@ -365,7 +375,8 @@ class _MainTabState extends State<MainTab> {
       children: [
         Text(
           'RITUAL',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor.withOpacity(0.8),
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -407,7 +418,8 @@ class _MainTabState extends State<MainTab> {
                   children: [
                     Text(
                       'The power to choose',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -416,7 +428,8 @@ class _MainTabState extends State<MainTab> {
                     const SizedBox(height: 4),
                     Text(
                       '1 min 15 sec • Text',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor.withOpacity(0.7),
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
@@ -438,7 +451,8 @@ class _MainTabState extends State<MainTab> {
       children: [
         Text(
           'YOUR ACTION STEP',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor.withOpacity(0.8),
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -467,7 +481,8 @@ class _MainTabState extends State<MainTab> {
               Expanded(
                 child: Text(
                   'Stand in front of the mirror and say out loud: "I choose myself." Repeat it three times with eye contact, even if it feels uncomfortable.',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
@@ -487,7 +502,8 @@ class _MainTabState extends State<MainTab> {
       children: [
         Text(
           'How are you feeling today?',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -535,7 +551,8 @@ class _MainTabState extends State<MainTab> {
             const SizedBox(width: 8),
             Text(
               mood,
-              style: GoogleFonts.dmSans(
+              style: TextStyle(
+          fontFamily: 'DMSans',
                 color: isSelected ? lightTextColor : lightTextColor.withOpacity(0.8),
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -566,7 +583,8 @@ class _MainTabState extends State<MainTab> {
           children: [
             Text(
               'Exclusive Videos',
-              style: GoogleFonts.dmSans(
+              style: TextStyle(
+          fontFamily: 'DMSans',
                 color: lightTextColor,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -626,7 +644,8 @@ class _MainTabState extends State<MainTab> {
                           Text(
                             index == 0 ? 'How to Overcoming Fear' : 
                             index == 1 ? 'Magnetic Energy Reset' : 'Inner Peace Journey',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor,
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -635,7 +654,8 @@ class _MainTabState extends State<MainTab> {
                           const SizedBox(height: 4),
                           Text(
                             index == 0 ? '5 min' : index == 1 ? '12 min' : '8 min',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor.withOpacity(0.7),
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -660,7 +680,8 @@ class _MainTabState extends State<MainTab> {
       children: [
         Text(
           'Featured Ritual',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 18,
             fontWeight: FontWeight.w600,

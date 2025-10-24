@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'power_preview_screen.dart';
 
 class PowerSelectionScreen extends StatefulWidget {
@@ -101,7 +100,8 @@ class _PowerSelectionScreenState extends State<PowerSelectionScreen> {
               // Header
               Text(
                 'Where does your power go first?',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor,
                   fontSize: 26,
                   fontWeight: FontWeight.w600,
@@ -167,7 +167,8 @@ class _PowerSelectionScreenState extends State<PowerSelectionScreen> {
                                     child: Text(
                                       power['title'],
                                       textAlign: TextAlign.center,
-                                      style: GoogleFonts.dmSans(
+                                      style: TextStyle(
+          fontFamily: 'DMSans',
                                         color: lightTextColor,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w600,
@@ -181,7 +182,8 @@ class _PowerSelectionScreenState extends State<PowerSelectionScreen> {
                                     child: Text(
                                       power['subtitle'],
                                       textAlign: TextAlign.center,
-                                      style: GoogleFonts.dmSans(
+                                      style: TextStyle(
+          fontFamily: 'DMSans',
                                         color: lightTextColor.withOpacity(0.7),
                                         fontSize: 10,
                                         fontWeight: FontWeight.w300,
@@ -235,7 +237,8 @@ class _PowerSelectionScreenState extends State<PowerSelectionScreen> {
                   ),
                   child: Text(
                     'Continue',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 18,
                       fontWeight: FontWeight.w500,

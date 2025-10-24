@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../shared_background.dart';
 import '../providers/user_provider.dart';
@@ -48,7 +47,8 @@ class _WhyYouCameScreenState extends State<WhyYouCameScreen> {
         SnackBar(
           content: Text(
             'Please select at least one reason',
-            style: GoogleFonts.dmSans(color: Colors.white),
+            style: TextStyle(
+          fontFamily: 'DMSans',color: Colors.white),
           ),
           backgroundColor: _hexToColor('6A1B9A'),
         ),
@@ -95,7 +95,8 @@ class _WhyYouCameScreenState extends State<WhyYouCameScreen> {
             
             Text(
               'How would you like to continue?',
-              style: GoogleFonts.dmSans(
+              style: TextStyle(
+          fontFamily: 'DMSans',
                 color: lightTextColor,
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -105,7 +106,8 @@ class _WhyYouCameScreenState extends State<WhyYouCameScreen> {
             const SizedBox(height: 8),
             Text(
               'Sign in to your account or create a new one',
-              style: GoogleFonts.dmSans(
+              style: TextStyle(
+          fontFamily: 'DMSans',
                 color: lightTextColor.withOpacity(0.7),
                 fontSize: 14,
                 fontWeight: FontWeight.w300,
@@ -134,7 +136,8 @@ class _WhyYouCameScreenState extends State<WhyYouCameScreen> {
                 ),
                 child: Text(
                   'Sign In',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -164,7 +167,8 @@ class _WhyYouCameScreenState extends State<WhyYouCameScreen> {
                 ),
                 child: Text(
                   'Create Account',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: _hexToColor('6A1B9A'),
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -198,7 +202,8 @@ class _WhyYouCameScreenState extends State<WhyYouCameScreen> {
                 // Header
                 Text(
                   'Why did you download\nthe LIZ app?',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 32,
                     fontWeight: FontWeight.w600,
@@ -208,7 +213,8 @@ class _WhyYouCameScreenState extends State<WhyYouCameScreen> {
                 const SizedBox(height: 8),
                 Text(
                   'Select all that apply to personalize your experience',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor.withOpacity(0.7),
                     fontSize: 16,
                     fontWeight: FontWeight.w300,
@@ -261,7 +267,8 @@ class _WhyYouCameScreenState extends State<WhyYouCameScreen> {
                                 const SizedBox(height: 8),
                                 Text(
                                   option['title'],
-                                  style: GoogleFonts.dmSans(
+                                  style: TextStyle(
+          fontFamily: 'DMSans',
                                     color: isSelected 
                                         ? lightTextColor
                                         : lightTextColor.withOpacity(0.8),
@@ -297,7 +304,8 @@ class _WhyYouCameScreenState extends State<WhyYouCameScreen> {
                     ),
                     child: Text(
                       'Continue',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/network_user.dart';
 import '../data/network_users_data.dart';
 import '../widgets/map_user_pin.dart';
@@ -64,7 +63,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
                   const SizedBox(width: 16),
                   Text(
                     'Show on a Map',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
@@ -156,7 +156,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
                           const SizedBox(width: 12),
                           Text(
                             'Search on a map',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor.withOpacity(0.7),
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
@@ -219,7 +220,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
                         children: [
                           Text(
                             _selectedUser!.name,
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -228,7 +230,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
                           const SizedBox(height: 4),
                           Text(
                             '${_selectedUser!.age} • ${_selectedUser!.locationString}',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor.withOpacity(0.8),
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
@@ -237,7 +240,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
                           const SizedBox(height: 4),
                           Text(
                             _selectedUser!.bio,
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor.withOpacity(0.7),
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -260,7 +264,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
                         ),
                         child: Text(
                           'View Profile',
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: lightTextColor,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -297,7 +302,8 @@ class _MapViewScreenState extends State<MapViewScreen> {
       child: Center(
         child: Text(
           user.initials,
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 20,
             fontWeight: FontWeight.w600,

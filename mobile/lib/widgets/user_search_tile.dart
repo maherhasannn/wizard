@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/network_user.dart';
 
 class UserSearchTile extends StatelessWidget {
@@ -72,7 +71,8 @@ class UserSearchTile extends StatelessWidget {
                     children: [
                       Text(
                         user.name,
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -81,7 +81,8 @@ class UserSearchTile extends StatelessWidget {
                       const SizedBox(width: 8),
                       Text(
                         '${user.age}',
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor.withOpacity(0.8),
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -103,7 +104,8 @@ class UserSearchTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     user.locationString,
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor.withOpacity(0.7),
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -112,7 +114,8 @@ class UserSearchTile extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     user.bio,
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor.withOpacity(0.8),
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
@@ -137,7 +140,8 @@ class UserSearchTile extends StatelessWidget {
                         ),
                         child: Text(
                           interest,
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: lightTextColor.withOpacity(0.8),
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
@@ -182,7 +186,8 @@ class UserSearchTile extends StatelessWidget {
       child: Center(
         child: Text(
           user.initials,
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 16,
             fontWeight: FontWeight.w600,

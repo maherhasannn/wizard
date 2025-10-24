@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/meditation_track.dart';
 import '../widgets/sleep_timer_modal.dart';
 
@@ -132,7 +131,8 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
                   ),
                   Text(
                     'Meditation',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -199,7 +199,8 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
                       // Track info
                       Text(
                         widget.track.title,
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 28,
                           fontWeight: FontWeight.w600,
@@ -209,7 +210,8 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
                       const SizedBox(height: 8),
                       Text(
                         widget.track.artist,
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor.withOpacity(0.8),
                           fontSize: 18,
                           fontWeight: FontWeight.w400,
@@ -238,7 +240,8 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
                               children: [
                                 Text(
                                   _formatDuration(_currentPosition),
-                                  style: GoogleFonts.dmSans(
+                                  style: TextStyle(
+          fontFamily: 'DMSans',
                                     color: lightTextColor.withOpacity(0.8),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
@@ -246,7 +249,8 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
                                 ),
                                 Text(
                                   _formatDuration(_totalDuration),
-                                  style: GoogleFonts.dmSans(
+                                  style: TextStyle(
+          fontFamily: 'DMSans',
                                     color: lightTextColor.withOpacity(0.8),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
@@ -416,7 +420,8 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
           const SizedBox(height: 4),
           Text(
             label,
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor.withOpacity(0.6),
               fontSize: 12,
               fontWeight: FontWeight.w300,

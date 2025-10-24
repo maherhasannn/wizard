@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'shared_background.dart';
 import 'plan_ready_screen.dart';
 
@@ -151,7 +150,8 @@ class _PlanCraftingScreenState extends State<PlanCraftingScreen>
                 child: Text(
                   'Crafting your plan...',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 24,
                     fontWeight: FontWeight.w400,
@@ -167,7 +167,8 @@ class _PlanCraftingScreenState extends State<PlanCraftingScreen>
                 child: Text(
                   'Based on your focus: ${_getSelectedPowersText()}',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor.withOpacity(0.7),
                     fontSize: 16,
                     fontWeight: FontWeight.w300,

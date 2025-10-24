@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'dart:async';
 import 'shared_background.dart';
 import 'power_selection_screen.dart';
@@ -125,7 +124,8 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
           child: Text(
             textData['text'],
             textAlign: TextAlign.center,
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: _hexToColor(textData['textColor']),
               fontSize: 32,
               fontWeight: FontWeight.w300,
@@ -139,7 +139,7 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
   // New widget for the final sign-up screen content
   Widget _buildSignUpContent() {
     final lightTextColor = _hexToColor('F0E6D8');
-    final buttonTextStyle = GoogleFonts.dmSans(
+    final buttonTextStyle = TextStyle(
       color: lightTextColor,
       fontSize: 16,
       fontWeight: FontWeight.w500,
@@ -158,7 +158,8 @@ class _IntroSequenceScreenState extends State<IntroSequenceScreen> {
                 child: Text(
                   "Let's unleash the force you already are",
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 26,
                     fontWeight: FontWeight.w300,

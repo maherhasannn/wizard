@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/challenge.dart';
 import '../screens/challenges_list_screen.dart';
 
@@ -70,7 +69,8 @@ class ChallengeCard extends StatelessWidget {
                     children: [
                       Text(
                         activeChallenge != null ? 'Active Challenge' : 'Daily Challenges',
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -80,7 +80,8 @@ class ChallengeCard extends StatelessWidget {
                         activeChallenge != null 
                             ? activeChallenge!.title
                             : 'Take on a new challenge today',
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor.withOpacity(0.7),
                           fontSize: 14,
                           fontWeight: FontWeight.w300,
@@ -109,7 +110,8 @@ class ChallengeCard extends StatelessWidget {
                       children: [
                         Text(
                           'Day ${progress!.completedDays + 1} of ${activeChallenge!.duration}',
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: lightTextColor.withOpacity(0.8),
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
@@ -134,7 +136,8 @@ class ChallengeCard extends StatelessWidget {
                     ),
                     child: Text(
                       '${((progress!.completedDays / activeChallenge!.duration) * 100).toInt()}%',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -174,7 +177,8 @@ class ChallengeCard extends StatelessWidget {
       ),
       child: Text(
         title,
-        style: GoogleFonts.dmSans(
+        style: TextStyle(
+          fontFamily: 'DMSans',
           color: lightTextColor.withOpacity(0.8),
           fontSize: 10,
           fontWeight: FontWeight.w400,

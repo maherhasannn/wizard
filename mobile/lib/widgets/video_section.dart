@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class VideoSection extends StatelessWidget {
   const VideoSection({super.key});
@@ -29,7 +28,8 @@ class VideoSection extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   'Video',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -39,7 +39,8 @@ class VideoSection extends StatelessWidget {
             ),
             Text(
               'See all >',
-              style: GoogleFonts.dmSans(
+              style: TextStyle(
+          fontFamily: 'DMSans',
                 color: lightTextColor.withOpacity(0.7),
                 fontSize: 14,
                 fontWeight: FontWeight.w300,
@@ -114,7 +115,8 @@ class VideoSection extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: textColor,
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -125,7 +127,8 @@ class VideoSection extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   timeAgo,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: textColor.withOpacity(0.6),
                     fontSize: 10,
                     fontWeight: FontWeight.w300,

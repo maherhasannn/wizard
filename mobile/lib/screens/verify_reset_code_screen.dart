@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../shared_background.dart';
@@ -181,7 +180,8 @@ class _VerifyResetCodeScreenState extends State<VerifyResetCodeScreen> {
                 const SizedBox(height: 40),
                 Text(
                   'Verify email',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: const Color(0xFFF5F5F5),
                     fontSize: 32,
                     fontWeight: FontWeight.w600,
@@ -191,7 +191,8 @@ class _VerifyResetCodeScreenState extends State<VerifyResetCodeScreen> {
                 const SizedBox(height: 8),
                 Text(
                   'We have sent an email with the code to ${widget.email}. Please check the Spam folder.',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: const Color(0xFFF5F5F5).withOpacity(0.7),
                     fontSize: 16,
                     fontWeight: FontWeight.w300,
@@ -213,7 +214,8 @@ class _VerifyResetCodeScreenState extends State<VerifyResetCodeScreen> {
                         textAlign: TextAlign.center,
                         keyboardType: TextInputType.number,
                         maxLength: 1,
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: const Color(0xFFF5F5F5),
                           fontSize: 24,
                           fontWeight: FontWeight.w600,
@@ -274,7 +276,8 @@ class _VerifyResetCodeScreenState extends State<VerifyResetCodeScreen> {
                           )
                         : Text(
                             'Verify',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: const Color(0xFFF5F5F5),
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -292,7 +295,8 @@ class _VerifyResetCodeScreenState extends State<VerifyResetCodeScreen> {
                     _canResend
                         ? 'Resend code'
                         : 'Resend code in ${_resendCountdown}s',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: _canResend
                           ? const Color(0xFF6A1B9A)
                           : const Color(0xFFF5F5F5).withOpacity(0.5),
@@ -309,7 +313,8 @@ class _VerifyResetCodeScreenState extends State<VerifyResetCodeScreen> {
                   onPressed: () => Navigator.pop(context),
                   child: Text(
                     'Back to forgot password',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: const Color(0xFFF5F5F5).withOpacity(0.7),
                       fontSize: 14,
                       fontWeight: FontWeight.w400,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'shared_background.dart';
 import 'plan_crafting_screen.dart';
 
@@ -160,7 +159,7 @@ class _PowerPreviewScreenState extends State<PowerPreviewScreen> {
   @override
   Widget build(BuildContext context) {
     final lightTextColor = _hexToColor('F0E6D8');
-    final buttonTextStyle = GoogleFonts.dmSans(
+    final buttonTextStyle = TextStyle(
       color: lightTextColor,
       fontSize: 16,
       fontWeight: FontWeight.w500,
@@ -194,7 +193,8 @@ class _PowerPreviewScreenState extends State<PowerPreviewScreen> {
                       child: Text(
                         firstPower?['title'] ?? 'Your Power Focus',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 20,
                           fontWeight: FontWeight.w500,
@@ -246,7 +246,8 @@ class _PowerPreviewScreenState extends State<PowerPreviewScreen> {
                                     children: [
                                       Text(
                                         'Meditations',
-                                        style: GoogleFonts.dmSans(
+                                        style: TextStyle(
+          fontFamily: 'DMSans',
                                           color: lightTextColor,
                                           fontSize: 16,
                                           fontWeight: FontWeight.w500,
@@ -258,7 +259,8 @@ class _PowerPreviewScreenState extends State<PowerPreviewScreen> {
                                           padding: const EdgeInsets.only(bottom: 4),
                                           child: Text(
                                             '• $item',
-                                            style: GoogleFonts.dmSans(
+                                            style: TextStyle(
+          fontFamily: 'DMSans',
                                               color: lightTextColor.withOpacity(0.8),
                                               fontSize: 14,
                                             ),
@@ -286,7 +288,8 @@ class _PowerPreviewScreenState extends State<PowerPreviewScreen> {
                                       children: [
                                         Text(
                                           content['title'],
-                                          style: GoogleFonts.dmSans(
+                                          style: TextStyle(
+          fontFamily: 'DMSans',
                                             color: lightTextColor,
                                             fontSize: 18,
                                             fontWeight: FontWeight.w500,
@@ -295,7 +298,8 @@ class _PowerPreviewScreenState extends State<PowerPreviewScreen> {
                                         const SizedBox(height: 8),
                                         Text(
                                           content['subtitle'],
-                                          style: GoogleFonts.dmSans(
+                                          style: TextStyle(
+          fontFamily: 'DMSans',
                                             color: lightTextColor.withOpacity(0.8),
                                             fontSize: 14,
                                             fontWeight: FontWeight.w300,
@@ -316,7 +320,8 @@ class _PowerPreviewScreenState extends State<PowerPreviewScreen> {
                                                 Expanded(
                                                   child: Text(
                                                     item,
-                                                    style: GoogleFonts.dmSans(
+                                                    style: TextStyle(
+          fontFamily: 'DMSans',
                                                       color: lightTextColor.withOpacity(0.9),
                                                       fontSize: 14,
                                                     ),

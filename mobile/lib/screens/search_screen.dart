@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/network_user.dart';
 import '../data/network_users_data.dart';
 import '../widgets/user_search_tile.dart';
@@ -84,7 +83,8 @@ class _SearchScreenState extends State<SearchScreen> {
                   Expanded(
                     child: Text(
                       'Search',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor,
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
@@ -119,14 +119,15 @@ class _SearchScreenState extends State<SearchScreen> {
                     Expanded(
                       child: TextField(
                         controller: _searchController,
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                         ),
                         decoration: InputDecoration(
                           hintText: 'Search',
-                          hintStyle: GoogleFonts.dmSans(
+                          hintStyle: TextStyle(
                             color: lightTextColor.withOpacity(0.5),
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
@@ -179,7 +180,8 @@ class _SearchScreenState extends State<SearchScreen> {
         children: [
           Text(
             'HISTORY',
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor,
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -212,7 +214,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       const SizedBox(width: 12),
                       Text(
                         query,
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -243,7 +246,8 @@ class _SearchScreenState extends State<SearchScreen> {
             const SizedBox(height: 16),
             Text(
               'Searching...',
-              style: GoogleFonts.dmSans(
+              style: TextStyle(
+          fontFamily: 'DMSans',
                 color: lightTextColor.withOpacity(0.7),
                 fontSize: 16,
                 fontWeight: FontWeight.w400,
@@ -267,7 +271,8 @@ class _SearchScreenState extends State<SearchScreen> {
             const SizedBox(height: 16),
             Text(
               'Unfortunately nothing found',
-              style: GoogleFonts.dmSans(
+              style: TextStyle(
+          fontFamily: 'DMSans',
                 color: lightTextColor,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -276,7 +281,8 @@ class _SearchScreenState extends State<SearchScreen> {
             const SizedBox(height: 8),
             Text(
               'Try a different request',
-              style: GoogleFonts.dmSans(
+              style: TextStyle(
+          fontFamily: 'DMSans',
                 color: lightTextColor.withOpacity(0.7),
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
@@ -294,7 +300,8 @@ class _SearchScreenState extends State<SearchScreen> {
         children: [
           Text(
             'Found People',
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor,
               fontSize: 16,
               fontWeight: FontWeight.w600,

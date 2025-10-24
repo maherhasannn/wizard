@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../shared_background.dart';
 
 class CirceTab extends StatefulWidget {
@@ -56,7 +55,8 @@ class _CirceTabState extends State<CirceTab> {
   Widget _buildHeader(Color lightTextColor, Color purpleAccent) {
     return Text(
       'Community',
-      style: GoogleFonts.dmSans(
+      style: TextStyle(
+          fontFamily: 'DMSans',
         color: lightTextColor,
         fontSize: 24,
         fontWeight: FontWeight.w600,
@@ -70,7 +70,8 @@ class _CirceTabState extends State<CirceTab> {
       children: [
         Text(
           'LIVE Q&A',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor.withOpacity(0.8),
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -120,7 +121,8 @@ class _CirceTabState extends State<CirceTab> {
                       children: [
                         Text(
                           'LIVE Q&A',
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: lightTextColor.withOpacity(0.8),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -130,7 +132,8 @@ class _CirceTabState extends State<CirceTab> {
                         const SizedBox(height: 4),
                         Text(
                           'How to overcome fear',
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: lightTextColor,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -144,7 +147,8 @@ class _CirceTabState extends State<CirceTab> {
               const SizedBox(height: 16),
               Text(
                 'Today, 2:00 PM',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor.withOpacity(0.8),
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
@@ -162,7 +166,8 @@ class _CirceTabState extends State<CirceTab> {
                       ),
                       child: Text(
                         'Set a Reminder',
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -186,7 +191,8 @@ class _CirceTabState extends State<CirceTab> {
       children: [
         Text(
           'Past Livestreams',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -239,7 +245,8 @@ class _CirceTabState extends State<CirceTab> {
                           Text(
                             index == 0 ? 'Building Confidence' : 
                             index == 1 ? 'Morning Motivation' : 'Self-Love Journey',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor,
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -248,7 +255,8 @@ class _CirceTabState extends State<CirceTab> {
                           const SizedBox(height: 4),
                           Text(
                             index == 0 ? '45 min' : index == 1 ? '32 min' : '28 min',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor.withOpacity(0.7),
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -273,7 +281,8 @@ class _CirceTabState extends State<CirceTab> {
       children: [
         Text(
           'Find Queens Near You',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -313,7 +322,8 @@ class _CirceTabState extends State<CirceTab> {
                         const SizedBox(height: 8),
                         Text(
                           'Map View',
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: lightTextColor.withOpacity(0.7),
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
@@ -333,7 +343,8 @@ class _CirceTabState extends State<CirceTab> {
                   ),
                   child: Text(
                     'Join the Circle',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -392,7 +403,8 @@ class _CirceTabState extends State<CirceTab> {
               const SizedBox(height: 20),
               Text(
                 'Join the Circle',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor,
                   fontSize: 24,
                   fontWeight: FontWeight.w600,
@@ -402,7 +414,8 @@ class _CirceTabState extends State<CirceTab> {
               const SizedBox(height: 8),
               Text(
                 'Connect with like-minded women in your area and build meaningful relationships.',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor.withOpacity(0.8),
                   fontSize: 16,
                   fontWeight: FontWeight.w400,
@@ -432,7 +445,8 @@ class _CirceTabState extends State<CirceTab> {
                     const SizedBox(width: 8),
                     Text(
                       'Connect Instagram',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -451,7 +465,8 @@ class _CirceTabState extends State<CirceTab> {
                 ),
                 child: Text(
                   'Join',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: purpleAccent,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -493,7 +508,8 @@ class _CirceTabState extends State<CirceTab> {
       children: [
         Text(
           label,
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -515,7 +531,8 @@ class _CirceTabState extends State<CirceTab> {
               Expanded(
                 child: Text(
                   hint,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor.withOpacity(0.7),
                     fontSize: 16,
                   ),

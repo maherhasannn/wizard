@@ -1,7 +1,6 @@
 // lib/main.dart
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -129,7 +128,8 @@ class _InitialLoadingScreenState extends State<InitialLoadingScreen> {
             child: Text(
               _phase['text'],
               textAlign: TextAlign.center,
-              style: GoogleFonts.dmSans(
+              style: TextStyle(
+          fontFamily: 'DMSans',
                 color: _hexToColor(_phase['textColor']),
                 fontSize: 36,
                 fontWeight: FontWeight.w300,

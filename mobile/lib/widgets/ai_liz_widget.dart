@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../screens/ai_chat_screen.dart';
 
 class AiLizWidget extends StatelessWidget {
@@ -74,7 +73,8 @@ class AiLizWidget extends StatelessWidget {
                 children: [
                   Text(
                     'Chat with AI Liz',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -83,7 +83,8 @@ class AiLizWidget extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     'Ask questions and get personalized guidance',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor.withOpacity(0.7),
                       fontSize: 14,
                       fontWeight: FontWeight.w300,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/network_user.dart';
 
 class UserProfileScreen extends StatelessWidget {
@@ -41,7 +40,8 @@ class UserProfileScreen extends StatelessWidget {
                   const SizedBox(width: 16),
                   Text(
                     'Profile',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
@@ -109,7 +109,8 @@ class UserProfileScreen extends StatelessWidget {
                     // Name and age
                     Text(
                       user.name,
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor,
                         fontSize: 32,
                         fontWeight: FontWeight.w600,
@@ -121,7 +122,8 @@ class UserProfileScreen extends StatelessWidget {
                     // Age and location
                     Text(
                       '${user.age} | ${user.locationString}',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor.withOpacity(0.8),
                         fontSize: 18,
                         fontWeight: FontWeight.w400,
@@ -148,7 +150,8 @@ class UserProfileScreen extends StatelessWidget {
                         children: [
                           Text(
                             'About',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -157,7 +160,8 @@ class UserProfileScreen extends StatelessWidget {
                           const SizedBox(height: 12),
                           Text(
                             user.bio,
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor.withOpacity(0.9),
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
@@ -188,7 +192,8 @@ class UserProfileScreen extends StatelessWidget {
                         children: [
                           Text(
                             'Interests',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -214,7 +219,8 @@ class UserProfileScreen extends StatelessWidget {
                                 ),
                                 child: Text(
                                   interest,
-                                  style: GoogleFonts.dmSans(
+                                  style: TextStyle(
+          fontFamily: 'DMSans',
                                     color: lightTextColor,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
@@ -257,7 +263,8 @@ class UserProfileScreen extends StatelessWidget {
                           ),
                           label: Text(
                             user.instagram,
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
@@ -378,7 +385,8 @@ class UserProfileScreen extends StatelessWidget {
       child: Center(
         child: Text(
           user.initials,
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 48,
             fontWeight: FontWeight.w600,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../shared_background.dart';
@@ -117,7 +116,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 const SizedBox(height: 40),
                 Text(
                   'Set your password',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: const Color(0xFFF5F5F5),
                     fontSize: 32,
                     fontWeight: FontWeight.w600,
@@ -127,7 +127,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 const SizedBox(height: 8),
                 Text(
                   'Create a secure password for your account',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: const Color(0xFFF5F5F5).withOpacity(0.7),
                     fontSize: 16,
                     fontWeight: FontWeight.w300,
@@ -140,13 +141,14 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 TextField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: const Color(0xFFF5F5F5),
                     fontSize: 16,
                   ),
                   decoration: InputDecoration(
                     labelText: 'Password',
-                    labelStyle: GoogleFonts.dmSans(
+                    labelStyle: TextStyle(
                       color: const Color(0xFFF5F5F5).withOpacity(0.7),
                     ),
                     border: OutlineInputBorder(
@@ -204,7 +206,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                     children: [
                       Text(
                         'Password Requirements:',
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: const Color(0xFFF5F5F5),
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -241,13 +244,14 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 TextField(
                   controller: _confirmPasswordController,
                   obscureText: _obscureConfirmPassword,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: const Color(0xFFF5F5F5),
                     fontSize: 16,
                   ),
                   decoration: InputDecoration(
                     labelText: 'Confirm Password',
-                    labelStyle: GoogleFonts.dmSans(
+                    labelStyle: TextStyle(
                       color: const Color(0xFFF5F5F5).withOpacity(0.7),
                     ),
                     border: OutlineInputBorder(
@@ -310,7 +314,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                           )
                         : Text(
                             'Done',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: const Color(0xFFF5F5F5),
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -326,7 +331,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                   onPressed: () => Navigator.pop(context),
                   child: Text(
                     'Back to verification',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: const Color(0xFFF5F5F5).withOpacity(0.7),
                       fontSize: 14,
                       fontWeight: FontWeight.w400,
@@ -354,7 +360,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
           const SizedBox(width: 8),
           Text(
             text,
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: isValid ? Colors.green : const Color(0xFFF5F5F5).withOpacity(0.7),
               fontSize: 14,
               fontWeight: FontWeight.w400,

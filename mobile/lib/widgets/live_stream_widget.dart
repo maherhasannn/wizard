@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class LiveStreamWidget extends StatefulWidget {
   const LiveStreamWidget({super.key});
@@ -41,7 +40,8 @@ class _LiveStreamWidgetState extends State<LiveStreamWidget> {
               children: [
                 Text(
                   'Live Stream',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -68,7 +68,8 @@ class _LiveStreamWidgetState extends State<LiveStreamWidget> {
                         const SizedBox(width: 4),
                         Text(
                           'LIVE',
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: Colors.white,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
@@ -114,7 +115,8 @@ class _LiveStreamWidgetState extends State<LiveStreamWidget> {
                         Text(
                           'Answering your questions directly in the app.',
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: lightTextColor,
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
@@ -149,7 +151,8 @@ class _LiveStreamWidgetState extends State<LiveStreamWidget> {
                             const SizedBox(width: 4),
                             Text(
                               '5.3K viewers',
-                              style: GoogleFonts.dmSans(
+                              style: TextStyle(
+          fontFamily: 'DMSans',
                                 color: Colors.white,
                                 fontSize: 10,
                                 fontWeight: FontWeight.w500,
@@ -169,7 +172,8 @@ class _LiveStreamWidgetState extends State<LiveStreamWidget> {
             if (!_isLive) ...[
               Text(
                 'Start at 21:00 Brussels time',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor.withOpacity(0.8),
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
@@ -184,7 +188,8 @@ class _LiveStreamWidgetState extends State<LiveStreamWidget> {
                 ),
                 child: Text(
                   'Stream starts in 4 minutes',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor.withOpacity(0.8),
                     fontSize: 12,
                     fontWeight: FontWeight.w400,
@@ -209,7 +214,8 @@ class _LiveStreamWidgetState extends State<LiveStreamWidget> {
                   ),
                   child: Text(
                     'Join waiting room',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -232,7 +238,8 @@ class _LiveStreamWidgetState extends State<LiveStreamWidget> {
                     children: [
                       Text(
                         'Live Chat',
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -264,7 +271,8 @@ class _LiveStreamWidgetState extends State<LiveStreamWidget> {
                       ),
                       child: Text(
                         'Add comment...',
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor.withOpacity(0.6),
                           fontSize: 14,
                         ),
@@ -295,7 +303,8 @@ class _LiveStreamWidgetState extends State<LiveStreamWidget> {
       padding: const EdgeInsets.only(bottom: 4),
       child: Text(
         message,
-        style: GoogleFonts.dmSans(
+        style: TextStyle(
+          fontFamily: 'DMSans',
           color: lightTextColor.withOpacity(0.8),
           fontSize: 12,
           fontWeight: FontWeight.w400,

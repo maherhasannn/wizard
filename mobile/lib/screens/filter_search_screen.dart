@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/network_user.dart';
 import '../data/network_users_data.dart';
 import '../widgets/user_search_tile.dart';
@@ -108,7 +107,8 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
                   const SizedBox(width: 16),
                   Text(
                     'By Filters',
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
@@ -119,7 +119,8 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
                     onPressed: _clearFilters,
                     child: Text(
                       'Clear',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: purpleAccent,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -166,7 +167,8 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
                         value: _selectedGender,
                         isExpanded: true,
                         dropdownColor: _hexToColor('2D1B69'),
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 16,
                         ),
@@ -199,7 +201,8 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
                         value: _selectedCity,
                         isExpanded: true,
                         dropdownColor: _hexToColor('2D1B69'),
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 16,
                         ),
@@ -266,7 +269,8 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
                               ),
                               child: Text(
                                 interest,
-                                style: GoogleFonts.dmSans(
+                                style: TextStyle(
+          fontFamily: 'DMSans',
                                   color: isSelected
                                       ? lightTextColor
                                       : lightTextColor.withOpacity(0.7),
@@ -286,7 +290,8 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
                     // Results
                     Text(
                       'Found ${_filteredUsers.length} people',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -318,7 +323,8 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
                             const SizedBox(height: 16),
                             Text(
                               'No people found',
-                              style: GoogleFonts.dmSans(
+                              style: TextStyle(
+          fontFamily: 'DMSans',
                                 color: lightTextColor,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -327,7 +333,8 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
                             const SizedBox(height: 8),
                             Text(
                               'Try adjusting your filters',
-                              style: GoogleFonts.dmSans(
+                              style: TextStyle(
+          fontFamily: 'DMSans',
                                 color: lightTextColor.withOpacity(0.7),
                                 fontSize: 14,
                               ),
@@ -372,7 +379,8 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
       children: [
         Text(
           title,
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 16,
             fontWeight: FontWeight.w600,
@@ -382,7 +390,8 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
           const SizedBox(height: 4),
           Text(
             subtitle,
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor.withOpacity(0.7),
               fontSize: 14,
               fontWeight: FontWeight.w400,

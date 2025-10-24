@@ -14,7 +14,7 @@
 *.log
 
 # Environment files at root level
-.env
+#.env
 .env.local
 .env.*.local
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../shared_background.dart';
 import '../models/challenge.dart';
 
@@ -66,7 +65,8 @@ class _ChallengesListScreenState extends State<ChallengesListScreen> {
       SnackBar(
         content: Text(
           'Joined "${challenge.title}" challenge!',
-          style: GoogleFonts.dmSans(color: Colors.white),
+          style: TextStyle(
+          fontFamily: 'DMSans',color: Colors.white),
         ),
         backgroundColor: _hexToColor('6A1B9A'),
       ),
@@ -112,7 +112,8 @@ class _ChallengesListScreenState extends State<ChallengesListScreen> {
                         children: [
                           Text(
                             'Daily Challenges',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor,
                               fontSize: 24,
                               fontWeight: FontWeight.w600,
@@ -120,7 +121,8 @@ class _ChallengesListScreenState extends State<ChallengesListScreen> {
                           ),
                           Text(
                             'Transform your life one day at a time',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor.withOpacity(0.7),
                               fontSize: 14,
                               fontWeight: FontWeight.w300,
@@ -191,7 +193,8 @@ class _ChallengesListScreenState extends State<ChallengesListScreen> {
                   children: [
                     Text(
                       challenge.title,
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -199,7 +202,8 @@ class _ChallengesListScreenState extends State<ChallengesListScreen> {
                     ),
                     Text(
                       '${challenge.duration} days',
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor.withOpacity(0.7),
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
@@ -216,7 +220,8 @@ class _ChallengesListScreenState extends State<ChallengesListScreen> {
           // Description
           Text(
             challenge.description,
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor.withOpacity(0.8),
               fontSize: 14,
               fontWeight: FontWeight.w400,
@@ -249,7 +254,8 @@ class _ChallengesListScreenState extends State<ChallengesListScreen> {
               ),
               child: Text(
                 'Join Challenge',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -275,7 +281,8 @@ class _ChallengesListScreenState extends State<ChallengesListScreen> {
       ),
       child: Text(
         tag,
-        style: GoogleFonts.dmSans(
+        style: TextStyle(
+          fontFamily: 'DMSans',
           color: lightTextColor.withOpacity(0.8),
           fontSize: 12,
           fontWeight: FontWeight.w400,

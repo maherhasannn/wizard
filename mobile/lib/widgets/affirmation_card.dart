@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class AffirmationCard extends StatefulWidget {
   const AffirmationCard({super.key});
@@ -26,7 +25,8 @@ class _AffirmationCardState extends State<AffirmationCard> {
       children: [
         Text(
           'Affirmation of the day',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -106,7 +106,8 @@ class _AffirmationCardState extends State<AffirmationCard> {
                       Text(
                         'Take an daily meditation for life',
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -122,7 +123,8 @@ class _AffirmationCardState extends State<AffirmationCard> {
                               Text(
                                 'Take an daily meditation for life',
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.dmSans(
+                                style: TextStyle(
+          fontFamily: 'DMSans',
                                   color: lightTextColor,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
@@ -150,7 +152,8 @@ class _AffirmationCardState extends State<AffirmationCard> {
                                     ),
                                     child: Text(
                                       'Take a new one',
-                                      style: GoogleFonts.dmSans(
+                                      style: TextStyle(
+          fontFamily: 'DMSans',
                                         color: lightTextColor,
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
@@ -173,7 +176,8 @@ class _AffirmationCardState extends State<AffirmationCard> {
                                     ),
                                     child: Text(
                                       'See again',
-                                      style: GoogleFonts.dmSans(
+                                      style: TextStyle(
+          fontFamily: 'DMSans',
                                         color: lightTextColor,
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
@@ -227,7 +231,8 @@ class _AffirmationCardState extends State<AffirmationCard> {
           const SizedBox(height: 20),
           Text(
             'How is your feeling?',
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor,
               fontSize: 16,
               fontWeight: FontWeight.w500,

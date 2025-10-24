@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class SilenceModeScreen extends StatefulWidget {
   const SilenceModeScreen({super.key});
@@ -148,7 +147,8 @@ class _SilenceModeScreenState extends State<SilenceModeScreen>
           // Title
           Text(
             'Silence',
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor,
               fontSize: 32,
               fontWeight: FontWeight.w600,
@@ -160,7 +160,8 @@ class _SilenceModeScreenState extends State<SilenceModeScreen>
           // Subtitle
           Text(
             'Choose time for your silence session.',
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor.withOpacity(0.8),
               fontSize: 16,
               fontWeight: FontWeight.w400,
@@ -186,7 +187,8 @@ class _SilenceModeScreenState extends State<SilenceModeScreen>
               children: [
                 Text(
                   'Select Duration',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
@@ -222,7 +224,8 @@ class _SilenceModeScreenState extends State<SilenceModeScreen>
                         child: Center(
                           child: Text(
                             '${hour.toString().padLeft(2, '0')}:00',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: isSelected
                                   ? lightTextColor
                                   : lightTextColor.withOpacity(0.7),
@@ -255,7 +258,8 @@ class _SilenceModeScreenState extends State<SilenceModeScreen>
               ),
               child: Text(
                 'Let\'s start',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor,
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
@@ -333,7 +337,8 @@ class _SilenceModeScreenState extends State<SilenceModeScreen>
           // Timer display
           Text(
             _formatDuration(_remainingTime),
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor,
               fontSize: 48,
               fontWeight: FontWeight.w300,
@@ -345,7 +350,8 @@ class _SilenceModeScreenState extends State<SilenceModeScreen>
           // Instructions
           Text(
             'Close your eyes and keep calm in a silence.',
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor.withOpacity(0.8),
               fontSize: 18,
               fontWeight: FontWeight.w400,

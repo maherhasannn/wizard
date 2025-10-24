@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/meditation_track.dart';
 
 class MeditationTrackMenu extends StatelessWidget {
@@ -37,7 +36,8 @@ class MeditationTrackMenu extends StatelessWidget {
               children: [
                 Text(
                   track.title,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -50,7 +50,8 @@ class MeditationTrackMenu extends StatelessWidget {
                   children: [
                     Text(
                       track.artist,
-                      style: GoogleFonts.dmSans(
+                      style: TextStyle(
+          fontFamily: 'DMSans',
                         color: lightTextColor.withOpacity(0.7),
                         fontSize: 14,
                         fontWeight: FontWeight.w300,
@@ -69,7 +70,8 @@ class MeditationTrackMenu extends StatelessWidget {
                         ),
                         child: Text(
                           'PREMIUM',
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: lightTextColor,
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
@@ -132,7 +134,8 @@ class MeditationTrackMenu extends StatelessWidget {
               ),
               child: Text(
                 'Cancel',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -176,7 +179,8 @@ class MeditationTrackMenu extends StatelessWidget {
             const SizedBox(width: 16),
             Text(
               title,
-              style: GoogleFonts.dmSans(
+              style: TextStyle(
+          fontFamily: 'DMSans',
                 color: lightTextColor,
                 fontSize: 16,
                 fontWeight: FontWeight.w400,

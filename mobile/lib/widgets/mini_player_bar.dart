@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../models/meditation_track.dart';
 
 class MiniPlayerBar extends StatelessWidget {
@@ -69,7 +68,8 @@ class MiniPlayerBar extends StatelessWidget {
                 children: [
                   Text(
                     track.title,
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -80,7 +80,8 @@ class MiniPlayerBar extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     track.artist,
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor.withOpacity(0.7),
                       fontSize: 14,
                       fontWeight: FontWeight.w300,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../shared_background.dart';
 import '../models/ai_chat_message.dart';
 
@@ -163,7 +162,8 @@ class _AiChatScreenState extends State<AiChatScreen> {
                         children: [
                           Text(
                             'AI Liz',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
@@ -171,7 +171,8 @@ class _AiChatScreenState extends State<AiChatScreen> {
                           ),
                           Text(
                             'Always here to help',
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: lightTextColor.withOpacity(0.7),
                               fontSize: 12,
                               fontWeight: FontWeight.w300,
@@ -218,10 +219,11 @@ class _AiChatScreenState extends State<AiChatScreen> {
                     Expanded(
                       child: TextField(
                         controller: _messageController,
-                        style: GoogleFonts.dmSans(color: lightTextColor),
+                        style: TextStyle(
+          fontFamily: 'DMSans',color: lightTextColor),
                         decoration: InputDecoration(
                           hintText: 'Type your message...',
-                          hintStyle: GoogleFonts.dmSans(
+                          hintStyle: TextStyle(
                             color: lightTextColor.withOpacity(0.5),
                           ),
                           border: OutlineInputBorder(
@@ -322,7 +324,8 @@ class _AiChatScreenState extends State<AiChatScreen> {
               ),
               child: Text(
                 isUser ? message.message : message.response,
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor,
                   fontSize: 14,
                   fontWeight: FontWeight.w400,

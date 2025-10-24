@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../shared_background.dart';
 
 class RitualsTab extends StatefulWidget {
@@ -67,7 +66,8 @@ class _RitualsTabState extends State<RitualsTab> {
       children: [
         Text(
           'Rituals',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 24,
             fontWeight: FontWeight.w600,
@@ -116,13 +116,14 @@ class _RitualsTabState extends State<RitualsTab> {
           Expanded(
             child: TextField(
               controller: _searchController,
-              style: GoogleFonts.dmSans(
+              style: TextStyle(
+          fontFamily: 'DMSans',
                 color: lightTextColor,
                 fontSize: 16,
               ),
               decoration: InputDecoration(
                 hintText: 'Search for rituals, topics...',
-                hintStyle: GoogleFonts.dmSans(
+                hintStyle: TextStyle(
                   color: lightTextColor.withOpacity(0.5),
                   fontSize: 16,
                 ),
@@ -142,7 +143,8 @@ class _RitualsTabState extends State<RitualsTab> {
       children: [
         Text(
           'My Rituals',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -189,7 +191,8 @@ class _RitualsTabState extends State<RitualsTab> {
           const SizedBox(height: 8),
           Text(
             title,
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor,
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -214,7 +217,8 @@ class _RitualsTabState extends State<RitualsTab> {
       children: [
         Text(
           'Explore by Category',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -249,7 +253,8 @@ class _RitualsTabState extends State<RitualsTab> {
                     children: [
                       Text(
                         category['name'] as String,
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -278,7 +283,8 @@ class _RitualsTabState extends State<RitualsTab> {
       children: [
         Text(
           'New Releases',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 18,
             fontWeight: FontWeight.w600,

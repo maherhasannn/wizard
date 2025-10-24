@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -72,7 +71,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SnackBar(
             content: Text(
               'Google Sign-In failed: $e',
-              style: GoogleFonts.dmSans(color: Colors.white),
+              style: TextStyle(
+          fontFamily: 'DMSans',color: Colors.white),
             ),
             backgroundColor: Colors.red,
           ),
@@ -106,7 +106,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SnackBar(
             content: Text(
               'Apple Sign-In failed: $e',
-              style: GoogleFonts.dmSans(color: Colors.white),
+              style: TextStyle(
+          fontFamily: 'DMSans',color: Colors.white),
             ),
             backgroundColor: Colors.red,
           ),
@@ -139,7 +140,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
           SnackBar(
             content: Text(
               'Facebook Sign-In failed: $e',
-              style: GoogleFonts.dmSans(color: Colors.white),
+              style: TextStyle(
+          fontFamily: 'DMSans',color: Colors.white),
             ),
             backgroundColor: Colors.red,
           ),
@@ -175,7 +177,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     children: [
                       Text(
                         'Registration',
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 32,
                           fontWeight: FontWeight.w600,
@@ -185,7 +188,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'Enter your email to create an account',
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor.withOpacity(0.7),
                           fontSize: 16,
                           fontWeight: FontWeight.w300,
@@ -198,10 +202,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       TextFormField(
                         controller: _emailController,
                         keyboardType: TextInputType.emailAddress,
-                        style: GoogleFonts.dmSans(color: lightTextColor),
+                        style: TextStyle(
+          fontFamily: 'DMSans',color: lightTextColor),
                         decoration: InputDecoration(
                           labelText: 'Email',
-                          labelStyle: GoogleFonts.dmSans(
+                          labelStyle: TextStyle(
                             color: lightTextColor.withOpacity(0.7),
                           ),
                           enabledBorder: OutlineInputBorder(
@@ -241,7 +246,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           padding: const EdgeInsets.only(bottom: 16),
                           child: Text(
                             authProvider.error!,
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: Colors.red,
                               fontSize: 14,
                             ),
@@ -270,7 +276,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               )
                             : Text(
                                 'Sign up',
-                                style: GoogleFonts.dmSans(
+                                style: TextStyle(
+          fontFamily: 'DMSans',
                                   color: lightTextColor,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -309,7 +316,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             const SizedBox(width: 12),
                             Text(
                               'Continue with Google',
-                              style: GoogleFonts.dmSans(
+                              style: TextStyle(
+          fontFamily: 'DMSans',
                                 color: Colors.black87,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -350,7 +358,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             const SizedBox(width: 12),
                             Text(
                               'Continue with Apple',
-                              style: GoogleFonts.dmSans(
+                              style: TextStyle(
+          fontFamily: 'DMSans',
                                 color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -391,7 +400,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             const SizedBox(width: 12),
                             Text(
                               'Continue with Facebook',
-                              style: GoogleFonts.dmSans(
+                              style: TextStyle(
+          fontFamily: 'DMSans',
                                 color: Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -411,7 +421,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         },
                         child: Text(
                           'Log in',
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: purpleAccent,
                             fontSize: 14,
                             fontWeight: FontWeight.w500,

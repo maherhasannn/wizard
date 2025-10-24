@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../shared_background.dart';
 
 class ChallengeTab extends StatefulWidget {
@@ -51,7 +50,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
   Widget _buildHeader(Color lightTextColor, Color purpleAccent) {
     return Text(
       'Challenges',
-      style: GoogleFonts.dmSans(
+      style: TextStyle(
+          fontFamily: 'DMSans',
         color: lightTextColor,
         fontSize: 24,
         fontWeight: FontWeight.w600,
@@ -65,7 +65,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
       children: [
         Text(
           'MY CHALLENGE',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor.withOpacity(0.8),
             fontSize: 12,
             fontWeight: FontWeight.w500,
@@ -115,7 +116,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
                       children: [
                         Text(
                           'TODAY\'S RITUAL',
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: lightTextColor.withOpacity(0.8),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -125,7 +127,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
                         const SizedBox(height: 4),
                         Text(
                           'The power to choose',
-                          style: GoogleFonts.dmSans(
+                          style: TextStyle(
+          fontFamily: 'DMSans',
                             color: lightTextColor,
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
@@ -139,7 +142,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
               const SizedBox(height: 16),
               Text(
                 'A daily journey to rebuild your confidence step by step.',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor.withOpacity(0.8),
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
@@ -157,7 +161,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
                       ),
                       child: Text(
                         'Start',
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
@@ -181,7 +186,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
       children: [
         Text(
           'Join Challenge',
-          style: GoogleFonts.dmSans(
+          style: TextStyle(
+          fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -247,7 +253,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
                     children: [
                       Text(
                         title,
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -256,7 +263,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
                       const SizedBox(height: 4),
                       Text(
                         description,
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor.withOpacity(0.7),
                           fontSize: 14,
                           fontWeight: FontWeight.w400,
@@ -273,7 +281,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
                   ),
                   child: Text(
                     tag,
-                    style: GoogleFonts.dmSans(
+                    style: TextStyle(
+          fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -334,7 +343,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
               Center(
                 child: Text(
                   title,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 24,
                     fontWeight: FontWeight.w600,
@@ -346,7 +356,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
               Center(
                 child: Text(
                   '4/21',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor.withOpacity(0.7),
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -363,7 +374,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
                 ),
                 child: Text(
                   'Start',
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -374,7 +386,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
               const SizedBox(height: 20),
               Text(
                 'What you will achieve',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -387,7 +400,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
               const SizedBox(height: 20),
               Text(
                 'Plan',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -409,7 +423,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         text,
-        style: GoogleFonts.dmSans(
+        style: TextStyle(
+          fontFamily: 'DMSans',
           color: lightTextColor.withOpacity(0.8),
           fontSize: 14,
           fontWeight: FontWeight.w400,
@@ -433,7 +448,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
               children: [
                 Text(
                   day,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor.withOpacity(0.7),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -442,7 +458,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
                 const SizedBox(height: 4),
                 Text(
                   title,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -451,7 +468,8 @@ class _ChallengeTabState extends State<ChallengeTab> {
                 const SizedBox(height: 4),
                 Text(
                   duration,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor.withOpacity(0.7),
                     fontSize: 14,
                     fontWeight: FontWeight.w400,

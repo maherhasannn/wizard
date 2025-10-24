@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'dart:math';
 
 class SleepTimerModal extends StatefulWidget {
@@ -31,7 +30,8 @@ class _SleepTimerModalState extends State<SleepTimerModal> {
           // Title
           Text(
             'Sleep Timer',
-            style: GoogleFonts.dmSans(
+            style: TextStyle(
+          fontFamily: 'DMSans',
               color: lightTextColor,
               fontSize: 24,
               fontWeight: FontWeight.w600,
@@ -89,7 +89,8 @@ class _SleepTimerModalState extends State<SleepTimerModal> {
                         child: Center(
                           child: Text(
                             minutes.toString(),
-                            style: GoogleFonts.dmSans(
+                            style: TextStyle(
+          fontFamily: 'DMSans',
                               color: _selectedMinutes == minutes
                                   ? lightTextColor
                                   : lightTextColor.withOpacity(0.7),
@@ -110,7 +111,8 @@ class _SleepTimerModalState extends State<SleepTimerModal> {
                     children: [
                       Text(
                         _selectedMinutes.toString(),
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor,
                           fontSize: 48,
                           fontWeight: FontWeight.w600,
@@ -118,7 +120,8 @@ class _SleepTimerModalState extends State<SleepTimerModal> {
                       ),
                       Text(
                         'minutes',
-                        style: GoogleFonts.dmSans(
+                        style: TextStyle(
+          fontFamily: 'DMSans',
                           color: lightTextColor.withOpacity(0.7),
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
@@ -156,7 +159,8 @@ class _SleepTimerModalState extends State<SleepTimerModal> {
               ),
               child: Text(
                 'Launch Timer',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -174,7 +178,8 @@ class _SleepTimerModalState extends State<SleepTimerModal> {
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'Cancel',
-                style: GoogleFonts.dmSans(
+                style: TextStyle(
+          fontFamily: 'DMSans',
                   color: lightTextColor.withOpacity(0.7),
                   fontSize: 16,
                   fontWeight: FontWeight.w400,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'shared_background.dart';
 import 'main_app_screen.dart';
 
@@ -95,7 +94,7 @@ class _PlanReadyScreenState extends State<PlanReadyScreen>
   @override
   Widget build(BuildContext context) {
     final lightTextColor = _hexToColor('F0E6D8');
-    final buttonTextStyle = GoogleFonts.dmSans(
+    final buttonTextStyle = TextStyle(
       color: lightTextColor,
       fontSize: 16,
       fontWeight: FontWeight.w500,
@@ -157,7 +156,8 @@ class _PlanReadyScreenState extends State<PlanReadyScreen>
                 child: Text(
                   'Your personalized plan is ready',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor,
                     fontSize: 24,
                     fontWeight: FontWeight.w500,
@@ -173,7 +173,8 @@ class _PlanReadyScreenState extends State<PlanReadyScreen>
                 child: Text(
                   'We\'re ready to begin your experience in the app.',
                   textAlign: TextAlign.center,
-                  style: GoogleFonts.dmSans(
+                  style: TextStyle(
+          fontFamily: 'DMSans',
                     color: lightTextColor.withOpacity(0.8),
                     fontSize: 16,
                     fontWeight: FontWeight.w300,
