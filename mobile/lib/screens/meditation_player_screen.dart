@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/meditation_track.dart';
 import '../widgets/sleep_timer_modal.dart';
+import '../widgets/meditation_loading_animation.dart';
 
 class MeditationPlayerScreen extends StatefulWidget {
   final MeditationTrack track;
@@ -21,6 +22,7 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
   bool _isPlaying = false;
   bool _isShuffleEnabled = false;
   bool _isRepeatEnabled = false;
+  bool _isLoading = true; // Add loading state
   Duration _currentPosition = Duration.zero;
   Duration _totalDuration = Duration.zero;
   late AnimationController _rotationController;
@@ -36,8 +38,20 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
       vsync: this,
     );
     
-    // Simulate progress for demo
-    _startProgressSimulation();
+    // Show loading animation for 2 seconds, then start the meditation
+    _showLoadingAnimation();
+  }
+
+  void _showLoadingAnimation() {
+    Future.delayed(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+        // Start progress simulation after loading
+        _startProgressSimulation();
+      }
+    });
   }
 
   @override
@@ -49,13 +63,6 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
   Color _hexToColor(String hexCode) {
     final hexString = hexCode.replaceAll('#', '');
     return Color(int.parse('FF$hexString', radix: 16));
-  }
-
-  Duration _parseDuration(String duration) {
-    final parts = duration.split(':');
-    final minutes = int.parse(parts[0]);
-    final seconds = int.parse(parts[1]);
-    return Duration(minutes: minutes, seconds: seconds);
   }
 
   String _formatDuration(Duration duration) {
@@ -110,6 +117,15 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
     final lightTextColor = _hexToColor('F0E6D8');
     final purpleAccent = _hexToColor('6A1B9A');
 
+    // Show loading animation if still loading
+    if (_isLoading) {
+      return MeditationLoadingAnimation(
+        message: 'Preparing ${widget.track.title}...',
+        primaryColor: purpleAccent,
+        secondaryColor: lightTextColor,
+      );
+    }
+
     return Scaffold(
       backgroundColor: _hexToColor('1B0A33'),
       body: SafeArea(
@@ -117,22 +133,22 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
           children: [
             // Header
             Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
                     onPressed: () => Navigator.pop(context),
                     icon: Icon(
-                      Icons.arrow_back,
+                      Icons.arrow_back_ios,
                       color: lightTextColor,
-                      size: 24,
+                      size: 20,
                     ),
                   ),
                   Text(
                     'Meditation',
                     style: TextStyle(
-          fontFamily: 'DMSans',
+                      fontFamily: 'DMSans',
                       color: lightTextColor,
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -142,24 +158,26 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
                     children: [
                       IconButton(
                         onPressed: () {
-                          // TODO: Implement favorite toggle
+                          setState(() {
+                            _isShuffleEnabled = !_isShuffleEnabled;
+                          });
                         },
                         icon: Icon(
-                              widget.track.isFavorited
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: lightTextColor,
-                          size: 24,
+                          Icons.shuffle,
+                          color: _isShuffleEnabled ? purpleAccent : lightTextColor.withOpacity(0.5),
+                          size: 20,
                         ),
                       ),
                       IconButton(
                         onPressed: () {
-                          // TODO: Implement download
+                          setState(() {
+                            _isRepeatEnabled = !_isRepeatEnabled;
+                          });
                         },
                         icon: Icon(
-                          Icons.download,
-                          color: lightTextColor,
-                          size: 24,
+                          Icons.repeat,
+                          color: _isRepeatEnabled ? purpleAccent : lightTextColor.withOpacity(0.5),
+                          size: 20,
                         ),
                       ),
                     ],
@@ -167,71 +185,148 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
                 ],
               ),
             ),
-
-            const SizedBox(height: 40),
-
-            // Background image
+            
+            // Main content
             Expanded(
-              child: Container(
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      _hexToColor('4F1B80').withOpacity(0.8),
-                      _hexToColor('1B0A33'),
-                    ],
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.3),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    // Large album art
+                    Expanded(
+                      flex: 3,
+                      child: Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.symmetric(vertical: 20),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              blurRadius: 20,
+                              spreadRadius: 0,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: widget.track.imageUrl != null
+                              ? Image.asset(
+                                  widget.track.imageUrl!,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return _buildFallbackImage();
+                                  },
+                                )
+                              : _buildFallbackImage(),
+                        ),
+                      ),
                     ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: Column(
-                    children: [
-                      // Track info
-                      Text(
-                        widget.track.title,
-                        style: TextStyle(
-          fontFamily: 'DMSans',
-                          color: lightTextColor,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        widget.track.artist,
-                        style: TextStyle(
-          fontFamily: 'DMSans',
-                          color: lightTextColor.withOpacity(0.8),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-
-                      const Spacer(),
-
-                      // Progress bar
-                      Column(
+                    
+                    // Track info with small thumbnail
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
                         children: [
-                          Slider(
-                            value: _currentPosition.inSeconds.toDouble(),
-                            max: _totalDuration.inSeconds.toDouble(),
-                            activeColor: lightTextColor,
-                            inactiveColor: lightTextColor.withOpacity(0.3),
-                            onChanged: (value) {
-                              _seekTo(Duration(seconds: value.toInt()));
-                            },
+                          // Small thumbnail
+                          Container(
+                            width: 50,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  blurRadius: 8,
+                                  spreadRadius: 0,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: widget.track.imageUrl != null
+                                  ? Image.asset(
+                                      widget.track.imageUrl!,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Container(
+                                          color: purpleAccent.withOpacity(0.3),
+                                          child: Icon(
+                                            Icons.music_note,
+                                            color: lightTextColor,
+                                            size: 24,
+                                          ),
+                                        );
+                                      },
+                                    )
+                                  : Container(
+                                      color: purpleAccent.withOpacity(0.3),
+                                      child: Icon(
+                                        Icons.music_note,
+                                        color: lightTextColor,
+                                        size: 24,
+                                      ),
+                                    ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          // Track title and artist
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.track.title,
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    color: lightTextColor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '@${widget.track.artist.toLowerCase().replaceAll(' ', '')}',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    color: lightTextColor.withOpacity(0.7),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 30),
+
+                    // Progress bar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(
+                        children: [
+                          SliderTheme(
+                            data: SliderTheme.of(context).copyWith(
+                              activeTrackColor: lightTextColor,
+                              inactiveTrackColor: lightTextColor.withOpacity(0.3),
+                              thumbColor: lightTextColor,
+                              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
+                              trackHeight: 2,
+                            ),
+                            child: Slider(
+                              value: _currentPosition.inSeconds.toDouble(),
+                              max: _totalDuration.inSeconds.toDouble(),
+                              onChanged: (value) {
+                                _seekTo(Duration(seconds: value.toInt()));
+                              },
+                            ),
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -241,7 +336,7 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
                                 Text(
                                   _formatDuration(_currentPosition),
                                   style: TextStyle(
-          fontFamily: 'DMSans',
+                                    fontFamily: 'DMSans',
                                     color: lightTextColor.withOpacity(0.8),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
@@ -250,7 +345,7 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
                                 Text(
                                   _formatDuration(_totalDuration),
                                   style: TextStyle(
-          fontFamily: 'DMSans',
+                                    fontFamily: 'DMSans',
                                     color: lightTextColor.withOpacity(0.8),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
@@ -261,140 +356,145 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
                           ),
                         ],
                       ),
+                    ),
 
-                      const SizedBox(height: 32),
+                    const SizedBox(height: 30),
 
-                      // Playback controls
-                      Row(
+                    // Playback controls
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          // Shuffle
+                          // Previous track
                           IconButton(
                             onPressed: () {
-                              setState(() {
-                                _isShuffleEnabled = !_isShuffleEnabled;
-                              });
+                              // Previous track
                             },
                             icon: Icon(
-                              Icons.shuffle,
-                              color: _isShuffleEnabled
-                                  ? purpleAccent
-                                  : lightTextColor.withOpacity(0.6),
+                              Icons.skip_previous,
+                              color: lightTextColor.withOpacity(0.7),
                               size: 28,
                             ),
                           ),
-
-                          // Rewind 15s
-                          IconButton(
-                            onPressed: () {
-                              final newPosition = Duration(
-                                seconds: (_currentPosition.inSeconds - 15).clamp(0, _totalDuration.inSeconds),
-                              );
-                              _seekTo(newPosition);
-                            },
-                            icon: Icon(
-                              Icons.replay_5,
-                              color: lightTextColor,
-                              size: 32,
-                            ),
-                          ),
-
-                          // Play/Pause
+                          // Play/Pause button
                           GestureDetector(
                             onTap: _togglePlayPause,
                             child: Container(
-                              width: 80,
-                              height: 80,
+                              width: 70,
+                              height: 70,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: purpleAccent,
                                 boxShadow: [
                                   BoxShadow(
                                     color: purpleAccent.withOpacity(0.3),
-                                    blurRadius: 20,
-                                    spreadRadius: 5,
+                                    blurRadius: 15,
+                                    spreadRadius: 0,
+                                    offset: const Offset(0, 5),
                                   ),
                                 ],
                               ),
                               child: Icon(
                                 _isPlaying ? Icons.pause : Icons.play_arrow,
-                                color: lightTextColor,
-                                size: 40,
+                                color: Colors.white,
+                                size: 35,
                               ),
                             ),
                           ),
-
-                          // Forward 15s
+                          // Next track
                           IconButton(
                             onPressed: () {
-                              final newPosition = Duration(
-                                seconds: (_currentPosition.inSeconds + 15).clamp(0, _totalDuration.inSeconds),
-                              );
-                              _seekTo(newPosition);
+                              // Next track
                             },
                             icon: Icon(
-                              Icons.forward_5,
-                              color: lightTextColor,
-                              size: 32,
+                              Icons.skip_next,
+                              color: lightTextColor.withOpacity(0.7),
+                              size: 28,
                             ),
                           ),
-
                           // Repeat
-                          IconButton(
-                            onPressed: () {
+                          GestureDetector(
+                            onTap: () {
                               setState(() {
                                 _isRepeatEnabled = !_isRepeatEnabled;
                               });
                             },
-                            icon: Icon(
-                              _isRepeatEnabled ? Icons.repeat : Icons.repeat,
-                              color: _isRepeatEnabled
-                                  ? purpleAccent
-                                  : lightTextColor.withOpacity(0.6),
-                              size: 28,
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: lightTextColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    Icons.repeat,
+                                    color: _isRepeatEnabled ? purpleAccent : lightTextColor.withOpacity(0.7),
+                                    size: 20,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Repeat',
+                                  style: TextStyle(
+                                    fontFamily: 'DMSans',
+                                    color: lightTextColor.withOpacity(0.7),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
                       ),
+                    ),
 
-                      const SizedBox(height: 32),
+                    const SizedBox(height: 30),
 
-                      // Bottom action icons
-                      Row(
+                    // Bottom action bar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _buildActionIcon(
-                            Icons.favorite_border,
-                            'Favorite',
-                            () {
-                              // TODO: Implement favorite
+                          GestureDetector(
+                            onTap: () {
+                              // Handle favorite
                             },
+                            child: Icon(
+                              widget.track.isFavorited ? Icons.favorite : Icons.favorite_border,
+                              color: widget.track.isFavorited ? Colors.red : lightTextColor.withOpacity(0.7),
+                              size: 24,
+                            ),
                           ),
-                          _buildActionIcon(
-                            Icons.download,
-                            'Download',
-                            () {
-                              // TODO: Implement download
+                          GestureDetector(
+                            onTap: () {
+                              // Handle download
                             },
+                            child: Icon(
+                              Icons.download,
+                              color: lightTextColor.withOpacity(0.7),
+                              size: 24,
+                            ),
                           ),
-                          _buildActionIcon(
-                            Icons.share,
-                            'Share',
-                            () {
-                              // TODO: Implement share
+                          GestureDetector(
+                            onTap: () {
+                              // Handle share
                             },
-                          ),
-                          _buildActionIcon(
-                            Icons.bedtime,
-                            'Sleep Timer',
-                            _showSleepTimer,
+                            child: Icon(
+                              Icons.share,
+                              color: lightTextColor.withOpacity(0.7),
+                              size: 24,
+                            ),
                           ),
                         ],
                       ),
+                    ),
 
-                      const SizedBox(height: 20),
-                    ],
-                  ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
               ),
             ),
@@ -404,30 +504,43 @@ class _MeditationPlayerScreenState extends State<MeditationPlayerScreen>
     );
   }
 
-  Widget _buildActionIcon(IconData icon, String label, VoidCallback onTap) {
+  Widget _buildFallbackImage() {
     final lightTextColor = _hexToColor('F0E6D8');
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            icon,
-            color: lightTextColor.withOpacity(0.8),
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-          fontFamily: 'DMSans',
-              color: lightTextColor.withOpacity(0.6),
-              fontSize: 12,
-              fontWeight: FontWeight.w300,
+    final purpleAccent = _hexToColor('6A1B9A');
+    
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            purpleAccent.withOpacity(0.8),
+            purpleAccent.withOpacity(0.4),
+          ],
+        ),
+      ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.music_note,
+              color: lightTextColor.withOpacity(0.8),
+              size: 60,
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Text(
+              widget.track.title,
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                color: lightTextColor,
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }

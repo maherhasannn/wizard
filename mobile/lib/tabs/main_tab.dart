@@ -7,6 +7,9 @@ import '../widgets/mood_tracking_popup.dart';
 import '../providers/auth_provider.dart';
 import '../screens/self_love_journey_onboarding_screen.dart';
 import '../screens/self_love_journey_screen.dart';
+import '../screens/meditation_player_screen.dart';
+import '../screens/videos_screen.dart';
+import '../models/meditation_track.dart';
 
 class MainTab extends StatefulWidget {
   final List<String> selectedPowers;
@@ -30,6 +33,9 @@ class _MainTabState extends State<MainTab> {
   int _selectedMoodIndex = 0;
   bool _showMoodPopup = false;
   String _moodDescription = '';
+  
+  // Action step state
+  bool _isActionStepCompleted = false;
   
   final List<Map<String, dynamic>> _moods = [
     {'label': 'Great', 'emoji': '🥰', 'color': Colors.red},
@@ -84,6 +90,40 @@ class _MainTabState extends State<MainTab> {
     });
     // Here you could save the mood data to a service or local storage
     print('Mood saved: ${_moods[_selectedMoodIndex]['label']} - $description');
+  }
+
+  void _onActionStepTapped() {
+    if (!_isActionStepCompleted) {
+      setState(() {
+        _isActionStepCompleted = true;
+      });
+      // Here you could save the completion status to local storage
+      print('Action step completed!');
+    }
+  }
+
+  void _navigateToMeditationPlayer(Map<String, dynamic> videoData) {
+    // Create a meditation track for testing (5 seconds duration as requested)
+    final track = MeditationTrack(
+      id: DateTime.now().millisecondsSinceEpoch,
+      title: videoData['title'],
+      artist: 'Liz\'s Guided Meditation',
+      duration: 5, // 5 seconds for testing
+      category: 'audio',
+      description: videoData['description'],
+      imageUrl: videoData['image'],
+    );
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => MeditationPlayerScreen(
+          track: track,
+          onTrackChanged: (newTrack) {
+            // Handle track changes if needed
+          },
+        ),
+      ),
+    );
   }
 
   Color _hexToColor(String hexCode) {
@@ -185,37 +225,42 @@ class _MainTabState extends State<MainTab> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Welcome back ',
+                'Welcome back',
                 style: TextStyle(
-          fontFamily: 'DMSans',
+                  fontFamily: 'DMSans',
                   fontWeight: FontWeight.w400,
                   color: lightTextColor,
                   fontSize: 20,
                 ),
               ),
-              Text(
-                '$userFirstName!',
-                style: TextStyle(
-          fontFamily: 'DMSans',
-                  fontWeight: FontWeight.w600,
-                  color: lightTextColor,
-                  fontSize: 20,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.auto_awesome,
-                color: lightTextColor,
-                size: 16,
-              ),
-              const SizedBox(width: 4),
-              Icon(
-                Icons.auto_awesome,
-                color: lightTextColor,
-                size: 16,
+              Row(
+                children: [
+                  Text(
+                    '$userFirstName!',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      fontWeight: FontWeight.w600,
+                      color: lightTextColor,
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.auto_awesome,
+                    color: lightTextColor,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.auto_awesome,
+                    color: lightTextColor,
+                    size: 16,
+                  ),
+                ],
               ),
             ],
           ),
@@ -532,36 +577,45 @@ class _MainTabState extends State<MainTab> {
           ),
         ),
         const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: purpleAccent.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: lightTextColor.withOpacity(0.1),
-              width: 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.check_box_outline_blank,
-                color: lightTextColor.withOpacity(0.5),
-                size: 24,
+        GestureDetector(
+          onTap: _onActionStepTapped,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: purpleAccent.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: lightTextColor.withOpacity(0.1),
+                width: 1,
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  'Stand in front of the mirror and say out loud: "I choose myself." Repeat it three times with eye contact, even if it feels uncomfortable.',
-                  style: TextStyle(
-          fontFamily: 'DMSans',
-                    color: lightTextColor,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  _isActionStepCompleted 
+                    ? Icons.check_box 
+                    : Icons.check_box_outline_blank,
+                  color: _isActionStepCompleted 
+                    ? purpleAccent 
+                    : lightTextColor.withOpacity(0.5),
+                  size: 24,
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Text(
+                    'Stand in front of the mirror and say out loud: "I choose myself." Repeat it three times with eye contact, even if it feels uncomfortable.',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      color: _isActionStepCompleted 
+                        ? lightTextColor.withOpacity(0.7)
+                        : lightTextColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
@@ -749,59 +803,62 @@ class _MainTabState extends State<MainTab> {
               ),
             ),
             const SizedBox(height: 12),
-            Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '14 Days',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      color: lightTextColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      '14 Days',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        color: lightTextColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    'Daily Activities',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      color: lightTextColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      'Daily Activities',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        color: lightTextColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    'Guided Reflections',
-                    style: TextStyle(
-                      fontFamily: 'DMSans',
-                      color: lightTextColor,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      'Guided Reflections',
+                      style: TextStyle(
+                        fontFamily: 'DMSans',
+                        color: lightTextColor,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -810,96 +867,227 @@ class _MainTabState extends State<MainTab> {
   }
 
   Widget _buildExclusiveVideos(Color lightTextColor, Color purpleAccent) {
+    // Sample video data for testing
+    final List<Map<String, dynamic>> exclusiveVideos = [
+      {
+        'title': 'Overcoming Fear',
+        'duration': 5,
+        'image': 'assets/images/the_moon_tarot.png',
+        'description': 'A guided meditation to help you face and overcome your deepest fears',
+      },
+      {
+        'title': 'Magnetic Energy Reset',
+        'duration': 12,
+        'image': 'assets/images/the_star_tarot.png',
+        'description': 'Reset your energy field and attract positive vibrations',
+      },
+      {
+        'title': 'Inner Peace Journey',
+        'duration': 8,
+        'image': 'assets/images/the_sun_tarot.png',
+        'description': 'Find tranquility and inner harmony through mindful breathing',
+      },
+      {
+        'title': 'Self-Love Affirmations',
+        'duration': 6,
+        'image': 'assets/images/fallback_tarot.png',
+        'description': 'Powerful affirmations to strengthen your self-love practice',
+      },
+      {
+        'title': 'Chakra Balancing',
+        'duration': 15,
+        'image': 'assets/images/the_moon_tarot.png',
+        'description': 'Balance your energy centers for optimal well-being',
+      },
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Exclusive Videos',
-              style: TextStyle(
-          fontFamily: 'DMSans',
-                color: lightTextColor,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
+            Row(
+              children: [
+                Icon(
+                  Icons.videocam,
+                  color: lightTextColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Exclusive Videos',
+                  style: TextStyle(
+                    fontFamily: 'DMSans',
+                    color: lightTextColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
-            Icon(
-              Icons.arrow_forward_ios,
-              color: lightTextColor.withOpacity(0.5),
-              size: 16,
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => const VideosScreen(),
+                  ),
+                );
+              },
+              child: Row(
+                children: [
+                  Text(
+                    'See all',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      color: lightTextColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: lightTextColor,
+                    size: 14,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
         const SizedBox(height: 16),
         SizedBox(
-          height: 200,
+          height: 120,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: 3,
+            itemCount: exclusiveVideos.length,
             itemBuilder: (context, index) {
-              return Container(
-                width: 150,
-                margin: const EdgeInsets.only(right: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      purpleAccent.withOpacity(0.8),
-                      purpleAccent.withOpacity(0.4),
+              final video = exclusiveVideos[index];
+              return GestureDetector(
+                onTap: () => _navigateToMeditationPlayer(video),
+                child: Container(
+                  width: 280,
+                  height: 120,
+                  margin: const EdgeInsets.only(right: 16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: purpleAccent.withOpacity(0.3),
+                        blurRadius: 8,
+                        spreadRadius: 0,
+                        offset: const Offset(0, 4),
+                      ),
                     ],
                   ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Container(
+                  child: Row(
+                    children: [
+                      // Image section
+                      Container(
+                        width: 120,
+                        height: 120,
                         decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-                          color: lightTextColor.withOpacity(0.1),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(12),
+                            bottomLeft: Radius.circular(12),
+                          ),
                         ),
-                        child: const Center(
-                          child: Icon(
-                            Icons.play_circle_filled,
-                            color: Colors.white,
-                            size: 40,
+                        child: Stack(
+                          children: [
+                            // Solid color background
+                            Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  bottomLeft: Radius.circular(12),
+                                ),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    purpleAccent.withOpacity(0.8),
+                                    purpleAccent.withOpacity(0.4),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            // Gradient overlay
+                            Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(12),
+                                  bottomLeft: Radius.circular(12),
+                                ),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    Colors.transparent,
+                                    Colors.black.withOpacity(0.4),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            // Play button
+                            const Center(
+                              child: Icon(
+                                Icons.play_circle_filled,
+                                color: Colors.white,
+                                size: 35,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Content section
+                      Expanded(
+                        child: Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: purpleAccent.withOpacity(0.1),
+                            borderRadius: const BorderRadius.only(
+                              topRight: Radius.circular(12),
+                              bottomRight: Radius.circular(12),
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                video['title'],
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  color: lightTextColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                video['description'],
+                                style: TextStyle(
+                                  fontFamily: 'DMSans',
+                                  color: lightTextColor.withOpacity(0.7),
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            index == 0 ? 'How to Overcoming Fear' : 
-                            index == 1 ? 'Magnetic Energy Reset' : 'Inner Peace Journey',
-                            style: TextStyle(
-          fontFamily: 'DMSans',
-                              color: lightTextColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            index == 0 ? '5 min' : index == 1 ? '12 min' : '8 min',
-                            style: TextStyle(
-          fontFamily: 'DMSans',
-                              color: lightTextColor.withOpacity(0.7),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               );
             },

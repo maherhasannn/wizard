@@ -37,9 +37,9 @@ class _MainAppScreenState extends State<MainAppScreen> with TickerProviderStateM
   // Tab data
   final List<Map<String, dynamic>> _tabs = [
     {'icon': Icons.home, 'label': 'Main', 'color': 0xFF6A1B9A},
-    {'icon': Icons.music_note, 'label': 'Rituals', 'color': 0xFF9C27B0},
-    {'icon': Icons.emoji_events, 'label': 'Challenge', 'color': 0xFFE91E63},
-    {'icon': Icons.people, 'label': 'Circe', 'color': 0xFF3F51B5},
+    {'icon': Icons.headphones, 'label': 'Rituals', 'color': 0xFF9C27B0},
+    {'icon': Icons.auto_fix_high, 'label': 'Challenge', 'color': 0xFFE91E63},
+    {'icon': Icons.public, 'label': 'Circe', 'color': 0xFF3F51B5},
   ];
 
   Color _hexToColor(String hexCode) {
@@ -82,6 +82,7 @@ class _MainAppScreenState extends State<MainAppScreen> with TickerProviderStateM
   }
 
   void _onTabSelected(int index) {
+    // Prevent reselecting the current tab
     if (index != _currentIndex) {
       setState(() {
         _currentIndex = index;
@@ -94,6 +95,7 @@ class _MainAppScreenState extends State<MainAppScreen> with TickerProviderStateM
       _bubbleController.reset();
       _bubbleController.forward();
     }
+    // If trying to select the same tab, do nothing (no visual feedback)
   }
 
   void _onPageChanged(int index) {
@@ -105,6 +107,7 @@ class _MainAppScreenState extends State<MainAppScreen> with TickerProviderStateM
       _bubbleController.forward();
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
