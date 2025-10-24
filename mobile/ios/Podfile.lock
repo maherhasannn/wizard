@@ -61,6 +61,9 @@ PODS:
     - Flutter
     - FlutterMacOS
   - PromisesObjC (2.4.0)
+  - shared_preferences_foundation (0.0.1):
+    - Flutter
+    - FlutterMacOS
   - sign_in_with_apple (0.0.1):
     - Flutter
   - url_launcher_ios (0.0.1):
@@ -77,6 +80,7 @@ DEPENDENCIES:
   - in_app_purchase_storekit (from `.symlinks/plugins/in_app_purchase_storekit/ios`)
   - in_app_review (from `.symlinks/plugins/in_app_review/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
+  - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - vibration (from `.symlinks/plugins/vibration/ios`)
@@ -112,6 +116,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/in_app_review/ios"
   path_provider_foundation:
     :path: ".symlinks/plugins/path_provider_foundation/darwin"
+  shared_preferences_foundation:
+    :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   sign_in_with_apple:
     :path: ".symlinks/plugins/sign_in_with_apple/ios"
   url_launcher_ios:
@@ -139,6 +145,7 @@ SPEC CHECKSUMS:
   in_app_review: 7dd1ea365263f834b8464673f9df72c80c17c937
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
+  shared_preferences_foundation: 7036424c3d8ec98dfe75ff1667cb0cd531ec82bb
   sign_in_with_apple: c5dcc141574c8c54d5ac99dd2163c0c72ad22418
   url_launcher_ios: 7a95fa5b60cc718a708b8f2966718e93db0cef1b
   vibration: 8e2f50fc35bb736f9eecb7dd9f7047fbb6a6e888

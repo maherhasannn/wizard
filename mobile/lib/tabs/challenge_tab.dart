@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../shared_background.dart';
+import '../screens/self_love_journey_onboarding_screen.dart';
 
 class ChallengeTab extends StatefulWidget {
   const ChallengeTab({super.key});
@@ -194,22 +195,164 @@ class _ChallengeTabState extends State<ChallengeTab> {
           ),
         ),
         const SizedBox(height: 16),
-        _buildChallengeCard(
-          'Stop Overthinking Challenge',
-          'A daily journey to rebuild your confidence step by step.',
-          'New',
-          lightTextColor,
-          purpleAccent,
-        ),
-        const SizedBox(height: 16),
-        _buildChallengeCard(
-          'Magnetic Morning Routine',
-          'A daily journey to rebuild your confidence step by step.',
-          'New',
-          lightTextColor,
-          purpleAccent,
-        ),
+        _buildSelfLoveJourneyCard(lightTextColor, purpleAccent),
       ],
+    );
+  }
+
+  Widget _buildSelfLoveJourneyCard(Color lightTextColor, Color purpleAccent) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const SelfLoveJourneyOnboardingScreen(),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.pink.withOpacity(0.8),
+              Colors.purple.withOpacity(0.6),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.pink.withOpacity(0.3),
+              blurRadius: 15,
+              spreadRadius: 0,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white.withOpacity(0.2),
+                    border: Border.all(
+                      color: Colors.white.withOpacity(0.3),
+                      width: 2,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '14-Day Self-Love Journey',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          color: lightTextColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Transform your relationship with yourself',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          color: lightTextColor.withOpacity(0.9),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: lightTextColor.withOpacity(0.7),
+                  size: 16,
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Start your journey of self-discovery, self-compassion, and deep self-love. Each day brings new insights and practices to help you build a stronger, more loving relationship with yourself.',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                color: lightTextColor.withOpacity(0.9),
+                fontSize: 14,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '14 Days',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      color: lightTextColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    'Daily Activities',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      color: lightTextColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    'Guided Reflections',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      color: lightTextColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 

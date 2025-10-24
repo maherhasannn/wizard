@@ -293,18 +293,6 @@ class _MainAppScreenState extends State<MainAppScreen> with TickerProviderStateM
                   );
                 },
               ),
-              const SizedBox(height: 4),
-              // Label with smooth transition
-              AnimatedDefaultTextStyle(
-                duration: const Duration(milliseconds: 200),
-                style: TextStyle(
-                  fontFamily: 'DMSans',
-                  color: isSelected ? Colors.white : Colors.white.withOpacity(0.6),
-                  fontSize: 12,
-                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                ),
-                child: Text(tab['label']),
-              ),
             ],
           ),
         ),

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/tarot_service.dart';
+import '../services/self_love_journey_service.dart';
 import '../widgets/tarot_card_widget.dart';
+import '../widgets/mood_tracking_popup.dart';
 import '../providers/auth_provider.dart';
+import '../screens/self_love_journey_onboarding_screen.dart';
+import '../screens/self_love_journey_screen.dart';
 
 class MainTab extends StatefulWidget {
   final List<String> selectedPowers;
@@ -20,16 +24,31 @@ class MainTab extends StatefulWidget {
 
 class _MainTabState extends State<MainTab> {
   final TarotService _tarotService = TarotService();
+  final SelfLoveJourneyService _journeyService = SelfLoveJourneyService();
+  
+  // Mood tracking state
+  int _selectedMoodIndex = 0;
+  bool _showMoodPopup = false;
+  String _moodDescription = '';
+  
+  final List<Map<String, dynamic>> _moods = [
+    {'label': 'Great', 'emoji': '🥰', 'color': Colors.red},
+    {'label': 'Good', 'emoji': '😊', 'color': Colors.yellow},
+    {'label': 'Okay', 'emoji': '🤔', 'color': Colors.blue},
+    {'label': 'Not good', 'emoji': '😢', 'color': Colors.red.shade800},
+  ];
 
   @override
   void initState() {
     super.initState();
     _tarotService.addListener(_onTarotServiceChanged);
+    _journeyService.addListener(_onJourneyServiceChanged);
   }
 
   @override
   void dispose() {
     _tarotService.removeListener(_onTarotServiceChanged);
+    _journeyService.removeListener(_onJourneyServiceChanged);
     super.dispose();
   }
 
@@ -37,6 +56,34 @@ class _MainTabState extends State<MainTab> {
     setState(() {
       // Rebuild when tarot service state changes
     });
+  }
+
+  void _onJourneyServiceChanged() {
+    setState(() {
+      // Rebuild when journey service state changes
+    });
+  }
+
+  void _onMoodSelected(int index) {
+    setState(() {
+      _selectedMoodIndex = index;
+      _showMoodPopup = true;
+    });
+  }
+
+  void _onMoodPopupClose() {
+    setState(() {
+      _showMoodPopup = false;
+    });
+  }
+
+  void _onMoodConfirmed(int emojiIndex, String description) {
+    setState(() {
+      _moodDescription = description;
+      _showMoodPopup = false;
+    });
+    // Here you could save the mood data to a service or local storage
+    print('Mood saved: ${_moods[_selectedMoodIndex]['label']} - $description');
   }
 
   Color _hexToColor(String hexCode) {
@@ -90,6 +137,11 @@ class _MainTabState extends State<MainTab> {
                   
                   const SizedBox(height: 30),
                   
+                  // Self-Love Journey
+                  _buildSelfLoveJourney(lightTextColor, purpleAccent),
+                  
+                  const SizedBox(height: 30),
+                  
                   // Exclusive Videos
                   _buildExclusiveVideos(lightTextColor, purpleAccent),
                   
@@ -114,6 +166,14 @@ class _MainTabState extends State<MainTab> {
               onGrabNewMessage: () {
                 _tarotService.grabNewMessage();
               },
+            ),
+          
+          // Mood tracking popup overlay
+          if (_showMoodPopup)
+            MoodTrackingPopup(
+              initialEmojiIndex: _selectedMoodIndex,
+              onClose: _onMoodPopupClose,
+              onConfirm: _onMoodConfirmed,
             ),
         ],
       ),
@@ -291,6 +351,9 @@ class _MainTabState extends State<MainTab> {
   }
 
   Widget _buildChallengeSection(Color lightTextColor, Color purpleAccent) {
+    final currentDay = _journeyService.currentDay;
+    final completedDays = _journeyService.completedDaysCount;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -305,64 +368,73 @@ class _MainTabState extends State<MainTab> {
           ),
         ),
         const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: purpleAccent.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: lightTextColor.withOpacity(0.1),
-              width: 1,
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const SelfLoveJourneyScreen(),
+              ),
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: purpleAccent.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: lightTextColor.withOpacity(0.1),
+                width: 1,
+              ),
             ),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '14-Day Self-Love Journey',
+                        style: TextStyle(
+          fontFamily: 'DMSans',
+                          color: lightTextColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'A daily journey to rebuild your confidence step by step.',
+                        style: TextStyle(
+          fontFamily: 'DMSans',
+                          color: lightTextColor.withOpacity(0.7),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Column(
                   children: [
                     Text(
-                      '14-Day Self-Love Journey',
-                      style: TextStyle(
-          fontFamily: 'DMSans',
-                        color: lightTextColor,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'A daily journey to rebuild your confidence step by step.',
+                      '$completedDays/14',
                       style: TextStyle(
           fontFamily: 'DMSans',
                         color: lightTextColor.withOpacity(0.7),
                         fontSize: 14,
-                        fontWeight: FontWeight.w400,
+                        fontWeight: FontWeight.w500,
                       ),
+                    ),
+                    const SizedBox(height: 8),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      color: lightTextColor.withOpacity(0.5),
+                      size: 16,
                     ),
                   ],
                 ),
-              ),
-              Column(
-                children: [
-                  Text(
-                    '4/21',
-                    style: TextStyle(
-          fontFamily: 'DMSans',
-                      color: lightTextColor.withOpacity(0.7),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    color: lightTextColor.withOpacity(0.5),
-                    size: 16,
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ],
@@ -503,7 +575,7 @@ class _MainTabState extends State<MainTab> {
         Text(
           'How are you feeling today?',
           style: TextStyle(
-          fontFamily: 'DMSans',
+            fontFamily: 'DMSans',
             color: lightTextColor,
             fontSize: 18,
             fontWeight: FontWeight.w600,
@@ -511,24 +583,63 @@ class _MainTabState extends State<MainTab> {
         ),
         const SizedBox(height: 16),
         Row(
-          children: [
-            _buildMoodButton('Great', lightTextColor, purpleAccent, true),
-            const SizedBox(width: 12),
-            _buildMoodButton('Good', lightTextColor, purpleAccent, false),
-            const SizedBox(width: 12),
-            _buildMoodButton('Okay', lightTextColor, purpleAccent, false),
-            const SizedBox(width: 12),
-            _buildMoodButton('Not good', lightTextColor, purpleAccent, false),
-          ],
+          children: List.generate(_moods.length, (index) {
+            return Expanded(
+              child: Padding(
+                padding: EdgeInsets.only(right: index < _moods.length - 1 ? 12 : 0),
+                child: _buildMoodButton(
+                  _moods[index]['label'], 
+                  lightTextColor, 
+                  purpleAccent, 
+                  _selectedMoodIndex == index,
+                  index,
+                ),
+              ),
+            );
+          }),
         ),
+        if (_moodDescription.isNotEmpty) ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.2),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                Text(
+                  _moods[_selectedMoodIndex]['emoji'],
+                  style: const TextStyle(fontSize: 20),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    _moodDescription,
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      color: lightTextColor.withOpacity(0.8),
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }
 
-  Widget _buildMoodButton(String mood, Color lightTextColor, Color purpleAccent, bool isSelected) {
+  Widget _buildMoodButton(String mood, Color lightTextColor, Color purpleAccent, bool isSelected, int index) {
     return GestureDetector(
+      onTap: () => _onMoodSelected(index),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected ? purpleAccent : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
@@ -537,41 +648,165 @@ class _MainTabState extends State<MainTab> {
             width: 1,
           ),
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 8,
-              height: 8,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected ? lightTextColor : _getMoodColor(mood),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              mood,
-              style: TextStyle(
-          fontFamily: 'DMSans',
-                color: isSelected ? lightTextColor : lightTextColor.withOpacity(0.8),
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
+        child: Center(
+          child: Text(
+            _moods[index]['emoji'],
+            style: const TextStyle(fontSize: 24),
+          ),
         ),
       ),
     );
   }
 
-  Color _getMoodColor(String mood) {
-    switch (mood) {
-      case 'Great': return Colors.red;
-      case 'Good': return Colors.yellow;
-      case 'Okay': return Colors.blue;
-      case 'Not good': return Colors.red.shade800;
-      default: return Colors.grey;
-    }
+  Widget _buildSelfLoveJourney(Color lightTextColor, Color purpleAccent) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => const SelfLoveJourneyOnboardingScreen(),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.pink.withOpacity(0.8),
+              Colors.purple.withOpacity(0.6),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.pink.withOpacity(0.3),
+              blurRadius: 15,
+              spreadRadius: 0,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.favorite,
+                    color: Colors.white,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '14-Day Self-Love Journey',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          color: lightTextColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Transform your relationship with yourself',
+                        style: TextStyle(
+                          fontFamily: 'DMSans',
+                          color: lightTextColor.withOpacity(0.9),
+                          fontSize: 14,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: lightTextColor.withOpacity(0.7),
+                  size: 16,
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Start your journey of self-discovery, self-compassion, and deep self-love. Each day brings new insights and practices to help you build a stronger, more loving relationship with yourself.',
+              style: TextStyle(
+                fontFamily: 'DMSans',
+                color: lightTextColor.withOpacity(0.9),
+                fontSize: 14,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '14 Days',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      color: lightTextColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    'Daily Activities',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      color: lightTextColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    'Guided Reflections',
+                    style: TextStyle(
+                      fontFamily: 'DMSans',
+                      color: lightTextColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildExclusiveVideos(Color lightTextColor, Color purpleAccent) {
