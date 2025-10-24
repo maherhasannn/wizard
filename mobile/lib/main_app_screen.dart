@@ -37,7 +37,7 @@ class _MainAppScreenState extends State<MainAppScreen> with TickerProviderStateM
   // Tab data
   final List<Map<String, dynamic>> _tabs = [
     {'icon': Icons.home, 'label': 'Main', 'color': 0xFF6A1B9A},
-    {'icon': Icons.headphones, 'label': 'Rituals', 'color': 0xFF9C27B0},
+    {'icon': Icons.headphones, 'label': 'Meditations', 'color': 0xFF9C27B0},
     {'icon': Icons.auto_fix_high, 'label': 'Challenge', 'color': 0xFFE91E63},
     {'icon': Icons.public, 'label': 'Circe', 'color': 0xFF3F51B5},
   ];
@@ -117,12 +117,13 @@ class _MainAppScreenState extends State<MainAppScreen> with TickerProviderStateM
     return Scaffold(
       body: Stack(
         children: [
-          SharedBackground(
-            bgColorHex: '1B0A33',
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: _onPageChanged,
-              itemCount: 4,
+            SharedBackground(
+              bgColorHex: '1B0A33',
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: _onPageChanged,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: 4,
               itemBuilder: (context, index) {
                 // Lazy load pages for better performance
                 switch (index) {
@@ -226,72 +227,16 @@ class _MainAppScreenState extends State<MainAppScreen> with TickerProviderStateM
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Liquid glass bubble
+              // Simple icon without circular background
               AnimatedBuilder(
                 animation: _bubbleAnimation,
                 builder: (context, child) {
                   return Transform.scale(
                     scale: isSelected ? 1.0 + (_bubbleAnimation.value * 0.1) : 1.0,
-                    child: Container(
-                      width: 50,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: isSelected ? LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            tabColor.withOpacity(0.9),
-                            tabColor.withOpacity(0.7),
-                            tabColor.withOpacity(0.8),
-                          ],
-                        ) : null,
-                        boxShadow: isSelected ? [
-                          BoxShadow(
-                            color: tabColor.withOpacity(0.6),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                            offset: const Offset(0, 4),
-                          ),
-                          BoxShadow(
-                            color: Colors.white.withOpacity(0.3),
-                            blurRadius: 8,
-                            spreadRadius: 0,
-                            offset: const Offset(0, -2),
-                          ),
-                        ] : [
-                          BoxShadow(
-                            color: Colors.white.withOpacity(0.1),
-                            blurRadius: 8,
-                            spreadRadius: 0,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: ClipOval(
-                        child: BackdropFilter(
-                          filter: ImageFilter.blur(
-                            sigmaX: isSelected ? 8.0 : 3.0, 
-                            sigmaY: isSelected ? 8.0 : 3.0
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: isSelected 
-                                  ? Colors.white.withOpacity(0.4)
-                                  : Colors.white.withOpacity(0.1),
-                                width: isSelected ? 2 : 1,
-                              ),
-                            ),
-                            child: Icon(
-                              tab['icon'],
-                              color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
-                              size: 24,
-                            ),
-                          ),
-                        ),
-                      ),
+                    child: Icon(
+                      tab['icon'],
+                      color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+                      size: 24,
                     ),
                   );
                 },
