@@ -289,3 +289,35 @@ class UserChallenge {
     }
   }
 }
+
+class UserChallengeProgress {
+  final int completedDays;
+  final int totalDays;
+  final DateTime? lastCompletedAt;
+
+  UserChallengeProgress({
+    required this.completedDays,
+    required this.totalDays,
+    this.lastCompletedAt,
+  });
+
+  factory UserChallengeProgress.fromJson(Map<String, dynamic> json) {
+    return UserChallengeProgress(
+      completedDays: json['completedDays'] as int,
+      totalDays: json['totalDays'] as int,
+      lastCompletedAt: json['lastCompletedAt'] != null 
+          ? DateTime.parse(json['lastCompletedAt'] as String) 
+          : null,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'completedDays': completedDays,
+      'totalDays': totalDays,
+      'lastCompletedAt': lastCompletedAt?.toIso8601String(),
+    };
+  }
+
+  double get progressPercentage => completedDays / totalDays;
+}
