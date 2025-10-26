@@ -115,10 +115,10 @@ class _MapViewScreenState extends State<MapViewScreen> {
                   ),
 
                   // User pins
-                  ..._users.map((user) {
+                  ..._users.where((user) => user.latitude != null && user.longitude != null).map((user) {
                     // Convert lat/lng to screen coordinates (simplified)
-                    final x = (user.longitude + 180) / 360 * MediaQuery.of(context).size.width;
-                    final y = (90 - user.latitude) / 180 * MediaQuery.of(context).size.height;
+                    final x = (user.longitude! + 180) / 360 * MediaQuery.of(context).size.width;
+                    final y = (90 - user.latitude!) / 180 * MediaQuery.of(context).size.height;
                     
                     return Positioned(
                       left: x - 20,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/network_user.dart';
-import '../data/network_users_data.dart';
+import '../providers/networking_provider.dart';
 import '../widgets/user_search_tile.dart';
 import 'user_profile_screen.dart';
 
@@ -12,9 +13,6 @@ class FilterSearchScreen extends StatefulWidget {
 }
 
 class _FilterSearchScreenState extends State<FilterSearchScreen> {
-  final List<NetworkUser> _allUsers = NetworkUsersData.getAllUsers();
-  List<NetworkUser> _filteredUsers = [];
-  
   // Filter options
   RangeValues _ageRange = const RangeValues(20, 35);
   String _selectedGender = 'All';
@@ -35,40 +33,41 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
   @override
   void initState() {
     super.initState();
-    _filteredUsers = _allUsers;
+    // Load users when screen initializes
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<NetworkingProvider>().discoverUsers();
+    });
   }
 
   void _applyFilters() {
-    setState(() {
-      _filteredUsers = _allUsers.where((user) {
-        // Age filter
-        if (user.age < _ageRange.start || user.age > _ageRange.end) {
-          return false;
-        }
+    // For now, we'll use the search functionality with filters
+    // In a real implementation, you'd want a dedicated filtered search endpoint
+    final query = _buildSearchQuery();
+    if (query.isNotEmpty) {
+      context.read<NetworkingProvider>().searchUsers(query);
+    } else {
+      context.read<NetworkingProvider>().discoverUsers();
+    }
+  }
 
-        // Gender filter
-        if (_selectedGender != 'All' && user.gender != _selectedGender) {
-          return false;
-        }
-
-        // City filter
-        if (_selectedCity != 'All' && user.city != _selectedCity) {
-          return false;
-        }
-
-        // Interests filter
-        if (_selectedInterests.isNotEmpty) {
-          bool hasMatchingInterest = _selectedInterests.any((interest) =>
-              user.interests.any((userInterest) =>
-                  userInterest.toLowerCase().contains(interest.toLowerCase())));
-          if (!hasMatchingInterest) {
-            return false;
-          }
-        }
-
-        return true;
-      }).toList();
-    });
+  String _buildSearchQuery() {
+    // Build a search query based on filters
+    // This is a simplified approach - in production you'd want proper API filtering
+    List<String> queryParts = [];
+    
+    if (_selectedGender != 'All') {
+      queryParts.add(_selectedGender);
+    }
+    
+    if (_selectedCity != 'All') {
+      queryParts.add(_selectedCity);
+    }
+    
+    if (_selectedInterests.isNotEmpty) {
+      queryParts.addAll(_selectedInterests);
+    }
+    
+    return queryParts.join(' ');
   }
 
   void _clearFilters() {
@@ -77,8 +76,8 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
       _selectedGender = 'All';
       _selectedCity = 'All';
       _selectedInterests = [];
-      _filteredUsers = _allUsers;
     });
+    context.read<NetworkingProvider>().discoverUsers();
   }
 
   @override
@@ -86,7 +85,9 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
     final lightTextColor = _hexToColor('F0E6D8');
     final purpleAccent = _hexToColor('6A1B9A');
 
-    return Scaffold(
+    return Consumer<NetworkingProvider>(
+      builder: (context, networkingProvider, child) {
+        return Scaffold(
       backgroundColor: _hexToColor('1B0A33'),
       body: SafeArea(
         child: Column(
@@ -212,7 +213,7 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
                         ),
                         items: [
                           'All',
-                          ..._allUsers.map((user) => user.city).toSet().toList()
+                          ...networkingProvider.discoveredUsers.map((user) => user.city).toSet().toList()
                         ].map((String value) {
                           return DropdownMenuItem<String>(
                             value: value,
@@ -289,9 +290,9 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
 
                     // Results
                     Text(
-                      'Found ${_filteredUsers.length} people',
+                      'Found ${networkingProvider.searchResults.length} people',
                       style: TextStyle(
-          fontFamily: 'DMSans',
+                        fontFamily: 'DMSans',
                         color: lightTextColor,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -301,7 +302,7 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
                     const SizedBox(height: 16),
 
                     // User list
-                    if (_filteredUsers.isEmpty)
+                    if (networkingProvider.searchResults.isEmpty)
                       Container(
                         width: double.infinity,
                         padding: const EdgeInsets.all(40),
@@ -324,7 +325,7 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
                             Text(
                               'No people found',
                               style: TextStyle(
-          fontFamily: 'DMSans',
+                                fontFamily: 'DMSans',
                                 color: lightTextColor,
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
@@ -334,7 +335,7 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
                             Text(
                               'Try adjusting your filters',
                               style: TextStyle(
-          fontFamily: 'DMSans',
+                                fontFamily: 'DMSans',
                                 color: lightTextColor.withOpacity(0.7),
                                 fontSize: 14,
                               ),
@@ -343,7 +344,7 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
                         ),
                       )
                     else
-                      ..._filteredUsers.map((user) {
+                      ...networkingProvider.searchResults.map((user) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: UserSearchTile(
@@ -368,6 +369,8 @@ class _FilterSearchScreenState extends State<FilterSearchScreen> {
           ],
         ),
       ),
+    );
+      },
     );
   }
 

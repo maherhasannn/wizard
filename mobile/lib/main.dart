@@ -14,6 +14,8 @@ import 'services/calendar_service.dart';
 import 'services/power_service.dart';
 import 'services/user_service.dart';
 import 'services/subscription_service.dart';
+import 'services/networking_service.dart';
+import 'services/livestream_service.dart';
 
 // Providers
 import 'providers/auth_provider.dart';
@@ -23,6 +25,8 @@ import 'providers/calendar_provider.dart';
 import 'providers/power_provider.dart';
 import 'providers/user_provider.dart';
 import 'providers/subscription_provider.dart';
+import 'providers/networking_provider.dart';
+import 'providers/livestream_provider.dart';
 
 import 'shared_background.dart';
 import 'intro_sequence_screen.dart';
@@ -44,6 +48,8 @@ void main() async {
   final powerService = PowerService(apiClient);
   final userService = UserService(apiClient);
   final subscriptionService = SubscriptionService(apiClient);
+  final networkingService = NetworkingService(apiClient);
+  final livestreamService = LivestreamService(apiClient);
   
   runApp(
     MultiProvider(
@@ -55,6 +61,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => PowerProvider(powerService)),
         ChangeNotifierProvider(create: (_) => UserProvider(userService)),
         ChangeNotifierProvider(create: (_) => SubscriptionProvider(subscriptionService)),
+        ChangeNotifierProvider(create: (_) => NetworkingProvider(networkingService)),
+        ChangeNotifierProvider(create: (_) => LivestreamProvider(livestreamService)),
       ],
       child: const MyApp(),
     ),

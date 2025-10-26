@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "unified-scout-476304-g9",
+  "private_key_id": "b9e3b042b70a42624869f07d813153e20800ef81",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC4aHqJo54ch2LW\n9eVZ8LuDOt4EDaIMBTNCryV/BAOZq2zyxAia/hp3r3hstOXn8JSlCFq7fHxnNkhM\n3xU23EHF1gyW1TYvsQCwFncvxX5ta6aBRGxpZReoNYF7gqK0yHOFSs7H5qwDbQg7\nQVNPm/9yqYPEMQ0HHc/o3hl5upj1Z44XCM2JYFygIUTmXhXqRxehAj84FbVniQD4\noDoYiEkgOf/MUeqUx/CJ3Alz66AyY9XECMf5xQurTyrtoRw7ut7fg+X0zZIXFsTM\neG6H5XFGTxumSlup42yerxNQGo8RQAC71lb9os55rtssW8etlBqTDFW9HhHaUj6W\nRprbjHDZAgMBAAECggEAFmenP7LP4oJ2eUyN7ZQIjESqNc7cOd6l4Du8cAayU0jX\nJ1W2//HQkGsS1A5Ugo4h2T0/HNlemgGn3iMahjxTh3BevjKwbzHvtfU8zOKPXkb+\nh2UjUNjV+3tovHNeRl22X2L75aC6lH36SozAzQLUkf9TgZI+FXfDS3U0niwUKniS\nHQ9I+s1HlYd0EroyAbGvMNcv2RSdEPx878xpq4v24+qsgNK0vfjkxD63MtlwtVF6\ndFYLBVMKAlJouGVVfS5Vf5hv71YEc1kLgect+nlTjxU7thEDnXltYZCL+oQ6a19C\nIg2aRfSrLi4G3wbXnWBNv3z5sopMRbCnJeixjIJ/IwKBgQDiWrZlAex1nDkjh0gc\nQ57wcaa/rxwsCq4/umYmz+8wOngEuDF2GWZ7dTXs6H5z+pmTH3nE1gIfunJWHheM\nF1mO7qaDYgjS1qg0lhxnIyy2Xt0jdw5Hg0Mc/MAGUzWGG0P9YOgiEeA/2BygNDmA\nMyJLyDXfODDIoXSdw/V4Gw9ufwKBgQDQj2DkFNv6WA9d9CC8+Fh8wNfiGbwLKwDK\np23GUOu15Kmc9SBz8hvgI1eiKS99X8NzoWA0l3xniFwAhp4oxvCWDDojjJTAwENj\nu8dmZNMHP7Sf33pEtwOAKg/sZq4PMeQ8zGo3szmPAXhY7pgnvRA+EpdH5nTKjHne\nqVRy2U6kpwKBgQC6KXkRIb/kCpRD0CNSe5rgjdhilhZJco9VAmy5RxKlS7Eh0It9\nYe6TYxbyvVQi9twP0DdJ1+jvR1x5z032fc2+bDCupZY0MS8t8Ldza85+Pw8I+AXa\ncu5jjMwxZ4YBwbLtVSIVwzX3zDne2JTiBywRv5vu9jvJBmDu0Be2rCrI6QKBgH2c\nDP/xbDePt9mfQeRuMmUYhC0h0LZtNPHY+u15KS2IxXrJy7zpMU7CGnKJGZgKCB5p\nMBccsYltf/O1ICZxAs9sF8v3TFP2t9+mZcbOrKZuAOxU3T/rdclIDAUWJnjyVIMl\nnkdjwyPU/9WYBb3RSaoI6mIcc3TWPEQVec4eARZ7AoGAM/MGKcb1mIhbuTtbKohw\nYZJLSLCtovFN9xuwtvOx3Ntp51/eeGpSvkLhJyAYfdlgw7qlkg5lx8mQJvf5x7TC\n+3mdrpxRkwtObP2Y5OBKH94vnMaYQgdePUsfr4vRp2Hz3oX4VZqq6TwSdgfarbB4\n2JY4GQrXaH1h7Lync9CMnh4=\n-----END PRIVATE KEY-----\n",
+  "client_email": "wizard-storage-service@unified-scout-476304-g9.iam.gserviceaccount.com",
+  "client_id": "112304704442964273715",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/wizard-storage-service%40unified-scout-476304-g9.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

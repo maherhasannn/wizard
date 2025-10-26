@@ -7,6 +7,7 @@ import networkingRoutes from './networking/networking.route';
 import contentRoutes from './content/content.route';
 import livestreamRoutes from './livestream/livestream.route';
 import powerRoutes from './power/power.route';
+import challengeRoutes from './challenge/challenge.route';
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router.use('/networking', networkingRoutes);
 router.use('/content', contentRoutes);
 router.use('/livestream', livestreamRoutes);
 router.use('/power', powerRoutes);
+router.use('/challenges', challengeRoutes);
 
 export default router;
 

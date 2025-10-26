@@ -1,8 +1,20 @@
 import prisma from '../../lib/prismaClient';
 import { AppError } from '../../middleware/errorHandler';
 import { ConnectionStatus, SwipeDirection } from '@prisma/client';
+import { Storage } from '@google-cloud/storage';
+import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
 class NetworkingService {
+  private storage: Storage;
+
+  constructor() {
+    this.storage = new Storage({
+      projectId: process.env.GOOGLE_CLOUD_PROJECT_ID,
+      keyFilename: process.env.GOOGLE_CLOUD_KEY_FILE,
+    });
+  }
+
   async updateProfile(userId: number, data: any) {
     const profile = await prisma.networkProfile.upsert({
       where: { userId },
@@ -10,6 +22,147 @@ class NetworkingService {
       update: data,
     });
     return profile;
+  }
+
+  async createOrUpdateProfile(userId: number, profileData: any) {
+    const {
+      firstName,
+      lastName,
+      birthday,
+      gender,
+      country,
+      city,
+      instagramHandle,
+      interests,
+      isProfilePublic
+    } = profileData;
+
+    // Update user basic info
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        firstName,
+        lastName,
+        birthday: new Date(birthday),
+        gender,
+        country,
+        city,
+        instagramHandle,
+        interests,
+        isProfilePublic: isProfilePublic ?? true,
+      },
+    });
+
+    // Create or update network profile
+    const networkProfile = await prisma.networkProfile.upsert({
+      where: { userId },
+      create: {
+        userId,
+        visibility: isProfilePublic ? 'PUBLIC' : 'PRIVATE',
+        lookingFor: 'FRIENDS',
+        bio: '',
+        interests,
+      },
+      update: {
+        visibility: isProfilePublic ? 'PUBLIC' : 'PRIVATE',
+        interests,
+      },
+    });
+
+    return {
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        birthday: user.birthday,
+        gender: user.gender,
+        country: user.country,
+        city: user.city,
+        instagramHandle: user.instagramHandle,
+        interests: user.interests,
+        isProfilePublic: user.isProfilePublic,
+        profilePhoto: user.profilePhoto,
+      },
+      networkProfile,
+    };
+  }
+
+  async uploadProfilePhoto(userId: number, file: any) {
+    try {
+      const bucketName = process.env.GOOGLE_CLOUD_STORAGE_BUCKET || 'wizard-media';
+      const fileName = `profile-photos/${userId}/${uuidv4()}${path.extname(file.originalname)}`;
+      
+      const bucket = this.storage.bucket(bucketName);
+      const fileUpload = bucket.file(fileName);
+
+      const stream = fileUpload.createWriteStream({
+        metadata: {
+          contentType: file.mimetype,
+        },
+        resumable: false,
+      });
+
+      return new Promise((resolve, reject) => {
+        stream.on('error', (err) => {
+          console.error('❌ [GCS] Upload error:', err);
+          reject(new AppError('Failed to upload photo', 500));
+        });
+
+        stream.on('finish', async () => {
+          try {
+            // Make the file public
+            await fileUpload.makePublic();
+            
+            const publicUrl = `https://storage.googleapis.com/${bucketName}/${fileName}`;
+            
+            // Update user's profile photo URL
+            await prisma.user.update({
+              where: { id: userId },
+              data: { profilePhoto: publicUrl },
+            });
+
+            console.log('✅ [GCS] Photo uploaded successfully:', publicUrl);
+            resolve({ photoUrl: publicUrl });
+          } catch (err) {
+            console.error('❌ [GCS] Error updating database:', err);
+            reject(new AppError('Failed to save photo URL', 500));
+          }
+        });
+
+        stream.end(file.buffer);
+      });
+    } catch (error) {
+      console.error('❌ [GCS] Upload error:', error);
+      throw new AppError('Failed to upload photo', 500);
+    }
+  }
+
+  async getMyProfile(userId: number) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        birthday: true,
+        gender: true,
+        country: true,
+        city: true,
+        instagramHandle: true,
+        interests: true,
+        isProfilePublic: true,
+        profilePhoto: true,
+        networkProfile: true,
+      },
+    });
+
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+
+    return user;
   }
 
   async discover(userId: number, limit: number = 20) {

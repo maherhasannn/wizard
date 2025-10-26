@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/network_user.dart';
+import '../providers/networking_provider.dart';
 
-class UserProfileScreen extends StatelessWidget {
+class UserProfileScreen extends StatefulWidget {
   final NetworkUser user;
 
   const UserProfileScreen({
     super.key,
     required this.user,
   });
+
+  @override
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
+}
+
+class _UserProfileScreenState extends State<UserProfileScreen> {
 
   Color _hexToColor(String hexCode) {
     final hexString = hexCode.replaceAll('#', '');
@@ -19,7 +27,12 @@ class UserProfileScreen extends StatelessWidget {
     final lightTextColor = _hexToColor('F0E6D8');
     final purpleAccent = _hexToColor('6A1B9A');
 
-    return Scaffold(
+    return Consumer<NetworkingProvider>(
+      builder: (context, networkingProvider, child) {
+        final isConnected = networkingProvider.isUserConnected(widget.user.id);
+        final connectionStatus = networkingProvider.getConnectionStatus(widget.user.id);
+
+        return Scaffold(
       backgroundColor: _hexToColor('1B0A33'),
       body: SafeArea(
         child: Column(
@@ -53,7 +66,7 @@ class UserProfileScreen extends StatelessWidget {
                       // Share profile
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text('Sharing ${user.name}\'s profile'),
+                          content: Text('Sharing ${widget.user.name}\'s profile'),
                           backgroundColor: purpleAccent,
                         ),
                       );
@@ -92,9 +105,9 @@ class UserProfileScreen extends StatelessWidget {
                         ],
                       ),
                       child: ClipOval(
-                        child: user.photoUrl.isNotEmpty
+                        child: widget.user.photoUrl.isNotEmpty
                             ? Image.asset(
-                                user.photoUrl,
+                                widget.user.photoUrl,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
                                   return _buildPlaceholderAvatar();
@@ -108,7 +121,7 @@ class UserProfileScreen extends StatelessWidget {
 
                     // Name and age
                     Text(
-                      user.name,
+                      widget.user.name,
                       style: TextStyle(
           fontFamily: 'DMSans',
                         color: lightTextColor,
@@ -121,7 +134,7 @@ class UserProfileScreen extends StatelessWidget {
 
                     // Age and location
                     Text(
-                      '${user.age} | ${user.locationString}',
+                      '${widget.user.age} | ${widget.user.locationString}',
                       style: TextStyle(
           fontFamily: 'DMSans',
                         color: lightTextColor.withOpacity(0.8),
@@ -159,7 +172,7 @@ class UserProfileScreen extends StatelessWidget {
                           ),
                           const SizedBox(height: 12),
                           Text(
-                            user.bio,
+                            widget.user.bio,
                             style: TextStyle(
           fontFamily: 'DMSans',
                               color: lightTextColor.withOpacity(0.9),
@@ -203,7 +216,7 @@ class UserProfileScreen extends StatelessWidget {
                           Wrap(
                             spacing: 8,
                             runSpacing: 8,
-                            children: user.interests.map((interest) {
+                            children: widget.user.interests.map((interest) {
                               return Container(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
@@ -236,7 +249,7 @@ class UserProfileScreen extends StatelessWidget {
                     const SizedBox(height: 24),
 
                     // Instagram link
-                    if (user.instagram.isNotEmpty)
+                    if (widget.user.instagram.isNotEmpty)
                       Container(
                         width: double.infinity,
                         margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -244,7 +257,7 @@ class UserProfileScreen extends StatelessWidget {
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('Opening ${user.instagram}'),
+                                content: Text('Opening ${widget.user.instagram}'),
                                 backgroundColor: purpleAccent,
                               ),
                             );
@@ -262,7 +275,7 @@ class UserProfileScreen extends StatelessWidget {
                             size: 20,
                           ),
                           label: Text(
-                            user.instagram,
+                            widget.user.instagram,
                             style: TextStyle(
           fontFamily: 'DMSans',
                               color: lightTextColor,
@@ -311,16 +324,24 @@ class UserProfileScreen extends StatelessWidget {
 
                           const SizedBox(width: 16),
 
-                          // Like button
+                          // Connect/Like button
                           Expanded(
                             child: Container(
                               height: 50,
                               decoration: BoxDecoration(
-                                color: purpleAccent,
+                                color: isConnected 
+                                    ? Colors.green 
+                                    : connectionStatus == 'PENDING'
+                                        ? Colors.orange
+                                        : purpleAccent,
                                 borderRadius: BorderRadius.circular(25),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: purpleAccent.withOpacity(0.3),
+                                    color: (isConnected 
+                                        ? Colors.green 
+                                        : connectionStatus == 'PENDING'
+                                            ? Colors.orange
+                                            : purpleAccent).withOpacity(0.3),
                                     blurRadius: 10,
                                     spreadRadius: 2,
                                   ),
@@ -329,21 +350,36 @@ class UserProfileScreen extends StatelessWidget {
                               child: Material(
                                 color: Colors.transparent,
                                 child: InkWell(
-                                  onTap: () {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('You liked ${user.name}!'),
-                                        backgroundColor: purpleAccent,
-                                      ),
-                                    );
-                                    Navigator.pop(context);
-                                  },
+                                  onTap: () => _handleConnectionAction(networkingProvider),
                                   borderRadius: BorderRadius.circular(25),
                                   child: Center(
-                                    child: Icon(
-                                      Icons.favorite,
-                                      color: lightTextColor,
-                                      size: 24,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          isConnected 
+                                              ? Icons.check
+                                              : connectionStatus == 'PENDING'
+                                                  ? Icons.hourglass_empty
+                                                  : Icons.favorite,
+                                          color: lightTextColor,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          isConnected 
+                                              ? 'Connected'
+                                              : connectionStatus == 'PENDING'
+                                                  ? 'Pending'
+                                                  : 'Connect',
+                                          style: TextStyle(
+                                            fontFamily: 'DMSans',
+                                            color: lightTextColor,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -363,6 +399,41 @@ class UserProfileScreen extends StatelessWidget {
         ),
       ),
     );
+      },
+    );
+  }
+
+  void _handleConnectionAction(NetworkingProvider networkingProvider) async {
+    final lightTextColor = _hexToColor('F0E6D8');
+    final purpleAccent = _hexToColor('6A1B9A');
+    
+    if (networkingProvider.isUserConnected(widget.user.id)) {
+      // Already connected - show message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('You are already connected with ${widget.user.name}'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      // Send connection request
+      final success = await networkingProvider.sendConnectionRequest(widget.user.id);
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Connection request sent to ${widget.user.name}'),
+            backgroundColor: purpleAccent,
+          ),
+        );
+      } else if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to send connection request'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildPlaceholderAvatar() {
@@ -384,7 +455,7 @@ class UserProfileScreen extends StatelessWidget {
       ),
       child: Center(
         child: Text(
-          user.initials,
+          widget.user.initials,
           style: TextStyle(
           fontFamily: 'DMSans',
             color: lightTextColor,

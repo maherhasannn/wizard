@@ -121,6 +121,8 @@ class AuthService {
    * Login user
    */
   async login(data: LoginData) {
+    console.log('🔑 [AUTH] Login attempt for:', data.email);
+    
     // Find user
     const user = await prisma.user.findUnique({
       where: { email: data.email.toLowerCase() },
@@ -135,21 +137,31 @@ class AuthService {
     });
 
     if (!user) {
+      console.log('🔑 [AUTH] User not found');
       throw new AppError('Incorrect password', 401);
     }
 
+    console.log('🔑 [AUTH] User found:', user.id, 'Email verified:', user.isEmailVerified);
+
     // Check if email is verified
     if (!user.isEmailVerified) {
+      console.log('🔑 [AUTH] Email not verified');
       throw new AppError('Please verify your email before logging in', 401);
     }
 
     // Check if password is set (not null for incomplete registrations)
     if (!user.password) {
+      console.log('🔑 [AUTH] Password not set');
       throw new AppError('Please complete registration by setting a password', 401);
     }
 
+    console.log('🔑 [AUTH] Stored password hash exists:', !!user.password);
+    console.log('🔑 [AUTH] Attempting password verification...');
+
     // Verify password
     const isValidPassword = await verifyPassword(user.password, data.password);
+
+    console.log('🔑 [AUTH] Password valid:', isValidPassword);
 
     if (!isValidPassword) {
       throw new AppError('Incorrect password', 401);
@@ -167,6 +179,8 @@ class AuthService {
         refreshTokenExpiry: getTokenExpiry(30 * 24), // 30 days
       },
     });
+
+    console.log('🔑 [AUTH] Login successful for user:', user.id);
 
     return {
       user: {
@@ -334,6 +348,9 @@ class AuthService {
    * Verify email with 6-digit code
    */
   async verifyEmail(email: string, code: string) {
+    console.log('📧 [EMAIL-VERIFY] Attempting to verify email:', email);
+    console.log('📧 [EMAIL-VERIFY] Code provided:', code);
+    
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       select: {
@@ -346,24 +363,36 @@ class AuthService {
     });
 
     if (!user) {
+      console.log('📧 [EMAIL-VERIFY] User not found');
       throw new AppError('Incorrect code', 400);
     }
+
+    console.log('📧 [EMAIL-VERIFY] User found:', user.id);
+    console.log('📧 [EMAIL-VERIFY] Already verified:', user.isEmailVerified);
 
     if (user.isEmailVerified) {
       throw new AppError('Email already verified', 400);
     }
 
+    console.log('📧 [EMAIL-VERIFY] Stored code:', user.verificationCode);
+    console.log('📧 [EMAIL-VERIFY] Code expiry:', user.verificationCodeExpiry);
+
     if (!user.verificationCode || !user.verificationCodeExpiry) {
+      console.log('📧 [EMAIL-VERIFY] No verification code found');
       throw new AppError('No verification code found', 400);
     }
 
     if (user.verificationCode !== code) {
+      console.log('📧 [EMAIL-VERIFY] Code mismatch!');
       throw new AppError('Incorrect code', 400);
     }
 
     if (new Date() > user.verificationCodeExpiry) {
+      console.log('📧 [EMAIL-VERIFY] Code expired');
       throw new AppError('Code expired - please request a new one', 400);
     }
+
+    console.log('📧 [EMAIL-VERIFY] Code valid! Marking email as verified...');
 
     // Mark email as verified and clear verification code
     await prisma.user.update({
@@ -374,6 +403,8 @@ class AuthService {
         verificationCodeExpiry: null,
       },
     });
+
+    console.log('📧 [EMAIL-VERIFY] Email verified successfully');
 
     // Return success - user will set password next, no auto-login yet
     return {
@@ -426,6 +457,8 @@ class AuthService {
    * Forgot password - send reset code
    */
   async forgotPassword(email: string) {
+    console.log('🔓 [FORGOT-PASSWORD] Request for:', email);
+    
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       select: {
@@ -436,16 +469,24 @@ class AuthService {
     });
 
     if (!user) {
+      console.log('🔓 [FORGOT-PASSWORD] User not found');
       throw new AppError('Email address is not valid', 400);
     }
 
+    console.log('🔓 [FORGOT-PASSWORD] User found:', user.id);
+    console.log('🔓 [FORGOT-PASSWORD] Email verified:', user.isEmailVerified);
+
     if (!user.isEmailVerified) {
+      console.log('🔓 [FORGOT-PASSWORD] Email not verified');
       throw new AppError('Please verify your email first', 400);
     }
 
     // Generate reset code
     const resetCode = generateVerificationCode();
     const resetCodeExpiry = getTokenExpiry(10); // 10 minutes
+
+    console.log('🔓 [FORGOT-PASSWORD] Generated reset code:', resetCode);
+    console.log('🔓 [FORGOT-PASSWORD] Code expiry:', resetCodeExpiry);
 
     // Store reset code (using verification code fields for password reset)
     await prisma.user.update({
@@ -456,9 +497,13 @@ class AuthService {
       },
     });
 
+    console.log('🔓 [FORGOT-PASSWORD] Sending reset email...');
+
     // Send reset email
     const emailTemplate = createPasswordResetEmail(resetCode);
     await sendEmail(user.email, emailTemplate);
+
+    console.log('🔓 [FORGOT-PASSWORD] Reset code sent successfully');
 
     return { message: 'Password reset code sent successfully' };
   }
@@ -467,6 +512,9 @@ class AuthService {
    * Verify reset code
    */
   async verifyResetCode(email: string, code: string) {
+    console.log('🔓 [VERIFY-RESET] Verifying reset code for:', email);
+    console.log('🔓 [VERIFY-RESET] Code provided:', code);
+    
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       select: {
@@ -479,24 +527,37 @@ class AuthService {
     });
 
     if (!user) {
+      console.log('🔓 [VERIFY-RESET] User not found');
       throw new AppError('Incorrect code', 400);
     }
 
+    console.log('🔓 [VERIFY-RESET] User found:', user.id);
+    console.log('🔓 [VERIFY-RESET] Email verified:', user.isEmailVerified);
+
     if (!user.isEmailVerified) {
+      console.log('🔓 [VERIFY-RESET] Email not verified');
       throw new AppError('Please verify your email first', 400);
     }
 
+    console.log('🔓 [VERIFY-RESET] Stored code:', user.verificationCode);
+    console.log('🔓 [VERIFY-RESET] Code expiry:', user.verificationCodeExpiry);
+
     if (!user.verificationCode || !user.verificationCodeExpiry) {
+      console.log('🔓 [VERIFY-RESET] No reset code found');
       throw new AppError('No reset code found', 400);
     }
 
     if (user.verificationCode !== code) {
+      console.log('🔓 [VERIFY-RESET] Code mismatch!');
       throw new AppError('Incorrect code', 400);
     }
 
     if (new Date() > user.verificationCodeExpiry) {
+      console.log('🔓 [VERIFY-RESET] Code expired');
       throw new AppError('Code expired - please request a new one', 400);
     }
+
+    console.log('🔓 [VERIFY-RESET] Code verified successfully');
 
     return { message: 'Reset code verified successfully' };
   }
@@ -505,6 +566,9 @@ class AuthService {
    * Reset password with code
    */
   async resetPasswordWithCode(email: string, code: string, newPassword: string) {
+    console.log('🔓 [RESET-PASSWORD] Resetting password for:', email);
+    console.log('🔓 [RESET-PASSWORD] Code provided:', code);
+    
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       select: {
@@ -517,27 +581,42 @@ class AuthService {
     });
 
     if (!user) {
+      console.log('🔓 [RESET-PASSWORD] User not found');
       throw new AppError('Incorrect code', 400);
     }
 
+    console.log('🔓 [RESET-PASSWORD] User found:', user.id);
+    console.log('🔓 [RESET-PASSWORD] Email verified:', user.isEmailVerified);
+
     if (!user.isEmailVerified) {
+      console.log('🔓 [RESET-PASSWORD] Email not verified');
       throw new AppError('Please verify your email first', 400);
     }
 
+    console.log('🔓 [RESET-PASSWORD] Stored code:', user.verificationCode);
+    console.log('🔓 [RESET-PASSWORD] Code expiry:', user.verificationCodeExpiry);
+
     if (!user.verificationCode || !user.verificationCodeExpiry) {
+      console.log('🔓 [RESET-PASSWORD] No reset code found');
       throw new AppError('No reset code found', 400);
     }
 
     if (user.verificationCode !== code) {
+      console.log('🔓 [RESET-PASSWORD] Code mismatch!');
       throw new AppError('Incorrect code', 400);
     }
 
     if (new Date() > user.verificationCodeExpiry) {
+      console.log('🔓 [RESET-PASSWORD] Code expired');
       throw new AppError('Code expired - please request a new one', 400);
     }
 
+    console.log('🔓 [RESET-PASSWORD] Code valid. Hashing new password...');
+
     // Hash new password
     const hashedPassword = await hashPassword(newPassword);
+
+    console.log('🔓 [RESET-PASSWORD] Updating password and generating tokens...');
 
       // Generate tokens for auto-login
       const newAccessToken = generateAccessToken({ userId: user.id, email: user.email });
@@ -555,6 +634,8 @@ class AuthService {
         },
       });
 
+      console.log('🔓 [RESET-PASSWORD] Password reset successfully!');
+
       return {
         user: {
           id: user.id,
@@ -570,6 +651,8 @@ class AuthService {
    * Set password after email verification
    */
   async setPassword(email: string, password: string) {
+    console.log('🔒 [SET-PASSWORD] Setting password for:', email);
+    
     const user = await prisma.user.findUnique({
       where: { email: email.toLowerCase() },
       select: {
@@ -583,15 +666,24 @@ class AuthService {
     });
 
     if (!user) {
+      console.log('🔒 [SET-PASSWORD] User not found');
       throw new AppError('User not found', 404);
     }
 
+    console.log('🔒 [SET-PASSWORD] User found:', user.id);
+    console.log('🔒 [SET-PASSWORD] Email verified:', user.isEmailVerified);
+
     if (!user.isEmailVerified) {
+      console.log('🔒 [SET-PASSWORD] Email not verified!');
       throw new AppError('Email not verified', 400);
     }
 
+    console.log('🔒 [SET-PASSWORD] Hashing password...');
+
     // Hash password
     const hashedPassword = await hashPassword(password);
+
+    console.log('🔒 [SET-PASSWORD] Updating user with hashed password...');
 
     // Update password
     await prisma.user.update({
@@ -600,6 +692,8 @@ class AuthService {
         password: hashedPassword,
       },
     });
+
+    console.log('🔒 [SET-PASSWORD] Password set successfully. Generating tokens...');
 
     // Generate tokens for immediate login
     const accessToken = generateAccessToken({ userId: user.id, email: user.email });
@@ -613,6 +707,8 @@ class AuthService {
         refreshTokenExpiry: getTokenExpiry(30 * 24), // 30 days
       },
     });
+
+    console.log('🔒 [SET-PASSWORD] Complete! User can now login.');
 
     return {
       user: {

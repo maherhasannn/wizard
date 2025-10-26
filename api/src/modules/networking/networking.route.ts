@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import networkingController from './networking.controller';
+import networkingController, { upload } from './networking.controller';
 import { authenticate } from '../../middleware/authMiddleware';
 
 const router = Router();
@@ -7,6 +7,9 @@ const router = Router();
 router.use(authenticate);
 
 router.put('/profile', networkingController.updateProfile.bind(networkingController));
+router.post('/profile', networkingController.createOrUpdateProfile.bind(networkingController));
+router.get('/profile', networkingController.getMyProfile.bind(networkingController));
+router.post('/profile/photo', upload.single('photo'), networkingController.uploadProfilePhoto.bind(networkingController));
 router.get('/discover', networkingController.discover.bind(networkingController));
 router.post('/swipe', networkingController.recordSwipe.bind(networkingController));
 router.get('/connections', networkingController.getConnections.bind(networkingController));

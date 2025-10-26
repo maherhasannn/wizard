@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../config/api_config.dart';
@@ -9,6 +10,11 @@ class ApiClient {
   String? _token;
 
   ApiClient(this._client, this._storage);
+
+  // Factory constructor for creating instances
+  factory ApiClient.instance() {
+    return ApiClient(http.Client(), const FlutterSecureStorage());
+  }
 
   Future<void> loadToken() async {
     _token = await _storage.read(key: 'auth_token');
@@ -26,6 +32,10 @@ class ApiClient {
 
   Map<String, String> _headers() => {
     'Content-Type': 'application/json',
+    if (_token != null) 'Authorization': 'Bearer $_token',
+  };
+
+  Map<String, String> _multipartHeaders() => {
     if (_token != null) 'Authorization': 'Bearer $_token',
   };
 
@@ -135,6 +145,46 @@ class ApiClient {
       if (e is ApiException) rethrow;
       print('💥 [API] Failed to parse response: $e');
       throw ApiException('Invalid response from server', response.statusCode);
+    }
+  }
+
+  // File upload request
+  Future<Map<String, dynamic>> uploadFile(String endpoint, File file) async {
+    String url = '${ApiConfig.baseUrl}$endpoint';
+    
+    print('🌐 [API] UPLOAD $url');
+    print('📋 [API] Headers: ${_multipartHeaders()}');
+    print('📁 [API] File: ${file.path}');
+    
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+    
+    // Add headers
+    request.headers.addAll(_multipartHeaders());
+    
+    // Add file
+    request.files.add(await http.MultipartFile.fromPath('photo', file.path));
+    
+    try {
+      final streamedResponse = await request.send().timeout(ApiConfig.timeout);
+      final response = await http.Response.fromStream(streamedResponse);
+      
+      print('✅ [API] Response: ${response.statusCode}');
+      print('📦 [API] Body: ${response.body}');
+      
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        print('✨ [API] Success!');
+        return data;
+      } else {
+        final Map<String, dynamic> errorData = json.decode(response.body);
+        final String errorMessage = errorData['error']?['message'] ?? 'Upload failed';
+        print('⚠️ [API] Error: $errorMessage (Status: ${response.statusCode})');
+        throw ApiException(errorMessage, response.statusCode);
+      }
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      print('❌ [API] Error: $e');
+      throw ApiException('Network error: $e', 0);
     }
   }
 }

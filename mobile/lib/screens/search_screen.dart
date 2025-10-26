@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/network_user.dart';
-import '../data/network_users_data.dart';
+import '../providers/networking_provider.dart';
 import '../widgets/user_search_tile.dart';
 import 'user_profile_screen.dart';
 
@@ -13,8 +14,6 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
-  List<NetworkUser> _searchResults = [];
-  List<String> _searchHistory = ['Amina Peterson', 'Raoul Murphy', 'Olga Makropova', 'Scott Powell'];
   bool _isSearching = false;
 
   Color _hexToColor(String hexCode) {
@@ -25,9 +24,9 @@ class _SearchScreenState extends State<SearchScreen> {
   void _performSearch(String query) {
     if (query.isEmpty) {
       setState(() {
-        _searchResults = [];
         _isSearching = false;
       });
+      context.read<NetworkingProvider>().clearSearchResults();
       return;
     }
 
@@ -35,19 +34,21 @@ class _SearchScreenState extends State<SearchScreen> {
       _isSearching = true;
     });
 
-    // Simulate search delay
-    Future.delayed(const Duration(milliseconds: 500), () {
-      final results = NetworkUsersData.searchUsers(query);
-      setState(() {
-        _searchResults = results;
-        _isSearching = false;
-      });
-    });
+    context.read<NetworkingProvider>().searchUsers(query);
   }
 
   void _onSearchHistoryTap(String query) {
     _searchController.text = query;
     _performSearch(query);
+  }
+
+  void _onUserTap(NetworkUser user) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UserProfileScreen(user: user),
+      ),
+    );
   }
 
   @override
@@ -61,7 +62,9 @@ class _SearchScreenState extends State<SearchScreen> {
     final lightTextColor = _hexToColor('F0E6D8');
     final purpleAccent = _hexToColor('6A1B9A');
 
-    return Scaffold(
+    return Consumer<NetworkingProvider>(
+      builder: (context, networkingProvider, child) {
+        return Scaffold(
       backgroundColor: _hexToColor('1B0A33'),
       body: SafeArea(
         child: Column(
@@ -160,19 +163,18 @@ class _SearchScreenState extends State<SearchScreen> {
             // Content
             Expanded(
               child: _searchController.text.isEmpty
-                  ? _buildSearchHistory()
-                  : _buildSearchResults(),
+                  ? _buildSearchHistory(context, lightTextColor, purpleAccent, networkingProvider.searchHistory)
+                  : _buildSearchResults(context, lightTextColor, purpleAccent, networkingProvider.searchResults),
             ),
           ],
         ),
       ),
     );
+      },
+    );
   }
 
-  Widget _buildSearchHistory() {
-    final lightTextColor = _hexToColor('F0E6D8');
-    final purpleAccent = _hexToColor('6A1B9A');
-
+  Widget _buildSearchHistory(BuildContext context, Color lightTextColor, Color purpleAccent, List<String> searchHistory) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -181,14 +183,14 @@ class _SearchScreenState extends State<SearchScreen> {
           Text(
             'HISTORY',
             style: TextStyle(
-          fontFamily: 'DMSans',
+              fontFamily: 'DMSans',
               color: lightTextColor,
               fontSize: 16,
               fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(height: 16),
-          ..._searchHistory.map((query) {
+          ...searchHistory.map((query) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: GestureDetector(
@@ -232,33 +234,8 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  Widget _buildSearchResults() {
-    final lightTextColor = _hexToColor('F0E6D8');
-
-    if (_isSearching) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(
-              color: lightTextColor.withOpacity(0.7),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Searching...',
-              style: TextStyle(
-          fontFamily: 'DMSans',
-                color: lightTextColor.withOpacity(0.7),
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
-
-    if (_searchResults.isEmpty) {
+  Widget _buildSearchResults(BuildContext context, Color lightTextColor, Color purpleAccent, List<NetworkUser> searchResults) {
+    if (searchResults.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -272,7 +249,7 @@ class _SearchScreenState extends State<SearchScreen> {
             Text(
               'Unfortunately nothing found',
               style: TextStyle(
-          fontFamily: 'DMSans',
+                fontFamily: 'DMSans',
                 color: lightTextColor,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -282,7 +259,7 @@ class _SearchScreenState extends State<SearchScreen> {
             Text(
               'Try a different request',
               style: TextStyle(
-          fontFamily: 'DMSans',
+                fontFamily: 'DMSans',
                 color: lightTextColor.withOpacity(0.7),
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
@@ -299,9 +276,9 @@ class _SearchScreenState extends State<SearchScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Found People',
+            'Found: ${searchResults.length} users',
             style: TextStyle(
-          fontFamily: 'DMSans',
+              fontFamily: 'DMSans',
               color: lightTextColor,
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -310,21 +287,14 @@ class _SearchScreenState extends State<SearchScreen> {
           const SizedBox(height: 16),
           Expanded(
             child: ListView.builder(
-              itemCount: _searchResults.length,
+              itemCount: searchResults.length,
               itemBuilder: (context, index) {
-                final user = _searchResults[index];
+                final user = searchResults[index];
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: UserSearchTile(
                     user: user,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => UserProfileScreen(user: user),
-                        ),
-                      );
-                    },
+                    onTap: () => _onUserTap(user),
                   ),
                 );
               },

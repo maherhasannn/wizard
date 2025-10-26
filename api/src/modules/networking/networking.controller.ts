@@ -1,7 +1,23 @@
 import { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
+import multer from 'multer';
 import networkingService from './networking.service';
 import { AppError } from '../../middleware/errorHandler';
+
+// Configure multer for memory storage
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new AppError('Only image files are allowed', 400));
+    }
+  },
+});
 
 const updateProfileSchema = z.object({
   visibility: z.string().optional(),
@@ -18,6 +34,18 @@ const swipeSchema = z.object({
 const locationSchema = z.object({
   latitude: z.number(),
   longitude: z.number(),
+});
+
+const createProfileSchema = z.object({
+  firstName: z.string().min(1),
+  lastName: z.string().min(1).optional(),
+  birthday: z.string(),
+  gender: z.string(),
+  country: z.string(),
+  city: z.string(),
+  instagramHandle: z.string().optional(),
+  interests: z.array(z.string()),
+  isProfilePublic: z.boolean().optional(),
 });
 
 class NetworkingController {
@@ -129,8 +157,40 @@ class NetworkingController {
       next(error);
     }
   }
+
+  async createOrUpdateProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) throw new AppError('Unauthorized', 401);
+      const profileData = createProfileSchema.parse(req.body);
+      const result = await networkingService.createOrUpdateProfile(req.user.userId, profileData);
+      res.json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async uploadProfilePhoto(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) throw new AppError('Unauthorized', 401);
+      if (!req.file) throw new AppError('No file uploaded', 400);
+      
+      const result = await networkingService.uploadProfilePhoto(req.user.userId, req.file);
+      res.json({ success: true, data: result });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getMyProfile(req: Request, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) throw new AppError('Unauthorized', 401);
+      const profile = await networkingService.getMyProfile(req.user.userId);
+      res.json({ success: true, data: profile });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
+export { upload };
 export default new NetworkingController();
-
-

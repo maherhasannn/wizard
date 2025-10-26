@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'swipe_cards_screen.dart';
 import 'map_view_screen.dart';
 import 'filter_search_screen.dart';
+import 'search_screen.dart';
 
 class DiscoveryMethodsScreen extends StatelessWidget {
   const DiscoveryMethodsScreen({super.key});
@@ -55,14 +55,14 @@ class DiscoveryMethodsScreen extends StatelessWidget {
                   children: [
                     _buildDiscoveryCard(
                       context,
-                      'Swipe Cards',
-                      'Discover people through an intuitive swipe interface. Swipe right to connect, left to pass.',
-                      Icons.swipe,
-                      'assets/images/swipe_preview.jpg',
+                      'Search People',
+                      'Search for people by name, interests, or location. Find exactly who you\'re looking for.',
+                      Icons.search,
+                      'assets/images/search_preview.jpg',
                       () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const SwipeCardsScreen(),
+                          builder: (context) => const SearchScreen(),
                         ),
                       ),
                       lightTextColor,

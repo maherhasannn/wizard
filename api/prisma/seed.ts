@@ -7,6 +7,10 @@ async function main() {
   console.log('🌱 Starting seed...');
 
   // Clean existing data (in correct order due to foreign keys)
+  await prisma.userRitualCompletion.deleteMany();
+  await prisma.userChallenge.deleteMany();
+  await prisma.ritual.deleteMany();
+  await prisma.challenge.deleteMany();
   await prisma.userPowerSelection.deleteMany();
   await prisma.powerCategory.deleteMany();
   await prisma.liveStreamChat.deleteMany();
@@ -298,6 +302,251 @@ async function main() {
   ]);
 
   console.log(`✅ Created ${streams.length} live streams`);
+
+  // Create challenges with rituals
+  const meditationTracks = await prisma.meditationTrack.findMany();
+  
+  // Challenge 1: 21 Days of Self-Belief
+  const challenge1 = await prisma.challenge.create({
+    data: {
+      title: '21 Days of Self-Belief',
+      subtitle: 'A daily journey to rebuild your confidence step by step',
+      description: 'Transform your relationship with yourself through daily confidence-building rituals and empowering practices.',
+      duration: 21,
+      category: 'CONFIDENCE',
+      goals: [
+        'Build unshakable self-confidence in everyday life',
+        'Silence self-doubt and replace it with empowering thoughts',
+        'Step into any situation with presence and certainty'
+      ],
+      colorTheme: 'purple',
+      icon: 'sparkles',
+      rituals: {
+        create: [
+          {
+            dayNumber: 1,
+            title: 'Mirror Affirmations',
+            description: 'Powerful self-affirmation practice',
+            type: 'TEXT',
+            duration: 75, // 1 min 15 sec
+            textContent: 'Stand in front of the mirror and say out loud: "I choose myself." Repeat it three times with eye contact, even if it feels uncomfortable.',
+          },
+        ],
+      },
+    },
+  });
+
+  // Challenge 2: Heartbreak Healing Journey
+  const challenge2 = await prisma.challenge.create({
+    data: {
+      title: 'Heartbreak Healing Journey',
+      subtitle: '14 days to heal your heart and rediscover your strength',
+      description: 'A guided journey through the stages of healing from heartbreak with daily meditations, journaling, and self-care rituals.',
+      duration: 14,
+      category: 'HEALING',
+      goals: [
+        'Release emotional pain and move forward',
+        'Rediscover your inner strength and worth',
+        'Open your heart to new possibilities'
+      ],
+      colorTheme: 'pink',
+      icon: 'heart',
+      rituals: {
+        create: [
+          {
+            dayNumber: 1,
+            title: 'Healing Breathwork',
+            description: 'Release tension and emotional weight',
+            type: 'AUDIO',
+            duration: 600, // 10 min
+            audioUrl: 'https://storage.wizard.app/challenges/healing_breathwork_1.mp3',
+          },
+        ],
+      },
+    },
+  });
+
+  // Challenge 3: Magnetic Morning Routine
+  const challenge3 = await prisma.challenge.create({
+    data: {
+      title: 'Magnetic Morning Routine',
+      subtitle: '7 days to build powerful morning habits',
+      description: 'Create an invigorating morning routine that sets the tone for a productive, positive, and empowered day.',
+      duration: 7,
+      category: 'MORNING_ROUTINE',
+      goals: [
+        'Establish a consistent morning practice',
+        'Increase daily energy and motivation',
+        'Start each day with intention and clarity'
+      ],
+      colorTheme: 'orange',
+      icon: 'sunrise',
+      rituals: {
+        create: [
+          {
+            dayNumber: 1,
+            title: 'Gratitude Practice',
+            description: 'Begin your day with gratitude',
+            type: 'TEXT',
+            duration: 300, // 5 min
+            textContent: 'Write down three things you\'re grateful for today. Feel the emotion of gratitude as you write each one.',
+          },
+        ],
+      },
+    },
+  });
+
+  // Challenge 4: Stop Overthinking Challenge
+  const challenge4 = await prisma.challenge.create({
+    data: {
+      title: 'Stop Overthinking Challenge',
+      subtitle: '10 days of mental clarity practices',
+      description: 'Break free from the cycle of overthinking with practical exercises, mindfulness techniques, and cognitive reframing strategies.',
+      duration: 10,
+      category: 'MINDFULNESS',
+      goals: [
+        'Quiet your racing thoughts',
+        'Practice mental clarity and presence',
+        'Reduce anxiety and decision paralysis'
+      ],
+      colorTheme: 'beige',
+      icon: 'brain',
+      rituals: {
+        create: [
+          {
+            dayNumber: 1,
+            title: 'Mindful Observation',
+            description: 'Practice observing without judgment',
+            type: 'TEXT',
+            duration: 180, // 3 min
+            textContent: 'Spend 3 minutes observing a single object in your environment. Notice every detail without forming any thoughts or judgments. Just observe.',
+          },
+        ],
+      },
+    },
+  });
+
+  // Challenge 5: Attract New Love
+  const challenge5 = await prisma.challenge.create({
+    data: {
+      title: 'Attract New Love',
+      subtitle: '21 days of love manifestation rituals',
+      description: 'Prepare yourself mentally, emotionally, and energetically to attract meaningful, authentic love into your life.',
+      duration: 21,
+      category: 'MANIFESTATION',
+      goals: [
+        'Cultivate self-love as the foundation',
+        'Clear blocks to receiving love',
+        'Align your energy with loving relationships'
+      ],
+      colorTheme: 'rose',
+      icon: 'hearts',
+      rituals: {
+        create: [
+          {
+            dayNumber: 1,
+            title: 'Self-Love Affirmations',
+            description: 'Begin with loving yourself first',
+            type: 'TEXT',
+            duration: 240, // 4 min
+            textContent: 'Stand in front of the mirror and say: "I am worthy of love. I attract healthy, fulfilling relationships. I am ready to receive love."',
+          },
+        ],
+      },
+    },
+  });
+
+  // Challenge 6: Build Your Foundation
+  const challenge6 = await prisma.challenge.create({
+    data: {
+      title: 'Build Your Foundation',
+      subtitle: '30 days of core self-improvement',
+      description: 'Build lasting habits and mindset shifts that create a solid foundation for personal growth and transformation.',
+      duration: 30,
+      category: 'SELF_LOVE',
+      goals: [
+        'Establish core habits for success',
+        'Develop emotional resilience',
+        'Build a strong personal foundation'
+      ],
+      colorTheme: 'blue',
+      icon: 'foundation',
+      rituals: {
+        create: [
+          {
+            dayNumber: 1,
+            title: 'Foundation Setting',
+            description: 'Set your intention for transformation',
+            type: 'TEXT',
+            duration: 600, // 10 min
+            textContent: 'Write a letter to your future self describing the foundation you want to build over these 30 days. What habits, mindset, and values do you want to establish?',
+          },
+        ],
+      },
+    },
+  });
+
+  // Challenge 7: Inner Peace Quest
+  const challenge7 = await prisma.challenge.create({
+    data: {
+      title: 'Inner Peace Quest',
+      subtitle: '14 days of meditation and mindfulness',
+      description: 'Discover lasting inner peace through guided meditation practices, mindfulness techniques, and peace cultivation exercises.',
+      duration: 14,
+      category: 'MINDFULNESS',
+      goals: [
+        'Develop a consistent meditation practice',
+        'Cultivate inner calm and tranquility',
+        'Reduce stress and overwhelm in daily life'
+      ],
+      colorTheme: 'teal',
+      icon: 'lotus',
+      rituals: {
+        create: [
+          {
+            dayNumber: 1,
+            title: 'Breath Awareness Meditation',
+            description: 'Begin with the breath',
+            type: 'MEDITATION',
+            duration: 900, // 15 min
+            meditationTrackId: meditationTracks[0]?.id,
+          },
+        ],
+      },
+    },
+  });
+
+  // Challenge 8: Queen Energy Activation
+  const challenge8 = await prisma.challenge.create({
+    data: {
+      title: 'Queen Energy Activation',
+      subtitle: '7 days of feminine power practices',
+      description: 'Awaken and activate your divine feminine power through daily rituals, affirmations, and embodied practices.',
+      duration: 7,
+      category: 'SELF_LOVE',
+      goals: [
+        'Embrace and embody your feminine power',
+        'Release limiting beliefs about power',
+        'Stand confidently in your queen energy'
+      ],
+      colorTheme: 'gold',
+      icon: 'crown',
+      rituals: {
+        create: [
+          {
+            dayNumber: 1,
+            title: 'Crown Activation',
+            description: 'Activate your inner queen',
+            type: 'TEXT',
+            duration: 360, // 6 min
+            textContent: 'Place your hands on top of your head (crown chakra). Close your eyes and visualize a golden crown on your head, radiating powerful, confident energy throughout your entire body.',
+          },
+        ],
+      },
+    },
+  });
+
+  console.log(`✅ Created 8 challenges with rituals`);
 
   console.log('🎉 Seed completed successfully!');
 }
